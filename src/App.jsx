@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import {
   Brain, Shield, Check, ChevronRight, ChevronDown,
   Target, Clock, ArrowRight, Sparkles, Lock, X,
-  Mail, User, AlertCircle, CheckCircle2, RefreshCw, CreditCard
+  Mail, User, AlertCircle, CheckCircle2, RefreshCw
 } from "lucide-react";
 
 // ─── Constants ───
@@ -273,15 +273,14 @@ export default function LearnOpsLanding() {
   const [testRef, testVis] = useInView(0.1);
 
   const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState("");
 
-  const canSubmit = firstName && lastName && email && EMAIL_REGEX.test(email);
+  const canSubmit = firstName && email && EMAIL_REGEX.test(email);
 
-  async function handlePreOrder(e) {
+  async function handleWaitlist(e) {
     e.preventDefault();
     if (!canSubmit) return;
     setLoading(true);
@@ -292,10 +291,10 @@ export default function LearnOpsLanding() {
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
           access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY,
-          name: `${firstName} ${lastName}`,
+          name: firstName,
           email,
-          subject: "LearnOps Pre-Order Interest — $15/mo",
-          from_name: "LearnOps Pre-Order",
+          subject: "LearnOps Waitlist Sign-up",
+          from_name: "LearnOps Waitlist",
         }),
       });
       const result = await res.json();
@@ -318,8 +317,8 @@ export default function LearnOpsLanding() {
           <div className="hidden md:flex items-center space-x-8">
             <a href="#pipeline" className="text-[#dae2fd]/70 font-display font-bold text-lg tracking-tight hover:text-[#dae2fd] transition-all duration-300">Pipeline</a>
             <a href="#results" className="text-[#dae2fd]/70 font-display font-bold text-lg tracking-tight hover:text-[#dae2fd] transition-all duration-300">Results</a>
-            <a href="#checkout" className="bg-gradient-to-r from-[#c4c0ff] to-[#8b86e4] text-[#221875] px-6 py-2 rounded-full font-bold active:scale-95 duration-200 button-glow">
-              Sign In
+            <a href="#waitlist" className="bg-gradient-to-r from-[#c4c0ff] to-[#8b86e4] text-[#221875] px-6 py-2 rounded-full font-bold active:scale-95 duration-200 button-glow">
+              Join Waitlist
             </a>
           </div>
         </div>
@@ -341,14 +340,14 @@ export default function LearnOpsLanding() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <a
-                href="#checkout"
+                href="#waitlist"
                 className="bg-gradient-to-r from-[#c4c0ff] to-[#8b86e4] text-[#221875] px-8 py-4 rounded-full font-display font-bold text-lg text-center button-glow transition-all"
               >
-                Secure Early Access — $15/mo
+                Get Early Access
               </a>
               <div className="flex items-center gap-2 px-4 py-4 text-[#c8c4d3] text-sm font-medium">
                 <Shield size={16} className="text-[#3cddc7]" />
-                Limited time pre-order price
+                Be first to know when we launch
               </div>
             </div>
           </div>
@@ -544,8 +543,8 @@ export default function LearnOpsLanding() {
         </div>
       </section>
 
-      {/* ─── PRE-ORDER ─── */}
-      <section id="checkout" className="py-24 px-6 relative">
+      {/* ─── WAITLIST ─── */}
+      <section id="waitlist" className="py-24 px-6 relative">
         <div className="max-w-3xl mx-auto">
           <div className="bg-[#222a3d] rounded-lg p-12 relative z-10">
             {submitted ? (
@@ -553,40 +552,30 @@ export default function LearnOpsLanding() {
                 <div className="w-16 h-16 rounded-full bg-[#3cddc7]/20 border border-[#3cddc7]/40 flex items-center justify-center mx-auto mb-5">
                   <CheckCircle2 size={32} className="text-[#3cddc7]" />
                 </div>
-                <h3 className="text-2xl font-display font-bold text-[#dae2fd] mb-2">You're locked in!</h3>
+                <h3 className="text-2xl font-display font-bold text-[#dae2fd] mb-2">You're on the list!</h3>
                 <p className="text-[#c8c4d3] text-sm leading-relaxed max-w-sm mx-auto">
-                  We'll reach out to <strong className="text-[#dae2fd]">{email}</strong> before launch to finalize your $15/mo legacy rate.
+                  We'll notify <strong className="text-[#dae2fd]">{email}</strong> the moment LearnOps is ready for you.
                 </p>
               </div>
             ) : (
               <>
                 <div className="text-center mb-10">
-                  <h2 className="text-3xl font-display font-extrabold mb-4 text-[#dae2fd]">Secure Early Access</h2>
-                  <p className="text-[#c8c4d3]">Your card will not be charged until launch. Lock in the $15/mo legacy rate forever.</p>
+                  <h2 className="text-3xl font-display font-extrabold mb-4 text-[#dae2fd]">Join the Waitlist</h2>
+                  <p className="text-[#c8c4d3]">Be first to know when we launch. No spam, just signal.</p>
                 </div>
-                <form onSubmit={handlePreOrder} className="space-y-6">
+                <form onSubmit={handleWaitlist} className="space-y-6">
                   {formError && (
                     <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex items-center gap-2">
                       <AlertCircle size={14} /> {formError}
                     </div>
                   )}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-xs uppercase tracking-widest text-[#c8c4d3] mb-2">First Name</label>
-                      <input
-                        type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)}
-                        placeholder="John" required
-                        className="w-full bg-[#060e20] border-none rounded focus:ring-2 focus:ring-[#3cddc7]/40 text-[#dae2fd] p-4 outline-none"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs uppercase tracking-widest text-[#c8c4d3] mb-2">Last Name</label>
-                      <input
-                        type="text" value={lastName} onChange={(e) => setLastName(e.target.value)}
-                        placeholder="Doe" required
-                        className="w-full bg-[#060e20] border-none rounded focus:ring-2 focus:ring-[#3cddc7]/40 text-[#dae2fd] p-4 outline-none"
-                      />
-                    </div>
+                  <div>
+                    <label className="block text-xs uppercase tracking-widest text-[#c8c4d3] mb-2">First Name</label>
+                    <input
+                      type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)}
+                      placeholder="John" required
+                      className="w-full bg-[#060e20] border-none rounded focus:ring-2 focus:ring-[#3cddc7]/40 text-[#dae2fd] p-4 outline-none"
+                    />
                   </div>
                   <div>
                     <label className="block text-xs uppercase tracking-widest text-[#c8c4d3] mb-2">Email Address</label>
@@ -596,23 +585,16 @@ export default function LearnOpsLanding() {
                       className="w-full bg-[#060e20] border-none rounded focus:ring-2 focus:ring-[#3cddc7]/40 text-[#dae2fd] p-4 outline-none"
                     />
                   </div>
-                  <div>
-                    <label className="block text-xs uppercase tracking-widest text-[#c8c4d3] mb-2">Card Details</label>
-                    <div className="bg-[#060e20] p-4 rounded flex items-center justify-between">
-                      <span className="text-[#dae2fd]/30">4242 4242 4242 4242</span>
-                      <CreditCard size={18} className="text-[#dae2fd]/30" />
-                    </div>
-                  </div>
                   <button
                     type="submit"
                     disabled={!canSubmit || loading}
                     className="w-full bg-gradient-to-r from-[#3cddc7] to-[#00a392] text-[#00201c] py-5 rounded-full font-display font-bold text-xl button-glow transition-all mt-4 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
-                    {loading ? "Processing..." : "Pre-Order Now — $15/mo"}
+                    {loading ? "Sending..." : "Join the Waitlist"}
                   </button>
                   <p className="text-center text-xs text-[#c8c4d3]/60 flex items-center justify-center gap-2">
                     <Lock size={12} />
-                    Encrypted &amp; Secure. FTC Compliant 1-Click Cancellation.
+                    No spam. Unsubscribe any time.
                   </p>
                 </form>
               </>
@@ -622,11 +604,6 @@ export default function LearnOpsLanding() {
         </div>
       </section>
 
-      {/* ─── FTC BAR ─── */}
-      <div className="py-4 bg-[#3cddc7]/5 text-center text-xs tracking-wide text-[#3cddc7] border-y border-[#3cddc7]/10">
-        1-Click Cancellation Guarantee — Risk-Free Pre-Order Experience.
-      </div>
-
       {/* ─── FOOTER ─── */}
       <footer className="w-full border-t border-[#dae2fd]/10 bg-[#0b1326]">
         <div className="flex flex-col md:flex-row justify-between items-center px-12 py-16 gap-8 w-full max-w-7xl mx-auto">
@@ -635,8 +612,6 @@ export default function LearnOpsLanding() {
             <p className="text-sm tracking-wide text-[#dae2fd]/50">© 2026 LearnOps. AI-Augmented Neurocognitive Pipelines.</p>
           </div>
           <div className="flex flex-wrap justify-center gap-8">
-            <a href="#" className="text-sm tracking-wide text-[#dae2fd]/50 hover:text-[#c4c0ff] underline decoration-[#3cddc7]/30 transition-colors">FTC Click to Cancel</a>
-            <a href="#" className="text-sm tracking-wide text-[#dae2fd]/50 hover:text-[#c4c0ff] underline decoration-[#3cddc7]/30 transition-colors">1-Click Cancellation Guarantee</a>
             <a href="#" className="text-sm tracking-wide text-[#dae2fd]/50 hover:text-[#c4c0ff] underline decoration-[#3cddc7]/30 transition-colors">Privacy Policy</a>
             <a href="#" className="text-sm tracking-wide text-[#dae2fd]/50 hover:text-[#c4c0ff] underline decoration-[#3cddc7]/30 transition-colors">Terms of Service</a>
           </div>
