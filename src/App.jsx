@@ -269,6 +269,7 @@ const FLOW_ITEMS = [
 export default function LearnOpsLanding() {
   const [probRef, probVis] = useInView(0.1);
   const [pipeRef, pipeVis] = useInView(0.1);
+  const [previewRef, previewVis] = useInView(0.1);
   const [testRef, testVis] = useInView(0.1);
 
   const [firstName, setFirstName] = useState("");
@@ -419,6 +420,67 @@ export default function LearnOpsLanding() {
               visible={pipeVis}
             />
           ))}
+        </div>
+      </section>
+
+      {/* ─── PRODUCT PREVIEW ─── */}
+      <section ref={previewRef} className="py-24 px-6 bg-[#131b2e]">
+        <div className="max-w-5xl mx-auto">
+          <div className={`text-center mb-12 transition-all duration-700 ${previewVis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            <p className="text-xs font-semibold text-[#3cddc7] tracking-widest uppercase mb-3">Live product</p>
+            <h2 className="text-3xl md:text-4xl font-display font-extrabold text-[#dae2fd] mb-4">
+              See it before you commit.
+            </h2>
+            <p className="text-[#c8c4d3] max-w-xl mx-auto">
+              This is the actual MVP — not a mockup. Click around, explore the pipeline, and decide for yourself.
+            </p>
+          </div>
+
+          {/* Browser frame */}
+          <div className={`transition-all duration-700 delay-200 ${previewVis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            <div className="rounded-lg overflow-hidden border border-[#474551]/30 shadow-2xl">
+              {/* Browser chrome */}
+              <div className="bg-[#1c2540] px-4 py-3 flex items-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-500/60" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
+                  <div className="w-3 h-3 rounded-full bg-green-500/60" />
+                </div>
+                <div className="flex-1 bg-[#171f33] rounded px-3 py-1 text-xs text-[#928f9d] font-mono truncate">
+                  jon-devlapaz.github.io/LearnOps-tamagachi/
+                </div>
+                <a
+                  href="https://jon-devlapaz.github.io/LearnOps-tamagachi/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-[#3cddc7] hover:text-[#dae2fd] transition-colors whitespace-nowrap flex items-center gap-1"
+                >
+                  Open full screen
+                  <ArrowRight size={12} />
+                </a>
+              </div>
+              {/* iframe */}
+              <iframe
+                src="https://jon-devlapaz.github.io/LearnOps-tamagachi/"
+                title="LearnOps MVP"
+                className="w-full border-0"
+                style={{ height: "600px" }}
+                loading="lazy"
+              />
+            </div>
+          </div>
+
+          <div className={`text-center mt-8 transition-all duration-700 delay-300 ${previewVis ? "opacity-100" : "opacity-0"}`}>
+            <a
+              href="https://jon-devlapaz.github.io/LearnOps-tamagachi/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm text-[#c8c4d3] hover:text-[#3cddc7] transition-colors"
+            >
+              Open in a new tab for the full experience
+              <ArrowRight size={14} />
+            </a>
+          </div>
         </div>
       </section>
 
