@@ -266,7 +266,7 @@ const FLOW_ITEMS = [
 ];
 
 // ─── Main App ───
-export default function Hy-FeynLanding() {
+export default function HyFeynLanding() {
   const [probRef, probVis] = useInView(0.1);
   const [pipeRef, pipeVis] = useInView(0.1);
   const [previewRef, previewVis] = useInView(0.1);
