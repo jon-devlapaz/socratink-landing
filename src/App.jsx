@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import {
   Brain, Shield, Check, ChevronRight, ChevronDown,
   Target, Clock, ArrowRight, Sparkles, Lock, X,
-  Mail, User, AlertCircle, CheckCircle2, RefreshCw
+  Mail, User, AlertCircle, CheckCircle2, RefreshCw,
+  Activity, Zap
 } from "lucide-react";
 
 // ─── Constants ───
@@ -265,6 +266,140 @@ const FLOW_ITEMS = [
   { title: "Visual Scaffolding", detail: "Knowledge is automatically mapped into mental structures." },
 ];
 
+// ─── reFeyn Interactive Demo ───
+function ReFeynDemo() {
+  const [stage, setStage] = useState('input');
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    if (stage === 'extract') {
+      const interval = setInterval(() => {
+        setProgress((prev) => (prev >= 100 ? 100 : prev + 2));
+      }, 30);
+      if (progress === 100) setTimeout(() => setStage('drill'), 500);
+      return () => clearInterval(interval);
+    }
+  }, [stage, progress]);
+
+  return (
+    <div className="w-full max-w-xl mx-auto aspect-[4/3] bg-[#0B1120] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+
+      {/* Pipeline Tracker */}
+      <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-[#0D1525]">
+        <div className="flex gap-4">
+          {['Extract', 'Present', 'reFeyn'].map((s, i) => (
+            <div key={s} className="flex items-center gap-2">
+              <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                (i === 0 && stage === 'extract') || (i === 2 && (stage === 'drill' || stage === 'result'))
+                  ? 'bg-purple-400 shadow-[0_0_8px_rgba(168,85,247,0.8)]'
+                  : 'bg-slate-700'
+              }`} />
+              <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">{s}</span>
+            </div>
+          ))}
+        </div>
+        <div className="text-[10px] font-mono text-purple-400/50">v2.0_flash_active</div>
+      </div>
+
+      {/* Interaction Area */}
+      <div className="flex-1 p-8 flex flex-col justify-center">
+
+        {stage === 'input' && (
+          <div className="space-y-6 anim-fade-zoom">
+            <div className="space-y-2">
+              <h3 className="text-2xl font-bold text-white">Paste your "Wall of Text"</h3>
+              <p className="text-slate-400 text-sm">We'll find the causal gaps in 2 seconds.</p>
+            </div>
+            <div className="relative">
+              <textarea
+                readOnly
+                className="w-full h-32 bg-[#161E2E] rounded-xl border border-slate-800 p-4 text-slate-300 text-sm resize-none"
+                value="The Frank-Starling law of the heart states that the stroke volume of the left ventricle will increase as the left ventricular volume increases due to the myocyte stretch causing a more optimal overlap of actin and myosin filaments..."
+              />
+              <button
+                onClick={() => setStage('extract')}
+                className="absolute bottom-4 right-4 bg-purple-500 hover:bg-purple-400 text-white p-3 rounded-lg transition-all shadow-lg shadow-purple-500/20"
+              >
+                <Zap size={20} fill="currentColor" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {stage === 'extract' && (
+          <div className="space-y-8 flex flex-col items-center">
+            <div className="relative w-32 h-32">
+              <svg className="w-full h-full rotate-[-90deg]">
+                <circle cx="64" cy="64" r="60" stroke="currentColor" strokeWidth="2" fill="transparent" className="text-slate-800" />
+                <circle cx="64" cy="64" r="60" stroke="currentColor" strokeWidth="2" fill="transparent"
+                  strokeDasharray={377}
+                  strokeDashoffset={377 - (377 * progress) / 100}
+                  className="text-purple-500 transition-all duration-100 ease-linear"
+                />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Activity className="text-purple-400 animate-pulse" />
+              </div>
+            </div>
+            <div className="font-mono text-[11px] text-slate-500 uppercase tracking-[0.2em]">
+              Mapping Causal Mechanisms... {progress}%
+            </div>
+          </div>
+        )}
+
+        {stage === 'drill' && (
+          <div className="space-y-6 anim-slide-right">
+            <div className="flex items-center gap-2 text-purple-400">
+              <Brain size={18} />
+              <span className="text-xs font-bold uppercase tracking-widest">reFeyn: Socratic Drill</span>
+            </div>
+            <h4 className="text-xl text-white font-medium leading-relaxed">
+              "Why does the overlap of actin and myosin actually matter for the force of the contraction?"
+            </h4>
+            <div className="group relative">
+              <input
+                className="w-full bg-transparent border-b-2 border-slate-800 py-3 text-lg text-white outline-none focus:border-purple-500 transition-all placeholder:text-slate-700"
+                placeholder="Explain the mechanism..."
+              />
+              <button
+                onClick={() => setStage('result')}
+                className="absolute right-0 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-purple-400 transition-colors"
+              >
+                <ChevronRight size={24} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {stage === 'result' && (
+          <div className="text-center space-y-6 anim-fade-zoom">
+            <div className="inline-flex p-4 bg-purple-500/10 rounded-full border border-purple-500/20 mb-2">
+              <Lock className="text-purple-400" size={32} />
+            </div>
+            <h3 className="text-2xl font-bold text-white">Targeted Gap Identified</h3>
+            <p className="text-slate-400 max-w-xs mx-auto text-sm leading-relaxed">
+              You understand the <em>law</em>, but you're missing the <em>molecular physics</em>. We just saved you 40 minutes of re-reading.
+            </p>
+            <a
+              href="#waitlist"
+              className="inline-block px-8 py-3 bg-white text-black font-bold rounded-lg hover:bg-purple-50 transition-all hover:scale-105"
+            >
+              Get Early Access
+            </a>
+          </div>
+        )}
+
+      </div>
+
+      {/* Footer */}
+      <div className="px-8 py-4 bg-[#080E1A] text-slate-600 text-[10px] flex justify-between font-mono">
+        <span>STRATEGIST: ACTIVE</span>
+        <span>PERFORMER: READY</span>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main App ───
 export default function HyFeynLanding() {
   const [probRef, probVis] = useInView(0.1);
@@ -353,11 +488,9 @@ export default function HyFeynLanding() {
           </div>
           <div className="relative">
             <div className="absolute -inset-4 bg-[#3cddc7]/10 blur-[100px] rounded-full" />
-            <img
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYd6gJ1WZobAo8GiOXO-s5jmUUdzWCrVbfanMy1OKRZmTjX_qHW97B2xEuHLYAYzEDcepuqWwvX_idHvVOWaN9fRatPxGx_MxoaWP8P2QEjeK71OwZkYADRWEA4mIEIlUQoRksIjv1l1BWrc6a8_YbYSxHR3d1J37Q5MrUQFEacrkO4SE6K9sOc-kCxJP_sGPeOFIIFJce8XTJFRzKa12lB3SFLd3aP5NEQY3SrP-T1Y1rnl7xDqGwRiiFUH47Fj46hG3jOcDfBNYx"
-              alt="3D isometric visualization of the hiFeyn study pipeline"
-              className="relative z-10 w-full drop-shadow-2xl"
-            />
+            <div className="relative z-10">
+              <ReFeynDemo />
+            </div>
           </div>
         </div>
       </section>
