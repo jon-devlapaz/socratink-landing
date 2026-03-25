@@ -165,7 +165,7 @@ function TestimonialCard({ name, role, quote, avatar, delay, visible }) {
       style={{ transitionDelay: `${delay}ms` }}
     >
       <div className="flex items-center gap-4 mb-6">
-        <img src={avatar} alt={name} className="w-12 h-12 rounded-full object-cover" />
+        <img src={avatar} alt={name} width={48} height={48} className="w-12 h-12 rounded-full object-cover" />
         <div>
           <p className="font-bold text-[#dae2fd]">{name}</p>
           <p className="text-xs text-[#3cddc7]">{role}</p>
@@ -267,19 +267,102 @@ const FLOW_ITEMS = [
 ];
 
 // ─── reFeyn Interactive Demo ───
+const DEFAULT_TEXT =
+  "The Frank-Starling law of the heart states that the stroke volume of the left ventricle will increase as the left ventricular volume increases due to the myocyte stretch causing a more optimal overlap of actin and myosin filaments...";
+
+const GAP_STYLES = {
+  none:          { label: "No Gap",                 cls: "bg-green-500/15 text-green-400 border-green-500/30" },
+  shallow:       { label: "Surface Understanding",  cls: "bg-yellow-500/15 text-yellow-400 border-yellow-500/30" },
+  deep:          { label: "Missing Core Mechanism", cls: "bg-orange-500/15 text-orange-400 border-orange-500/30" },
+  misconception: { label: "Misconception Detected", cls: "bg-red-500/15 text-red-400 border-red-500/30" },
+};
+
+const TRACKER_LABELS = ['Extract', 'Drill', 'Result'];
+const TRACKER_ACTIVE = { extracting: 0, drill: 1, evaluating: 1, result: 2 };
+
 function ReFeynDemo() {
   const [stage, setStage] = useState('input');
-  const [progress, setProgress] = useState(0);
+  const [text, setText] = useState(DEFAULT_TEXT);
+  const [answer, setAnswer] = useState('');
+  const [extraction, setExtraction] = useState(null);
+  const [evaluation, setEvaluation] = useState(null);
+  const [error, setError] = useState('');
+  const [hintOpen, setHintOpen] = useState(false);
 
+  // Fire extract API when stage becomes 'extracting'
   useEffect(() => {
-    if (stage === 'extract') {
-      const interval = setInterval(() => {
-        setProgress((prev) => (prev >= 100 ? 100 : prev + 2));
-      }, 30);
-      if (progress === 100) setTimeout(() => setStage('drill'), 500);
-      return () => clearInterval(interval);
-    }
-  }, [stage, progress]);
+    if (stage !== 'extracting') return;
+    let cancelled = false;
+    fetch('/api/demo-extract', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    })
+      .then((r) => r.json().then((data) => ({ ok: r.ok, data })))
+      .then(({ ok, data }) => {
+        if (cancelled) return;
+        if (ok) {
+          setExtraction(data);
+          setStage('drill');
+        } else {
+          setError(data.error || 'Analysis failed. Try different text.');
+          setStage('input');
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setError('Network error. Please try again.');
+          setStage('input');
+        }
+      });
+    return () => { cancelled = true; };
+  }, [stage]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Fire evaluate API when stage becomes 'evaluating'
+  useEffect(() => {
+    if (stage !== 'evaluating') return;
+    let cancelled = false;
+    fetch('/api/demo-evaluate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        question: extraction?.question,
+        answer,
+        mechanisms: extraction?.mechanisms,
+      }),
+    })
+      .then((r) => r.json().then((data) => ({ ok: r.ok, data })))
+      .then(({ ok, data }) => {
+        if (cancelled) return;
+        if (ok) {
+          setEvaluation(data);
+          setStage('result');
+        } else {
+          setError(data.error || 'Evaluation failed. Try again.');
+          setStage('drill');
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setError('Network error. Please try again.');
+          setStage('drill');
+        }
+      });
+    return () => { cancelled = true; };
+  }, [stage]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function handleReset() {
+    setText('');
+    setAnswer('');
+    setExtraction(null);
+    setEvaluation(null);
+    setError('');
+    setHintOpen(false);
+    setStage('input');
+  }
+
+  const activeTrackerIdx = TRACKER_ACTIVE[stage] ?? -1;
+  const isLoading = stage === 'extracting' || stage === 'evaluating';
 
   return (
     <div className="w-full max-w-xl mx-auto aspect-[4/3] bg-[#0B1120] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
@@ -287,10 +370,10 @@ function ReFeynDemo() {
       {/* Pipeline Tracker */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-[#0D1525]">
         <div className="flex gap-4">
-          {['Extract', 'Present', 'reFeyn'].map((s, i) => (
+          {TRACKER_LABELS.map((s, i) => (
             <div key={s} className="flex items-center gap-2">
               <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                (i === 0 && stage === 'extract') || (i === 2 && (stage === 'drill' || stage === 'result'))
+                i === activeTrackerIdx
                   ? 'bg-purple-400 shadow-[0_0_8px_rgba(168,85,247,0.8)]'
                   : 'bg-slate-700'
               }`} />
@@ -298,27 +381,43 @@ function ReFeynDemo() {
             </div>
           ))}
         </div>
-        <div className="text-[10px] font-mono text-purple-400/50">v2.0_flash_active</div>
+        <div className="text-[10px] font-mono text-purple-400/50">demo</div>
       </div>
 
       {/* Interaction Area */}
-      <div className="flex-1 p-8 flex flex-col justify-center">
+      <div className="flex-1 px-8 py-6 flex flex-col justify-center overflow-y-auto">
+
+        {/* Error banner */}
+        {error && !isLoading && (
+          <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex items-center gap-2">
+            <AlertCircle size={13} className="shrink-0" />
+            <span className="flex-1">{error}</span>
+            {error.includes('waitlist') && (
+              <a href="#waitlist" className="underline whitespace-nowrap">Join →</a>
+            )}
+          </div>
+        )}
 
         {stage === 'input' && (
-          <div className="space-y-6 anim-fade-zoom">
-            <div className="space-y-2">
+          <div className="space-y-5 anim-fade-zoom">
+            <div className="space-y-1">
               <h3 className="text-2xl font-bold text-white">Paste your "Wall of Text"</h3>
-              <p className="text-slate-400 text-sm">We'll find the causal gaps in 2 seconds.</p>
+              <p className="text-slate-400 text-sm">We'll extract the mechanisms and test your understanding.</p>
             </div>
             <div className="relative">
               <textarea
-                readOnly
-                className="w-full h-32 bg-[#161E2E] rounded-xl border border-slate-800 p-4 text-slate-300 text-sm resize-none"
-                value="The Frank-Starling law of the heart states that the stroke volume of the left ventricle will increase as the left ventricular volume increases due to the myocyte stretch causing a more optimal overlap of actin and myosin filaments..."
+                value={text}
+                onChange={(e) => setText(e.target.value.slice(0, 2000))}
+                className="w-full h-32 bg-[#161E2E] rounded-xl border border-slate-800 p-4 text-slate-300 text-sm resize-none focus:outline-none focus:border-purple-500/50 transition-colors"
+                placeholder="Paste any study text here..."
               />
+              <div className="absolute bottom-4 left-4 text-[10px] text-slate-600 font-mono select-none">
+                {text.length}/2000
+              </div>
               <button
-                onClick={() => setStage('extract')}
-                className="absolute bottom-4 right-4 bg-purple-500 hover:bg-purple-400 text-white p-3 rounded-lg transition-all shadow-lg shadow-purple-500/20"
+                onClick={() => { setError(''); setStage('extracting'); }}
+                disabled={text.length < 50}
+                className="absolute bottom-4 right-4 bg-purple-500 hover:bg-purple-400 disabled:opacity-30 disabled:cursor-not-allowed text-white p-3 rounded-lg transition-all shadow-lg shadow-purple-500/20"
               >
                 <Zap size={20} fill="currentColor" />
               </button>
@@ -326,44 +425,53 @@ function ReFeynDemo() {
           </div>
         )}
 
-        {stage === 'extract' && (
-          <div className="space-y-8 flex flex-col items-center">
-            <div className="relative w-32 h-32">
-              <svg className="w-full h-full rotate-[-90deg]">
-                <circle cx="64" cy="64" r="60" stroke="currentColor" strokeWidth="2" fill="transparent" className="text-slate-800" />
-                <circle cx="64" cy="64" r="60" stroke="currentColor" strokeWidth="2" fill="transparent"
-                  strokeDasharray={377}
-                  strokeDashoffset={377 - (377 * progress) / 100}
-                  className="text-purple-500 transition-all duration-100 ease-linear"
-                />
-              </svg>
+        {isLoading && (
+          <div className="flex flex-col items-center gap-6">
+            <div className="relative w-24 h-24">
+              <div className="w-full h-full animate-spin" style={{ animationDuration: '1.4s' }}>
+                <svg className="w-full h-full">
+                  <circle cx="48" cy="48" r="44" stroke="currentColor" strokeWidth="2" fill="transparent" className="text-slate-800" />
+                  <circle cx="48" cy="48" r="44" stroke="currentColor" strokeWidth="2" fill="transparent"
+                    strokeDasharray="100 176"
+                    className="text-purple-500"
+                  />
+                </svg>
+              </div>
               <div className="absolute inset-0 flex items-center justify-center">
-                <Activity className="text-purple-400 animate-pulse" />
+                <Activity className="text-purple-400 animate-pulse" size={20} />
               </div>
             </div>
             <div className="font-mono text-[11px] text-slate-500 uppercase tracking-[0.2em]">
-              Mapping Causal Mechanisms... {progress}%
+              {stage === 'extracting' ? 'Extracting mechanisms...' : 'Analyzing your understanding...'}
             </div>
           </div>
         )}
 
         {stage === 'drill' && (
-          <div className="space-y-6 anim-slide-right">
+          <div className="space-y-5 anim-slide-right">
             <div className="flex items-center gap-2 text-purple-400">
               <Brain size={18} />
-              <span className="text-xs font-bold uppercase tracking-widest">reFeyn: Socratic Drill</span>
+              <span className="text-xs font-bold uppercase tracking-widest">Socratic Drill</span>
             </div>
-            <h4 className="text-xl text-white font-medium leading-relaxed">
-              "Why does the overlap of actin and myosin actually matter for the force of the contraction?"
+            {extraction?.topic && (
+              <p className="text-[10px] uppercase tracking-widest text-slate-600 font-mono">{extraction.topic}</p>
+            )}
+            <h4 className="text-lg text-white font-medium leading-relaxed">
+              "{extraction?.question}"
             </h4>
             <div className="group relative">
               <input
-                className="w-full bg-transparent border-b-2 border-slate-800 py-3 text-lg text-white outline-none focus:border-purple-500 transition-all placeholder:text-slate-700"
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter' && answer.length >= 10) { setError(''); setStage('evaluating'); } }}
+                className="w-full bg-transparent border-b-2 border-slate-800 py-3 text-base text-white outline-none focus:border-purple-500 transition-all placeholder:text-slate-700"
                 placeholder="Explain the mechanism..."
+                autoFocus
               />
               <button
-                onClick={() => setStage('result')}
-                className="absolute right-0 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-purple-400 transition-colors"
+                onClick={() => { setError(''); setStage('evaluating'); }}
+                disabled={answer.length < 10}
+                className="absolute right-0 top-1/2 -translate-y-1/2 text-slate-500 enabled:group-focus-within:text-purple-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronRight size={24} />
               </button>
@@ -371,21 +479,43 @@ function ReFeynDemo() {
           </div>
         )}
 
-        {stage === 'result' && (
-          <div className="text-center space-y-6 anim-fade-zoom">
-            <div className="inline-flex p-4 bg-purple-500/10 rounded-full border border-purple-500/20 mb-2">
-              <Lock className="text-purple-400" size={32} />
+        {stage === 'result' && evaluation && (
+          <div className="space-y-4 anim-fade-zoom">
+            <span className={`inline-block text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded border ${GAP_STYLES[evaluation.gapType]?.cls ?? GAP_STYLES.deep.cls}`}>
+              {GAP_STYLES[evaluation.gapType]?.label ?? evaluation.gapType}
+            </span>
+            <p className="text-white text-sm font-medium leading-relaxed">{evaluation.verdict}</p>
+            <div className="bg-slate-900/60 rounded-lg p-3 border border-slate-800">
+              <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-1">Gap identified</p>
+              <p className="text-slate-300 text-sm">{evaluation.missing}</p>
             </div>
-            <h3 className="text-2xl font-bold text-white">Targeted Gap Identified</h3>
-            <p className="text-slate-400 max-w-xs mx-auto text-sm leading-relaxed">
-              You understand the <em>law</em>, but you're missing the <em>molecular physics</em>. We just saved you 40 minutes of re-reading.
-            </p>
-            <a
-              href="#waitlist"
-              className="inline-block px-8 py-3 bg-white text-black font-bold rounded-lg hover:bg-purple-50 transition-all hover:scale-105"
+            <button
+              onClick={() => setHintOpen((v) => !v)}
+              className="flex items-center gap-1 text-[11px] text-purple-400/70 hover:text-purple-400 transition-colors"
             >
-              Get Early Access
-            </a>
+              <ChevronDown size={13} className={`transition-transform duration-200 ${hintOpen ? 'rotate-180' : ''}`} />
+              {hintOpen ? 'Hide hint' : 'Show hint'}
+            </button>
+            {hintOpen && (
+              <p className="text-slate-400 text-xs leading-relaxed italic border-l-2 border-purple-500/30 pl-3">
+                {evaluation.hint}
+              </p>
+            )}
+            <div className="flex gap-3 pt-1">
+              <button
+                onClick={handleReset}
+                className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors"
+              >
+                <RefreshCw size={12} />
+                Try another
+              </button>
+              <a
+                href="#waitlist"
+                className="flex-1 text-center px-4 py-2 bg-white text-black text-xs font-bold rounded-lg hover:bg-purple-50 transition-all hover:scale-[1.02]"
+              >
+                Get Early Access
+              </a>
+            </div>
           </div>
         )}
 
@@ -393,8 +523,8 @@ function ReFeynDemo() {
 
       {/* Footer */}
       <div className="px-8 py-4 bg-[#080E1A] text-slate-600 text-[10px] flex justify-between font-mono">
-        <span>STRATEGIST: ACTIVE</span>
-        <span>PERFORMER: READY</span>
+        <span>hiFeyn mini</span>
+        <span>1 of 1 questions</span>
       </div>
     </div>
   );
@@ -405,6 +535,7 @@ export default function HyFeynLanding() {
   const [probRef, probVis] = useInView(0.1);
   const [pipeRef, pipeVis] = useInView(0.1);
   const [previewRef, previewVis] = useInView(0.1);
+  const [iframeRef, iframeVis] = useInView(0.05);
   const [testRef, testVis] = useInView(0.1);
 
   const [firstName, setFirstName] = useState("");
@@ -591,14 +722,16 @@ export default function HyFeynLanding() {
                   <ArrowRight size={12} />
                 </a>
               </div>
-              {/* iframe */}
-              <iframe
-                src="https://jon-devlapaz.github.io/LearnOps-tamagachi/"
-                title="hiFeyn MVP"
-                className="w-full border-0"
-                style={{ height: "600px" }}
-                loading="lazy"
-              />
+              {/* iframe — only mounts once section enters viewport */}
+              <div ref={iframeRef} style={{ height: "600px" }}>
+                {iframeVis && (
+                  <iframe
+                    src="https://jon-devlapaz.github.io/LearnOps-tamagachi/"
+                    title="hiFeyn MVP"
+                    className="w-full h-full border-0"
+                  />
+                )}
+              </div>
             </div>
           </div>
 

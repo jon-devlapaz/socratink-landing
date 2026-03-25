@@ -26,3 +26,4 @@ dist-ssr
 
 # Design reference files
 Revised design Methodology/
+.env*.local
