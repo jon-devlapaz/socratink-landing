@@ -231,11 +231,11 @@ const TESTIMONIALS = [
 const FAQ_ITEMS = [
   {
     question: "Do I need to install anything?",
-    answer: "hiFeyn runs in your browser. No extensions, no desktop apps, no plugins. Paste a link or upload a transcript, and the pipeline starts immediately.",
+    answer: "tink runs in your browser. No extensions, no desktop apps, no plugins. Paste a link or upload a transcript, and the pipeline starts immediately.",
   },
   {
     question: "Is this just fancy flashcards?",
-    answer: "No. Flashcards drill isolated labels. reFeyn — hiFeyn's Socratic dialogue engine — challenges you to explain causal mechanisms: how and why things work, not just what they're called. Every session adapts to where your reasoning actually breaks down, not to a fixed review interval.",
+    answer: "No. Flashcards drill isolated labels. reFeyn — tink's Socratic dialogue engine — challenges you to explain causal mechanisms: how and why things work, not just what they're called. Every session adapts to where your reasoning actually breaks down, not to a fixed review interval.",
   },
   {
     question: "What if I don't have ADHD?",
@@ -523,7 +523,7 @@ function ReFeynDemo() {
 
       {/* Footer */}
       <div className="px-8 py-4 bg-[#080E1A] text-slate-600 text-[10px] flex justify-between font-mono">
-        <span>hiFeyn mini</span>
+        <span>tink mini</span>
         <span>1 of 1 questions</span>
       </div>
     </div>
@@ -559,8 +559,8 @@ export default function HyFeynLanding() {
           access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY,
           name: firstName,
           email,
-          subject: "hiFeyn Waitlist Sign-up",
-          from_name: "hiFeyn Waitlist",
+          subject: "tink Waitlist Sign-up",
+          from_name: "tink Waitlist",
         }),
       });
       const result = await res.json();
@@ -579,7 +579,7 @@ export default function HyFeynLanding() {
       {/* ─── NAV ─── */}
       <nav className="fixed top-0 w-full z-50 bg-[#0b1326]/60 backdrop-blur-xl">
         <div className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
-          <div className="text-2xl font-bold tracking-tighter text-[#c4c0ff] font-display">hiFeyn</div>
+          <div className="text-2xl font-bold tracking-tighter text-[#c4c0ff] font-display">tink</div>
           <div className="hidden md:flex items-center space-x-8">
             <a href="#pipeline" className="text-[#dae2fd]/70 font-display font-bold text-lg tracking-tight hover:text-[#dae2fd] transition-all duration-300">Pipeline</a>
             <a href="#results" className="text-[#dae2fd]/70 font-display font-bold text-lg tracking-tight hover:text-[#dae2fd] transition-all duration-300">Results</a>
@@ -647,7 +647,7 @@ export default function HyFeynLanding() {
               </ul>
             </div>
             <div className="p-12 bg-[#222a3d]">
-              <h3 className="font-display text-3xl font-bold mb-8 text-[#3cddc7]">The hiFeyn Flow</h3>
+              <h3 className="font-display text-3xl font-bold mb-8 text-[#3cddc7]">The tink Flow</h3>
               <ul className="space-y-6">
                 {FLOW_ITEMS.map((item, i) => (
                   <li key={i} className="flex items-start gap-4">
@@ -727,7 +727,7 @@ export default function HyFeynLanding() {
                 {iframeVis && (
                   <iframe
                     src="https://jon-devlapaz.github.io/LearnOps-tamagachi/"
-                    title="hiFeyn MVP"
+                    title="tink MVP"
                     className="w-full h-full border-0"
                   />
                 )}
@@ -762,7 +762,7 @@ export default function HyFeynLanding() {
                   Built for ADHD brains — not adapted from neurotypical tools.
                 </h3>
                 <p className="text-sm text-[#c8c4d3] leading-relaxed mb-5">
-                  hiFeyn isn't a study app with an "ADHD mode" toggle. The entire pipeline — including the reFeyn Socratic engine — was designed
+                  tink isn't a study app with an "ADHD mode" toggle. The entire pipeline — including the reFeyn Socratic engine — was designed
                   around executive function constraints from the ground up. That means sessions that end before you collapse, not after.
                 </p>
                 <div className="grid sm:grid-cols-2 gap-3">
@@ -820,7 +820,7 @@ export default function HyFeynLanding() {
                 </div>
                 <h3 className="text-2xl font-display font-bold text-[#dae2fd] mb-2">You're on the list!</h3>
                 <p className="text-[#c8c4d3] text-sm leading-relaxed max-w-sm mx-auto">
-                  We'll notify <strong className="text-[#dae2fd]">{email}</strong> the moment hiFeyn is ready for you.
+                  We'll notify <strong className="text-[#dae2fd]">{email}</strong> the moment tink is ready for you.
                 </p>
               </div>
             ) : (
@@ -874,8 +874,8 @@ export default function HyFeynLanding() {
       <footer className="w-full border-t border-[#dae2fd]/10 bg-[#0b1326]">
         <div className="flex flex-col md:flex-row justify-between items-center px-12 py-16 gap-8 w-full max-w-7xl mx-auto">
           <div className="flex flex-col gap-2">
-            <div className="font-display font-bold text-[#c4c0ff] text-xl">hiFeyn</div>
-            <p className="text-sm tracking-wide text-[#dae2fd]/50">© 2026 hiFeyn. AI-Augmented Neurocognitive Pipelines.</p>
+            <div className="font-display font-bold text-[#c4c0ff] text-xl">tink</div>
+            <p className="text-sm tracking-wide text-[#dae2fd]/50">© 2026 tink. AI-Augmented Neurocognitive Pipelines.</p>
           </div>
           <div className="flex flex-wrap justify-center gap-8">
             <a href="#" className="text-sm tracking-wide text-[#dae2fd]/50 hover:text-[#c4c0ff] underline decoration-[#3cddc7]/30 transition-colors">Privacy Policy</a>
