@@ -280,251 +280,131 @@ const GAP_STYLES = {
 const TRACKER_LABELS = ['Extract', 'Drill', 'Result'];
 const TRACKER_ACTIVE = { extracting: 0, drill: 1, evaluating: 1, result: 2 };
 
-function ReFeynDemo() {
-  const [stage, setStage] = useState('input');
-  const [text, setText] = useState(DEFAULT_TEXT);
-  const [answer, setAnswer] = useState('');
-  const [extraction, setExtraction] = useState(null);
-  const [evaluation, setEvaluation] = useState(null);
-  const [error, setError] = useState('');
-  const [hintOpen, setHintOpen] = useState(false);
-
-  // Fire extract API when stage becomes 'extracting'
-  useEffect(() => {
-    if (stage !== 'extracting') return;
-    let cancelled = false;
-    fetch('/api/demo-extract', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text }),
-    })
-      .then((r) => r.json().then((data) => ({ ok: r.ok, data })))
-      .then(({ ok, data }) => {
-        if (cancelled) return;
-        if (ok) {
-          setExtraction(data);
-          setStage('drill');
-        } else {
-          setError(data.error || 'Analysis failed. Try different text.');
-          setStage('input');
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setError('Network error. Please try again.');
-          setStage('input');
-        }
-      });
-    return () => { cancelled = true; };
-  }, [stage]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Fire evaluate API when stage becomes 'evaluating'
-  useEffect(() => {
-    if (stage !== 'evaluating') return;
-    let cancelled = false;
-    fetch('/api/demo-evaluate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        question: extraction?.question,
-        answer,
-        mechanisms: extraction?.mechanisms,
-      }),
-    })
-      .then((r) => r.json().then((data) => ({ ok: r.ok, data })))
-      .then(({ ok, data }) => {
-        if (cancelled) return;
-        if (ok) {
-          setEvaluation(data);
-          setStage('result');
-        } else {
-          setError(data.error || 'Evaluation failed. Try again.');
-          setStage('drill');
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setError('Network error. Please try again.');
-          setStage('drill');
-        }
-      });
-    return () => { cancelled = true; };
-  }, [stage]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  function handleReset() {
-    setText('');
-    setAnswer('');
-    setExtraction(null);
-    setEvaluation(null);
-    setError('');
-    setHintOpen(false);
-    setStage('input');
-  }
-
-  const activeTrackerIdx = TRACKER_ACTIVE[stage] ?? -1;
-  const isLoading = stage === 'extracting' || stage === 'evaluating';
+function UXLoopSimulator() {
+  const [phase, setPhase] = useState(1);
 
   return (
-    <div className="w-full max-w-xl mx-auto aspect-[4/3] bg-[#0B1120] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
-
-      {/* Pipeline Tracker */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-[#0D1525]">
-        <div className="flex gap-4">
-          {TRACKER_LABELS.map((s, i) => (
-            <div key={s} className="flex items-center gap-2">
-              <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                i === activeTrackerIdx
-                  ? 'bg-purple-400 shadow-[0_0_8px_rgba(168,85,247,0.8)]'
-                  : 'bg-slate-700'
-              }`} />
-              <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">{s}</span>
-            </div>
+    <div id="loop" className="w-full max-w-xl mx-auto shadow-2xl relative">
+      <div className="bg-[#131b2e] border border-[#474551]/20 rounded-2xl flex flex-col overflow-hidden relative glass-card">
+        
+        {/* Stepper Controls (Horizontal Tabs) */}
+        <div className="flex bg-[#0b1326]/80 border-b border-[#474551]/20 p-2 gap-1 overflow-x-auto shrink-0 z-20 relative backdrop-blur-md">
+          {[
+            { n: 1, title: 'Extraction' },
+            { n: 2, title: 'Vault' },
+            { n: 3, title: 'reTink' },
+            { n: 4, title: 'Scaffolding' },
+          ].map(step => (
+            <button 
+              key={step.n}
+              onClick={() => setPhase(step.n)} 
+              className={`flex-1 min-w-[70px] flex flex-col items-center gap-1.5 p-2 rounded-xl transition-all ${
+                phase === step.n ? 'bg-[#1c2540] border border-[#3cddc7]/30 shadow-[0_0_10px_rgba(60,221,199,0.1)]' : 'border border-transparent hover:bg-[#1c2540]/60'
+              }`}
+            >
+              <div className={`w-6 h-6 rounded-full border flex items-center justify-center font-bold text-[11px] shrink-0 transition-colors ${
+                phase === step.n ? 'bg-[#3cddc7]/10 border-[#3cddc7] text-[#3cddc7]' : 'bg-[#0b1326] border-[#474551]/40 text-[#928f9d]'
+              }`}>
+                {step.n}
+              </div>
+              <span className={`text-[9px] uppercase tracking-wider font-bold transition-colors ${
+                phase === step.n ? 'text-[#dae2fd]' : 'text-[#928f9d]'
+              }`}>
+                {step.title}
+              </span>
+            </button>
           ))}
         </div>
-        <div className="text-[10px] font-mono text-purple-400/50">demo</div>
-      </div>
 
-      {/* Interaction Area */}
-      <div className="flex-1 px-8 py-6 flex flex-col justify-center overflow-y-auto">
-
-        {/* Error banner */}
-        {error && !isLoading && (
-          <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex items-center gap-2">
-            <AlertCircle size={13} className="shrink-0" />
-            <span className="flex-1">{error}</span>
-            {error.includes('waitlist') && (
-              <a href="#waitlist" className="underline whitespace-nowrap">Join →</a>
-            )}
-          </div>
-        )}
-
-        {stage === 'input' && (
-          <div className="space-y-5 anim-fade-zoom">
-            <div className="space-y-1">
-              <h3 className="text-2xl font-bold text-white">Paste your "Wall of Text"</h3>
-              <p className="text-slate-400 text-sm">We'll extract the mechanisms and test your understanding.</p>
-            </div>
-            <div className="relative">
-              <textarea
-                value={text}
-                onChange={(e) => setText(e.target.value.slice(0, 2000))}
-                className="w-full h-32 bg-[#161E2E] rounded-xl border border-slate-800 p-4 text-slate-300 text-sm resize-none focus:outline-none focus:border-purple-500/50 transition-colors"
-                placeholder="Paste any study text here..."
-              />
-              <div className="absolute bottom-4 left-4 text-[10px] text-slate-600 font-mono select-none">
-                {text.length}/2000
-              </div>
-              <button
-                onClick={() => { setError(''); setStage('extracting'); }}
-                disabled={text.length < 50}
-                className="absolute bottom-4 right-4 bg-purple-500 hover:bg-purple-400 disabled:opacity-30 disabled:cursor-not-allowed text-white p-3 rounded-lg transition-all shadow-lg shadow-purple-500/20"
-              >
-                <Zap size={20} fill="currentColor" />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {isLoading && (
-          <div className="flex flex-col items-center gap-6">
-            <div className="relative w-24 h-24">
-              <div className="w-full h-full animate-spin" style={{ animationDuration: '1.4s' }}>
-                <svg className="w-full h-full">
-                  <circle cx="48" cy="48" r="44" stroke="currentColor" strokeWidth="2" fill="transparent" className="text-slate-800" />
-                  <circle cx="48" cy="48" r="44" stroke="currentColor" strokeWidth="2" fill="transparent"
-                    strokeDasharray="100 176"
-                    className="text-purple-500"
-                  />
-                </svg>
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Activity className="text-purple-400 animate-pulse" size={20} />
-              </div>
-            </div>
-            <div className="font-mono text-[11px] text-slate-500 uppercase tracking-[0.2em]">
-              {stage === 'extracting' ? 'Extracting mechanisms...' : 'Analyzing your understanding...'}
-            </div>
-          </div>
-        )}
-
-        {stage === 'drill' && (
-          <div className="space-y-5 anim-slide-right">
-            <div className="flex items-center gap-2 text-purple-400">
-              <Brain size={18} />
-              <span className="text-xs font-bold uppercase tracking-widest">Socratic Drill</span>
-            </div>
-            {extraction?.topic && (
-              <p className="text-[10px] uppercase tracking-widest text-slate-600 font-mono">{extraction.topic}</p>
-            )}
-            <h4 className="text-lg text-white font-medium leading-relaxed">
-              "{extraction?.question}"
-            </h4>
-            <div className="group relative">
-              <input
-                value={answer}
-                onChange={(e) => setAnswer(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter' && answer.length >= 10) { setError(''); setStage('evaluating'); } }}
-                className="w-full bg-transparent border-b-2 border-slate-800 py-3 text-base text-white outline-none focus:border-purple-500 transition-all placeholder:text-slate-700"
-                placeholder="Explain the mechanism..."
-                autoFocus
-              />
-              <button
-                onClick={() => { setError(''); setStage('evaluating'); }}
-                disabled={answer.length < 10}
-                className="absolute right-0 top-1/2 -translate-y-1/2 text-slate-500 enabled:group-focus-within:text-purple-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-              >
-                <ChevronRight size={24} />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {stage === 'result' && evaluation && (
-          <div className="space-y-4 anim-fade-zoom">
-            <span className={`inline-block text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded border ${GAP_STYLES[evaluation.gapType]?.cls ?? GAP_STYLES.deep.cls}`}>
-              {GAP_STYLES[evaluation.gapType]?.label ?? evaluation.gapType}
+        {/* Simulation Visualizer */}
+        <div className="bg-[#060e20] relative flex flex-col h-72 sm:h-80 w-full overflow-hidden shrink-0">
+          
+          {/* Header Data */}
+          <div className="px-5 py-3 border-b border-[#474551]/20 flex justify-between items-center bg-[#0b1326]/90 z-20 shrink-0">
+            <span id="sim-status" className="text-[10px] sm:text-[11px] font-mono text-[#3cddc7] uppercase tracking-widest truncate">
+              System: {
+                phase === 1 ? "Extracting Signal..." :
+                phase === 2 ? "Categorizing Pattern..." :
+                phase === 3 ? "Socratic Dialogue Initiated..." :
+                "Knowledge Mapped..."
+              }
             </span>
-            <p className="text-white text-sm font-medium leading-relaxed">{evaluation.verdict}</p>
-            <div className="bg-slate-900/60 rounded-lg p-3 border border-slate-800">
-              <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-1">Gap identified</p>
-              <p className="text-slate-300 text-sm">{evaluation.missing}</p>
-            </div>
-            <button
-              onClick={() => setHintOpen((v) => !v)}
-              className="flex items-center gap-1 text-[11px] text-purple-400/70 hover:text-purple-400 transition-colors"
-            >
-              <ChevronDown size={13} className={`transition-transform duration-200 ${hintOpen ? 'rotate-180' : ''}`} />
-              {hintOpen ? 'Hide hint' : 'Show hint'}
-            </button>
-            {hintOpen && (
-              <p className="text-slate-400 text-xs leading-relaxed italic border-l-2 border-purple-500/30 pl-3">
-                {evaluation.hint}
-              </p>
-            )}
-            <div className="flex gap-3 pt-1">
-              <button
-                onClick={handleReset}
-                className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors"
-              >
-                <RefreshCw size={12} />
-                Try another
-              </button>
-              <a
-                href="#waitlist"
-                className="flex-1 text-center px-4 py-2 bg-white text-black text-xs font-bold rounded-lg hover:bg-purple-50 transition-all hover:scale-[1.02]"
-              >
-                Get Early Access
-              </a>
+            <div className="flex space-x-1.5 shrink-0 ml-4">
+              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#474551]/70"></div>
+              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#474551]/70"></div>
+              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#474551]/70"></div>
             </div>
           </div>
-        )}
 
-      </div>
+          {/* Split View Area */}
+          <div className="flex-1 flex relative w-full h-full text-sm">
+            
+            {/* Graph / Study View Simulator (Left/Full) */}
+            <div id="sim-main-view" className={`h-full relative p-4 transition-all duration-500 ease-in-out ${phase === 3 ? 'w-1/2 sm:w-[55%] border-r border-[#474551]/20' : 'w-full'} flex items-center justify-center`}>
+              {/* Graph Simulation using DOM elements */}
+              <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500`}>
+                
+                {/* Connecting Lines */}
+                <div id="line-1" className={`absolute w-20 sm:w-28 h-[2px] top-1/2 left-1/2 -mt-[1px] transform origin-left -rotate-45 transition-colors duration-500 ${phase >= 4 ? 'bg-[#3cddc7]' : 'bg-[#1c2540]'}`}></div>
+                <div id="line-2" className={`absolute w-20 sm:w-28 h-[2px] top-1/2 left-1/2 -mt-[1px] transform origin-left rotate-45 transition-colors duration-500 ${phase >= 4 ? 'bg-[#c4c0ff]' : 'bg-[#1c2540]'}`}></div>
+                <div id="line-3" className={`absolute w-16 sm:w-20 h-[2px] top-1/2 right-1/2 -mt-[1px] transform origin-right rotate-12 transition-opacity duration-500 ${phase >= 4 ? 'opacity-100 bg-[#1c2540]' : 'opacity-0'}`}></div>
 
-      {/* Footer */}
-      <div className="px-8 py-4 bg-[#080E1A] text-slate-600 text-[10px] flex justify-between font-mono">
-        <span>Tink mini</span>
-        <span>1 of 1 questions</span>
+                {/* Nodes */}
+                {/* Center Backbone */}
+                <div id="node-center" className="absolute w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#131b2e] border border-[#3cddc7] shadow-[0_0_15px_rgba(60,221,199,0.3)] flex items-center justify-center cursor-pointer z-10 transition-transform hover:scale-105">
+                  <span className="text-white font-bold text-lg">B</span>
+                </div>
+                
+                {/* Cluster 1 (Top Right) */}
+                <div id="node-c1" className={`absolute w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 flex items-center justify-center -translate-y-16 translate-x-16 sm:-translate-y-20 sm:translate-x-20 transition-all duration-500 z-10 ${
+                  phase >= 4 ? 'bg-[#131b2e] border-[#3cddc7] shadow-[0_0_10px_rgba(60,221,199,0.5)] border-solid' : 
+                  phase >= 2 ? 'bg-[#0d1424] border-[#c4c0ff] border-dashed shadow-[0_0_10px_rgba(196,192,255,0.2)]' : 
+                  'bg-[#0d1424] border-[#474551]/60 border-dashed'
+                }`}>
+                  {phase >= 4 ? <Check size={14} className="text-[#3cddc7]" /> : <span className={`text-[10px] sm:text-xs font-bold ${phase >= 2 ? 'text-[#c4c0ff]' : 'text-[#474551]'}`}>?</span>}
+                </div>
+
+                {/* Cluster 2 (Bottom Right) */}
+                <div id="node-c2" className={`absolute w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 flex items-center justify-center translate-y-16 translate-x-16 sm:translate-y-20 sm:translate-x-20 transition-all duration-500 z-10 ${
+                  phase >= 4 ? 'bg-[#131b2e] border-[#c4c0ff] shadow-[0_0_10px_rgba(196,192,255,0.3)] border-solid' : 
+                  phase >= 2 ? 'bg-[#0d1424] border-[#474551]/60 border-dashed' :
+                  'bg-[#0d1424] border-[#474551]/30 border-dashed'
+                }`}>
+                  {phase >= 4 ? <Check size={14} className="text-[#c4c0ff]" /> : <span className="text-[#474551] font-bold text-[10px] sm:text-xs">?</span>}
+                </div>
+              </div>
+
+              {/* Text Blur Simulation */}
+              <div id="sim-text-content" className={`absolute inset-0 bg-[#060e20] p-5 sm:p-6 flex flex-col justify-center pointer-events-none transition-all duration-700 z-10 ${phase >= 2 ? 'opacity-100' : 'opacity-0 z-[-1]'}`}>
+                <h3 className="text-sm sm:text-base font-bold text-[#dae2fd] mb-2 drop-shadow-md">Backbone Principle</h3>
+                <p id="blur-text" className={`text-[#c8c4d3] text-[10px] sm:text-xs leading-relaxed transition-all duration-1000 select-none ${phase >= 4 ? 'blur-none opacity-100' : 'blur-[3px] opacity-60'}`}>
+                  Machine learning fundamentally redefines task automation by enabling systems to learn from data rather than relying on explicit programming. This paradigm shift allows for adaptation to unseen data, forming the prerequisite foundation for advanced techniques like neural networks.
+                </p>
+              </div>
+            </div>
+
+            {/* Chat Sidebar Simulator (Right) */}
+            <div id="sim-chat-view" className={`bg-[#0b1326] border-l border-[#474551]/20 overflow-hidden transition-all duration-500 ease-in-out flex flex-col absolute right-0 top-0 bottom-0 ${phase === 3 ? 'w-1/2 sm:w-[45%] opacity-100' : 'w-0 opacity-0'}`}>
+              <div className="p-2 sm:p-3 border-b border-[#474551]/20 bg-[#131b2e] shrink-0">
+                <span className="text-[10px] sm:text-[11px] font-bold text-[#c8c4d3] flex items-center truncate">
+                  <span className="w-2 h-2 rounded-full bg-[#c4c0ff] mr-2 shrink-0"></span> Socratic AI
+                </span>
+              </div>
+              <div className="flex-1 p-3 flex flex-col justify-end space-y-2.5 overflow-y-auto">
+                <div id="chat-msg-1" className={`bg-[#1c2540] p-2.5 rounded-xl rounded-tl-sm text-[10px] sm:text-[11px] leading-relaxed text-[#dae2fd] self-start max-w-[95%] transition-all duration-500 ${phase >= 3 ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+                  Explain the core thesis to me from memory. Apply it to weather prediction.
+                </div>
+                <div id="chat-msg-2" className={`bg-[#c4c0ff]/10 border border-[#c4c0ff]/20 p-2.5 rounded-xl rounded-tr-sm text-[10px] sm:text-[11px] leading-relaxed text-[#dae2fd] self-end max-w-[95%] transition-all duration-500 delay-150 ${phase >= 3 ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+                  It's using data to predict outcomes instead of hardcoding rules. Like analyzing past weather data.
+                </div>
+                <div id="chat-msg-3" className={`bg-[#1c2540] border border-[#3cddc7]/50 shadow-[0_0_10px_rgba(60,221,199,0.1)] p-2.5 rounded-xl rounded-tl-sm text-[10px] sm:text-[11px] leading-relaxed text-[#dae2fd] self-start max-w-[95%] transition-all duration-500 delay-300 ${phase === 3 ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+                  Spot on! Let's lock it in. <br/><span className="text-[#3cddc7] mt-2 block font-mono bg-[#3cddc7]/10 px-1.5 py-0.5 rounded truncate text-[9px]">[&#123;"action":"UNLOCK"&#125;]</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -620,7 +500,7 @@ export default function HyFeynLanding() {
           <div className="relative">
             <div className="absolute -inset-4 bg-[#3cddc7]/10 blur-[100px] rounded-full" />
             <div className="relative z-10">
-              <ReFeynDemo />
+              <UXLoopSimulator />
             </div>
           </div>
         </div>
@@ -710,10 +590,10 @@ export default function HyFeynLanding() {
                   <div className="w-3 h-3 rounded-full bg-green-500/60" />
                 </div>
                 <div className="flex-1 bg-[#171f33] rounded px-3 py-1 text-xs text-[#928f9d] font-mono truncate">
-                  jon-devlapaz.github.io/LearnOps-tamagachi/
+                  learn-ops-tamagachi.vercel.app/
                 </div>
                 <a
-                  href="https://jon-devlapaz.github.io/LearnOps-tamagachi/"
+                  href="https://learn-ops-tamagachi.vercel.app/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs text-[#3cddc7] hover:text-[#dae2fd] transition-colors whitespace-nowrap flex items-center gap-1"
@@ -726,7 +606,7 @@ export default function HyFeynLanding() {
               <div ref={iframeRef} style={{ height: "600px" }}>
                 {iframeVis && (
                   <iframe
-                    src="https://jon-devlapaz.github.io/LearnOps-tamagachi/"
+                    src="https://learn-ops-tamagachi.vercel.app/"
                     title="Tink MVP"
                     className="w-full h-full border-0"
                   />
@@ -737,7 +617,7 @@ export default function HyFeynLanding() {
 
           <div className={`text-center mt-8 transition-all duration-700 delay-300 ${previewVis ? "opacity-100" : "opacity-0"}`}>
             <a
-              href="https://jon-devlapaz.github.io/LearnOps-tamagachi/"
+              href="https://learn-ops-tamagachi.vercel.app/"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm text-[#c8c4d3] hover:text-[#3cddc7] transition-colors"
