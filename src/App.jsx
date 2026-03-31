@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Brain, Shield, Check, ChevronRight, ChevronDown,
-  Target, Clock, ArrowRight, Sparkles, Lock, X,
-  Mail, User, AlertCircle, CheckCircle2, RefreshCw,
-  Activity, Zap
+  ArrowRight, Sparkles, Lock, AlertCircle, CheckCircle2,
+  Activity
 } from "lucide-react";
 
 // ─── Constants ───
@@ -96,28 +95,6 @@ function IsoreFeyn({ accent = "#fbbf24" }) {
   );
 }
 
-function IsoScaffold({ accent = "#a78bfa" }) {
-  return (
-    <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-      <defs><GradientDef id="gs1" accent={accent} /></defs>
-      <path d="M110 50 Q95 55 92 70 Q89 85 100 95 Q85 90 80 75 Q75 55 95 45 Q105 40 110 50Z" fill="url(#gs1)" stroke={accent} strokeWidth="1.5" />
-      <circle cx="125" cy="52" r="2" fill={accent} fillOpacity="0.6" />
-      <circle cx="135" cy="65" r="1.5" fill={accent} fillOpacity="0.4" />
-      <circle cx="118" cy="40" r="1" fill={accent} fillOpacity="0.3" />
-      <rect x="55" y="115" width="90" height="4" rx="2" fill={accent} fillOpacity="0.15" stroke={accent} strokeWidth="0.8" />
-      <circle cx="70" cy="117" r="5" fill={accent} fillOpacity="0.3" stroke={accent} strokeWidth="1" />
-      <text x="70" y="120" textAnchor="middle" fill={accent} fontSize="5" fontWeight="700">D1</text>
-      <circle cx="100" cy="117" r="5" fill={accent} fillOpacity="0.3" stroke={accent} strokeWidth="1" />
-      <text x="100" y="120" textAnchor="middle" fill={accent} fontSize="5" fontWeight="700">24h</text>
-      <circle cx="130" cy="117" r="5" fill={accent} fillOpacity="0.3" stroke={accent} strokeWidth="1" />
-      <text x="130" y="120" textAnchor="middle" fill={accent} fontSize="5" fontWeight="700">✓</text>
-      <path d="M76 117 L93 117" stroke={accent} strokeWidth="1" />
-      <path d="M106 117 L123 117" stroke={accent} strokeWidth="1" />
-      <path d="M90 145 L97 153 L112 138" stroke={accent} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-    </svg>
-  );
-}
-
 // ─── FAQ Accordion ───
 function FAQItem({ question, answer }) {
   const [open, setOpen] = useState(false);
@@ -155,115 +132,55 @@ function StageCard({ number, title, subtitle, description, illustration, accentC
   );
 }
 
-// ─── Testimonial Card ───
-function TestimonialCard({ name, role, quote, avatar, delay, visible }) {
-  return (
-    <div
-      className={`glass-card p-8 rounded-lg border border-[#474551]/10 transition-all duration-700 ${
-        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-      }`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
-      <div className="flex items-center gap-4 mb-6">
-        <img src={avatar} alt={name} width={48} height={48} className="w-12 h-12 rounded-full object-cover" />
-        <div>
-          <p className="font-bold text-[#dae2fd]">{name}</p>
-          <p className="text-xs text-[#3cddc7]">{role}</p>
-        </div>
-      </div>
-      <p className="text-[#c8c4d3] italic mb-4">"{quote}"</p>
-      <div className="flex gap-1 text-[#3cddc7]">
-        {[...Array(5)].map((_, i) => (
-          <svg key={i} width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
-            <path d="M7 1l1.8 3.6L13 5.3l-3 2.9.7 4.1L7 10.4l-3.7 1.9.7-4.1-3-2.9 4.2-.7z" />
-          </svg>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 // ─── Page Data ───
-const STAGES = [
+const STEPS = [
   {
-    number: 1, title: "Extraction",
-    description: "Drop any PDF, video, or article. AI strips the noise and isolates the high-signal concepts.",
+    number: 1, title: "Bring your material",
+    description: "Notes, readings, transcripts, or source text. You own the content — socraTink extracts the structure.",
     accentClass: "bg-[#c4c0ff]/10", delay: 0, Illustration: IsoExtraction,
   },
   {
-    number: 2, title: "Vault",
-    description: "Centralized knowledge storage that categorizes ideas based on cognitive patterns, not folders.",
-    accentClass: "bg-[#3cddc7]/10", delay: 100, Illustration: IsoVault,
+    number: 2, title: "Get a map",
+    description: "socraTink identifies what depends on what and builds a knowledge graph. You can see the full territory before you start.",
+    accentClass: "bg-[#3cddc7]/10", delay: 150, Illustration: IsoVault,
   },
   {
-    number: 3, title: "reTink",
-    description: "Socratic dialogue sessions, not flashcards. reTink stress-tests your causal understanding — asking why and how, not just what — and adapts each session to where your reasoning actually breaks down.",
-    accentClass: "bg-amber-400/10", delay: 200, Illustration: IsoreFeyn,
-  },
-  {
-    number: 4, title: "Scaffolding",
-    description: "Long-term mental structure. See how every concept connects in an interactive knowledge map.",
-    accentClass: "bg-violet-400/10", delay: 300, Illustration: IsoScaffold,
+    number: 3, title: "Clear rooms",
+    description: "Drill one node at a time. The explanation disappears. You reconstruct from memory. The graph changes only when your answer holds up.",
+    accentClass: "bg-amber-400/10", delay: 300, Illustration: IsoreFeyn,
   },
 ];
 
-const TESTIMONIALS = [
-  {
-    name: "Sarah Jenkins", role: "Medical Student",
-    quote: "Saved 2 hours a day on note-taking. I finally feel like I'm studying the content instead of just organizing it.",
-    avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuCWKU1tiGaRIbCAM-Pe7MXxEumtwHaMkdbGx2SjMq8xEsn-Y42GtBTlllzlJBjRuEGO-ZUDSxIBDC_VC7haBiJYwBkjlTtsNWhABRcjrY15fnea1fcX_rKCdAdOcBF_TGUr3tZhjRI3f9eWwtCzzebZfuWsqYcf1x78YKOvqg_niTlO90KZnxhOqSYic-7YhrkQHLI-TyZHyrkps9yTTxeE93ZvItUxS3AKI3IUtPUZ50d28PfCyDyEDJzCB6pyS7sfADcSv46Gbwkp",
-    delay: 0,
-  },
-  {
-    name: "Marcus Thorne", role: "CS Undergrad",
-    quote: "reTink asks me questions I don't know I can't answer yet. That's the part that actually sticks with my ADHD — it's not drilling facts, it's exposing my blind spots.",
-    avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuCIFNm7Bvd1i1XVTPM_Bbt1U6dQWBpQWSJCF5RJuMFj5a7t5uKQi7XSRfWnTIuF6BsklvVPYNLhpEt4afhFq6LjRLBgSoeRm79UgaQ4OouHVvRwQ2ERxUKnVq7B66DONrPVawZk2d9BWDlB8HXqyGN69OrEQOu5pOPwe58l3BmZC2s8sOZWQMPN9CbgH_lbBY6F9Vx4zwlxv9UdPyS7uyYMoBvDVOLkM23eCxr8PfYXEfqZFb8J4jnFeD2v8s2u7b-h2c7Ci4gPLVUg",
-    delay: 100,
-  },
-  {
-    name: "Elena Rodriguez", role: "Law Student",
-    quote: "The visual scaffolding helped me see the 'big picture' for the first time. No more getting lost in details.",
-    avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuC4GhXzUdmNVhKvrSuf_YhzIAvlArr25-ZlgziI0Tf0vyoayyzk3dmoejuwyKyuE6lzPEnKJr_8QQGjZF23V2JRY8zx8bmRtyKzXQWEFO1vbkZBSNiE8-uu7nzrcRHK1MIo9KtPC7lUUj1VrXwG18djiQsVt74p9_ML6fhEQVr6igc8hi6Du1MbZxWupEK9at6Nf8h3IGeSWw8XjWPsmyCSAUbR5mtjSbz2OhWsZ-T2cvzoiei_mN2hOxCMqRVrwybb1lD-ahKanLgK",
-    delay: 200,
-  },
-];
 
 const FAQ_ITEMS = [
   {
-    question: "Do I need to install anything?",
-    answer: "Tink runs in your browser. No extensions, no desktop apps, no plugins. Paste a link or upload a transcript, and the pipeline starts immediately.",
+    question: "Who is this for?",
+    answer: "Self-directed learners who study from their own material and want more than summaries, streaks, and quiz cosmetics. If you care whether you actually understand something — not just whether you've seen it — socraTink was built for you.",
   },
   {
     question: "Is this just fancy flashcards?",
-    answer: "No. Flashcards drill isolated labels. reTink — Tink's Socratic dialogue engine — challenges you to explain causal mechanisms: how and why things work, not just what they're called. Every session adapts to where your reasoning actually breaks down, not to a fixed review interval.",
-  },
-  {
-    question: "What if I don't have ADHD?",
-    answer: "The pipeline works for any learner. The ADHD scaffolding (time-boxes, fatigue guards, re-warming protocols) simply provides extra structure. If you don't need it, it stays out of your way.",
+    answer: "No. Flashcards test recognition of isolated labels. socraTink asks you to reconstruct causal mechanisms from memory — how and why things work, not just what they're called. The AI adapts to where your reasoning actually breaks down, not to a fixed review interval.",
   },
   {
     question: "What subjects does it work for?",
-    answer: "Any subject with causal structure — sciences, engineering, law, economics, medicine, history. It's less suited for pure creative or artistic study, where the knowledge isn't mechanism-based.",
+    answer: "Any subject with causal structure — sciences, engineering, law, economics, medicine, history. If the material has ideas that depend on other ideas, socraTink can map and drill it.",
+  },
+  {
+    question: "How is this different from RemNote, Anki, or Recall?",
+    answer: "Anki is honest recall without structure. RemNote and Recall have structure but their graphs track notes and activity, not verified understanding. socraTink sits at the intersection: your own material, a real dependency graph, and a map that only advances when you can actually explain the ideas inside it.",
+  },
+  {
+    question: "What about learners with ADHD?",
+    answer: "socraTink wasn't designed as an ADHD tool with a general mode — it was designed around clear targets, bounded sessions, and zero-friction re-entry. Features like automatic time-boxing, fatigue guardrails, and context restoration for returning sessions are built into the core loop. If you don't need them, they stay out of your way.",
   },
 ];
 
-const ADHD_FEATURES = [
-  { Icon: Clock, label: "Automatic time-boxing", detail: "35-min sessions with built-in breaks" },
-  { Icon: Shield, label: "Fatigue guardrails", detail: "Stops you before cognitive collapse" },
-  { Icon: Target, label: "Zero-friction entry", detail: "No setup ritual — paste a link and go" },
-  { Icon: RefreshCw, label: "Re-warming protocols", detail: "Context restoration for returning sessions" },
-];
 
-const CHAOS_ITEMS = [
-  { title: "Context Switching Fatigue", detail: "Bouncing between 10 tabs, PDF readers, and Notion pages." },
-  { title: "The \"Infinite Scroll\" Trap", detail: "Reading for 2 hours but retaining zero usable information." },
-  { title: "Executive Dysfunction", detail: "Staring at a blank page, unable to decide where to start." },
-];
-
-const FLOW_ITEMS = [
-  { title: "Isolated Focus Modes", detail: "One task at a time. Pure content extraction without noise." },
-  { title: "reTink: Socratic Active Recall", detail: "Dialogue-based sessions that probe your reasoning, not just your memory." },
-  { title: "Visual Scaffolding", detail: "Knowledge is automatically mapped into mental structures." },
+const ILLUSION_ITEMS = [
+  { title: "You read it", detail: "Highlighted, summarized, reviewed the notes. Felt like progress." },
+  { title: "You recognized it", detail: "Saw the answer on a flashcard and thought — yeah, I know that." },
+  { title: "Then you tried to explain it", detail: "From memory, out loud, to someone who asked why. And the floor dropped out." },
 ];
 
 // ─── reFeyn Interactive Demo ───
@@ -439,8 +356,8 @@ export default function HyFeynLanding() {
           access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY,
           name: firstName,
           email,
-          subject: "Tink Waitlist Sign-up",
-          from_name: "Tink Waitlist",
+          subject: "socraTink Waitlist Sign-up",
+          from_name: "socraTink Waitlist",
         }),
       });
       const result = await res.json();
@@ -459,10 +376,10 @@ export default function HyFeynLanding() {
       {/* ─── NAV ─── */}
       <nav className="fixed top-0 w-full z-50 bg-[#0b1326]/60 backdrop-blur-xl">
         <div className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
-          <div className="text-2xl font-bold tracking-tighter text-[#c4c0ff] font-display">Tink</div>
+          <div className="text-2xl font-bold tracking-tighter text-[#c4c0ff] font-display">socraTink</div>
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#pipeline" className="text-[#dae2fd]/70 font-display font-bold text-lg tracking-tight hover:text-[#dae2fd] transition-all duration-300">Pipeline</a>
-            <a href="#results" className="text-[#dae2fd]/70 font-display font-bold text-lg tracking-tight hover:text-[#dae2fd] transition-all duration-300">Results</a>
+            <a href="#how-it-works" className="text-[#dae2fd]/70 font-display font-bold text-lg tracking-tight hover:text-[#dae2fd] transition-all duration-300">How It Works</a>
+            <a href="#why-different" className="text-[#dae2fd]/70 font-display font-bold text-lg tracking-tight hover:text-[#dae2fd] transition-all duration-300">Why It's Different</a>
             <a href="#waitlist" className="bg-gradient-to-r from-[#c4c0ff] to-[#8b86e4] text-[#221875] px-6 py-2 rounded-full font-bold active:scale-95 duration-200 button-glow">
               Join Waitlist
             </a>
@@ -475,26 +392,28 @@ export default function HyFeynLanding() {
       <section className="relative pt-32 pb-20 px-6 hero-gradient overflow-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
-            <div className="inline-block py-1 px-4 rounded-full bg-[#2d3449] border border-[#474551]/20 text-[#3cddc7] text-xs tracking-widest uppercase">
-              NEUROCOGNITIVE OPTIMIZATION
-            </div>
             <h1 className="text-5xl md:text-7xl font-display font-extrabold leading-tight tracking-tight text-[#dae2fd]">
-              Turn Study Chaos into <span className="text-[#c4c0ff]">Clean Cognition.</span>
+              See what you can <span className="text-[#c4c0ff]">actually explain.</span>
             </h1>
             <p className="text-xl text-[#c8c4d3] max-w-lg leading-relaxed">
-              Designed for the ADHD brain. An AI-augmented study pipeline that isolates content, automates active recall, and builds long-term knowledge without the overwhelm.
+              Upload your material. socraTink turns it into a knowledge map, then asks you to rebuild one idea at a time from memory. The map only changes when understanding is real.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <a
-                href="#waitlist"
+                href="https://learn-ops-tamagachi.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-gradient-to-r from-[#c4c0ff] to-[#8b86e4] text-[#221875] px-8 py-4 rounded-full font-display font-bold text-lg text-center button-glow transition-all"
               >
-                Get Early Access
+                Try the Demo
               </a>
-              <div className="flex items-center gap-2 px-4 py-4 text-[#c8c4d3] text-sm font-medium">
-                <Shield size={16} className="text-[#3cddc7]" />
-                Be first to know when we launch
-              </div>
+              <a
+                href="#how-it-works"
+                className="flex items-center gap-2 px-4 py-4 text-[#c8c4d3] hover:text-[#dae2fd] text-sm font-medium transition-colors"
+              >
+                See how the map works
+                <ChevronRight size={16} />
+              </a>
             </div>
           </div>
           <div className="relative">
@@ -506,60 +425,65 @@ export default function HyFeynLanding() {
         </div>
       </section>
 
+      {/* ─── VALUE STRIP ─── */}
+      <section className="py-12 px-6 bg-[#0b1326] border-y border-[#474551]/15">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <div>
+            <p className="font-display font-bold text-lg text-[#dae2fd] mb-1">One room at a time</p>
+            <p className="text-sm text-[#c8c4d3]">Know exactly what you are working on.</p>
+          </div>
+          <div>
+            <p className="font-display font-bold text-lg text-[#dae2fd] mb-1">No fake progress</p>
+            <p className="text-sm text-[#c8c4d3]">The map updates only when you actually get it.</p>
+          </div>
+          <div>
+            <p className="font-display font-bold text-lg text-[#dae2fd] mb-1">Your weak spots stay visible</p>
+            <p className="text-sm text-[#c8c4d3]">Unfinished ideas stay return-worthy, not shameful.</p>
+          </div>
+        </div>
+      </section>
+
       {/* ─── PROBLEM ─── */}
       <section ref={probRef} className="py-24 px-6 bg-[#131b2e]">
-        <div className="max-w-7xl mx-auto">
-          <div className={`grid grid-cols-1 lg:grid-cols-2 rounded-lg overflow-hidden bg-[#1c2540] shadow-2xl transition-all duration-700 ${probVis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-            <div className="p-12 border-r border-[#474551]/10">
-              <h3 className="font-display text-3xl font-bold mb-8 text-red-400/80">The Study Chaos</h3>
-              <ul className="space-y-6">
-                {CHAOS_ITEMS.map((item, i) => (
-                  <li key={i} className="flex items-start gap-4">
-                    <div className="w-6 h-6 rounded-full bg-red-500/15 flex items-center justify-center shrink-0 mt-0.5">
-                      <X size={12} className="text-red-400" />
-                    </div>
-                    <div>
-                      <p className="font-bold text-[#dae2fd]">{item.title}</p>
-                      <p className="text-sm text-[#c8c4d3]">{item.detail}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="p-12 bg-[#222a3d]">
-              <h3 className="font-display text-3xl font-bold mb-8 text-[#3cddc7]">The Tink Flow</h3>
-              <ul className="space-y-6">
-                {FLOW_ITEMS.map((item, i) => (
-                  <li key={i} className="flex items-start gap-4">
-                    <div className="w-6 h-6 rounded-full bg-[#3cddc7]/15 flex items-center justify-center shrink-0 mt-0.5">
-                      <Check size={12} className="text-[#3cddc7]" />
-                    </div>
-                    <div>
-                      <p className="font-bold text-[#dae2fd]">{item.title}</p>
-                      <p className="text-sm text-[#c8c4d3]">{item.detail}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+        <div className="max-w-3xl mx-auto">
+          <div className={`transition-all duration-700 ${probVis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            <h2 className="font-display text-3xl md:text-4xl font-extrabold mb-6 text-[#dae2fd] text-center">
+              Most study tools reward exposure.
+            </h2>
+            <p className="text-lg text-[#c8c4d3] text-center mb-12 max-w-2xl mx-auto leading-relaxed">
+              socraTink is built against that illusion.
+            </p>
+            <div className="space-y-6">
+              {ILLUSION_ITEMS.map((item, i) => (
+                <div key={i} className="flex items-start gap-4 rounded-lg bg-[#1c2540] p-6">
+                  <div className="w-8 h-8 rounded-full bg-[#c4c0ff]/10 border border-[#c4c0ff]/20 flex items-center justify-center shrink-0 mt-0.5">
+                    <span className="text-[#c4c0ff] font-bold text-sm">{i + 1}</span>
+                  </div>
+                  <div>
+                    <p className="font-bold text-[#dae2fd]">{item.title}</p>
+                    <p className="text-sm text-[#c8c4d3] mt-1">{item.detail}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* ─── PIPELINE ─── */}
-      <section id="pipeline" ref={pipeRef} className="py-24 px-6">
+      {/* ─── HOW IT WORKS ─── */}
+      <section id="how-it-works" ref={pipeRef} className="py-24 px-6">
         <div className="max-w-7xl mx-auto text-center mb-16">
-          <h2 className="text-4xl font-display font-extrabold mb-4 text-[#dae2fd]">The 4-Stage Study Pipeline</h2>
+          <h2 className="text-4xl font-display font-extrabold mb-4 text-[#dae2fd]">How It Works</h2>
           <p className="text-[#c8c4d3] max-w-2xl mx-auto">
-            We don't just "take notes." We process information through a neuro-optimized assembly line.
+            Three steps. Your material, your map, your understanding — verified.
           </p>
         </div>
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {STAGES.map(({ Illustration, ...stage }) => (
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+          {STEPS.map(({ Illustration, ...step }) => (
             <StageCard
-              key={stage.number}
-              {...stage}
-              illustration={<Illustration accent={stage.number === 1 ? "#c4c0ff" : stage.number === 2 ? "#3cddc7" : stage.number === 3 ? "#fbbf24" : "#a78bfa"} />}
+              key={step.number}
+              {...step}
+              illustration={<Illustration accent={step.number === 1 ? "#c4c0ff" : step.number === 2 ? "#3cddc7" : "#fbbf24"} />}
               visible={pipeVis}
             />
           ))}
@@ -570,12 +494,12 @@ export default function HyFeynLanding() {
       <section ref={previewRef} className="py-24 px-6 bg-[#131b2e]">
         <div className="max-w-5xl mx-auto">
           <div className={`text-center mb-12 transition-all duration-700 ${previewVis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-            <p className="text-xs font-semibold text-[#3cddc7] tracking-widest uppercase mb-3">Live product</p>
+            <p className="text-xs font-semibold text-[#3cddc7] tracking-widest uppercase mb-3">Live prototype</p>
             <h2 className="text-3xl md:text-4xl font-display font-extrabold text-[#dae2fd] mb-4">
-              See it before you commit.
+              The map is real. Try it.
             </h2>
             <p className="text-[#c8c4d3] max-w-xl mx-auto">
-              This is the actual MVP — not a mockup. Click around, explore the pipeline, and decide for yourself.
+              This is the working prototype — not a mockup. Upload material, drill a node, and see the graph respond to what you actually understand.
             </p>
           </div>
 
@@ -607,7 +531,7 @@ export default function HyFeynLanding() {
                 {iframeVis && (
                   <iframe
                     src="https://learn-ops-tamagachi.vercel.app/"
-                    title="Tink MVP"
+                    title="socraTink Prototype"
                     className="w-full h-full border-0"
                   />
                 )}
@@ -629,47 +553,60 @@ export default function HyFeynLanding() {
         </div>
       </section>
 
-      {/* ─── ADHD CALLOUT ─── */}
-      <section className="py-20 px-6 bg-[#131b2e]">
-        <div className="max-w-4xl mx-auto">
-          <div className="rounded-lg border border-[#474551]/15 bg-[#1c2540] p-8 sm:p-10">
-            <div className="flex flex-col sm:flex-row gap-6 items-start">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#c4c0ff]/20 to-[#3cddc7]/20 border border-[#c4c0ff]/25 flex items-center justify-center shrink-0">
-                <Sparkles size={22} className="text-[#c4c0ff]" />
+      {/* ─── WHY IT FEELS DIFFERENT ─── */}
+      <section id="why-different" className="py-24 px-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-6">
+            <p className="text-sm text-[#928f9d] tracking-widest uppercase mb-3">Not another AI summary app. Not a prettier flashcard deck. Not a note graph.</p>
+            <h2 className="text-3xl md:text-4xl font-display font-extrabold text-[#dae2fd]">Why It Feels Different</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
+            <div className="rounded-lg bg-[#131b2e] border border-[#474551]/10 p-8">
+              <div className="w-10 h-10 rounded-xl bg-[#3cddc7]/10 flex items-center justify-center mb-4">
+                <Shield size={20} className="text-[#3cddc7]" />
               </div>
-              <div>
-                <h3 className="font-display font-bold text-xl text-[#dae2fd] mb-3">
-                  Built for ADHD brains — not adapted from neurotypical tools.
-                </h3>
-                <p className="text-sm text-[#c8c4d3] leading-relaxed mb-5">
-                  Tink isn't a study app with an "ADHD mode" toggle. The entire pipeline — including the reTink Socratic engine — was designed
-                  around executive function constraints from the ground up. That means sessions that end before you collapse, not after.
-                </p>
-                <div className="grid sm:grid-cols-2 gap-3">
-                  {ADHD_FEATURES.map(({ Icon, label, detail }, i) => (
-                    <div key={i} className="flex items-start gap-3">
-                      <span className="text-[#3cddc7] mt-0.5"><Icon size={15} /></span>
-                      <div>
-                        <p className="text-sm font-semibold text-[#dae2fd]">{label}</p>
-                        <p className="text-xs text-[#c8c4d3]">{detail}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              <h3 className="font-display font-bold text-lg text-[#dae2fd] mb-2">The graph tells the truth</h3>
+              <p className="text-sm text-[#c8c4d3] leading-relaxed">It is not a browser. It is not a checklist. It is a record of verified understanding.</p>
+            </div>
+            <div className="rounded-lg bg-[#131b2e] border border-[#474551]/10 p-8">
+              <div className="w-10 h-10 rounded-xl bg-[#c4c0ff]/10 flex items-center justify-center mb-4">
+                <Brain size={20} className="text-[#c4c0ff]" />
               </div>
+              <h3 className="font-display font-bold text-lg text-[#dae2fd] mb-2">Drill protects recall</h3>
+              <p className="text-sm text-[#c8c4d3] leading-relaxed">When it is time to answer, explanation disappears. You generate first.</p>
+            </div>
+            <div className="rounded-lg bg-[#131b2e] border border-[#474551]/10 p-8">
+              <div className="w-10 h-10 rounded-xl bg-amber-400/10 flex items-center justify-center mb-4">
+                <Lock size={20} className="text-amber-400" />
+              </div>
+              <h3 className="font-display font-bold text-lg text-[#dae2fd] mb-2">Progression is earned</h3>
+              <p className="text-sm text-[#c8c4d3] leading-relaxed">New territory opens when prerequisite ideas are actually solid. No shortcuts.</p>
+            </div>
+            <div className="rounded-lg bg-[#131b2e] border border-[#474551]/10 p-8">
+              <div className="w-10 h-10 rounded-xl bg-violet-400/10 flex items-center justify-center mb-4">
+                <Activity size={20} className="text-violet-400" />
+              </div>
+              <h3 className="font-display font-bold text-lg text-[#dae2fd] mb-2">Weak spots are useful</h3>
+              <p className="text-sm text-[#c8c4d3] leading-relaxed">"Not solid yet" is not failure. It is the next place to grow.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ─── TESTIMONIALS ─── */}
-      <section id="results" ref={testRef} className="py-24 px-6 bg-[#060e20]">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-display font-extrabold mb-12 text-center text-[#dae2fd]">Results from Beta Users</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {TESTIMONIALS.map((t) => (
-              <TestimonialCard key={t.name} {...t} visible={testVis} />
-            ))}
+      {/* ─── EARLY ADOPTERS ─── */}
+      <section ref={testRef} className="py-20 px-6 bg-[#060e20]">
+        <div className="max-w-2xl mx-auto text-center">
+          <div className={`transition-all duration-700 ${testVis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
+            <div className="w-12 h-12 rounded-xl bg-[#3cddc7]/10 border border-[#3cddc7]/20 flex items-center justify-center mx-auto mb-6">
+              <Sparkles size={22} className="text-[#3cddc7]" />
+            </div>
+            <h2 className="text-2xl font-display font-extrabold mb-4 text-[#dae2fd]">Still testing. Still learning.</h2>
+            <p className="text-[#c8c4d3] leading-relaxed mb-2">
+              socraTink is in active development. The map is being built the same way we ask you to build yours — one verified step at a time.
+            </p>
+            <p className="text-[#c8c4d3] leading-relaxed">
+              To our early adopters: thank you. Your feedback is shaping every decision.
+            </p>
           </div>
         </div>
       </section>
@@ -700,14 +637,14 @@ export default function HyFeynLanding() {
                 </div>
                 <h3 className="text-2xl font-display font-bold text-[#dae2fd] mb-2">You're on the list!</h3>
                 <p className="text-[#c8c4d3] text-sm leading-relaxed max-w-sm mx-auto">
-                  We'll notify <strong className="text-[#dae2fd]">{email}</strong> the moment Tink is ready for you.
+                  We'll notify <strong className="text-[#dae2fd]">{email}</strong> the moment socraTink is ready for you.
                 </p>
               </div>
             ) : (
               <>
                 <div className="text-center mb-10">
-                  <h2 className="text-3xl font-display font-extrabold mb-4 text-[#dae2fd]">Join the Waitlist</h2>
-                  <p className="text-[#c8c4d3]">Be first to know when we launch. No spam, just signal.</p>
+                  <h2 className="text-3xl font-display font-extrabold mb-4 text-[#dae2fd]">Build a map you can trust.</h2>
+                  <p className="text-[#c8c4d3]">Join the waitlist. No spam — just signal when socraTink is ready.</p>
                 </div>
                 <form onSubmit={handleWaitlist} className="space-y-6">
                   {formError && (
@@ -754,8 +691,8 @@ export default function HyFeynLanding() {
       <footer className="w-full border-t border-[#dae2fd]/10 bg-[#0b1326]">
         <div className="flex flex-col md:flex-row justify-between items-center px-12 py-16 gap-8 w-full max-w-7xl mx-auto">
           <div className="flex flex-col gap-2">
-            <div className="font-display font-bold text-[#c4c0ff] text-xl">Tink</div>
-            <p className="text-sm tracking-wide text-[#dae2fd]/50">© 2026 Tink. AI-Augmented Neurocognitive Pipelines.</p>
+            <div className="font-display font-bold text-[#c4c0ff] text-xl">socraTink</div>
+            <p className="text-sm tracking-wide text-[#dae2fd]/50">© 2026 socraTink. A truthful map of what you can actually explain.</p>
           </div>
           <div className="flex flex-wrap justify-center gap-8">
             <a href="#" className="text-sm tracking-wide text-[#dae2fd]/50 hover:text-[#c4c0ff] underline decoration-[#3cddc7]/30 transition-colors">Privacy Policy</a>
