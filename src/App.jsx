@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { createElement, useEffect, useRef, useState } from "react";
 import {
-  Brain, Shield, Check, ChevronRight, ChevronDown,
+  Brain, Shield, ChevronRight, ChevronDown,
   ArrowRight, Sparkles, Lock, AlertCircle, CheckCircle2,
   Activity
 } from "lucide-react";
@@ -21,7 +21,7 @@ function useInView(threshold = 0.15) {
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, []);
+  }, [threshold]);
   return [ref, visible];
 }
 
@@ -115,7 +115,7 @@ function FAQItem({ question, answer }) {
 }
 
 // ─── Pipeline Stage Card ───
-function StageCard({ number, title, subtitle, description, illustration, accentClass, delay, visible }) {
+function StageCard({ number, title, description, illustration, accentClass, delay, visible }) {
   return (
     <div
       className={`stage-card landing-card group rounded-2xl border border-outline-variant/20 bg-surface-container subtle-shadow p-8 transition-all duration-300 hover:shadow-[0_12px_40px_rgba(144,103,198,0.08)] ${
@@ -182,133 +182,185 @@ const ILLUSION_ITEMS = [
   { title: "Then you tried to explain it", detail: "From memory, out loud, to someone who asked why. And the floor dropped out." },
 ];
 
-function UXLoopSimulator() {
-  const [phase, setPhase] = useState(1);
+const HERO_LOOP_MS = 16000;
+const HERO_RESPONSE = "B is the active mechanism that connects the core idea to the next branch. If I can explain B clearly, the map can open what depends on it.";
+
+function usePrefersReducedMotion() {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") return false;
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") return undefined;
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const handleChange = (event) => {
+      setPrefersReducedMotion(event.matches);
+    };
+
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", handleChange);
+      return () => mediaQuery.removeEventListener("change", handleChange);
+    }
+
+    mediaQuery.addListener(handleChange);
+    return () => mediaQuery.removeListener(handleChange);
+  }, []);
+
+  return prefersReducedMotion;
+}
+
+function HeroProductVignette() {
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const [elapsedMs, setElapsedMs] = useState(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") return 0;
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 13000 : 0;
+  });
+
+  useEffect(() => {
+    if (prefersReducedMotion) return undefined;
+
+    const startedAt = performance.now();
+    const intervalId = window.setInterval(() => {
+      setElapsedMs((performance.now() - startedAt) % HERO_LOOP_MS);
+    }, 50);
+
+    return () => window.clearInterval(intervalId);
+  }, [prefersReducedMotion]);
+
+  const after = (time) => elapsedMs >= time;
+  const between = (start, end) => elapsedMs >= start && elapsedMs < end;
+
+  const statusText = between(0, 2500)
+    ? "SYSTEM: EXTRACTING SIGNAL..."
+    : between(2500, 4500)
+      ? "SYSTEM: KNOWLEDGE MAP READY"
+      : between(4500, 8000)
+        ? "ACTIVE TARGET: EXPLAIN B IN YOUR OWN WORDS"
+        : between(8000, 10500)
+          ? "EVALUATING RECONSTRUCTION..."
+          : "GRAPH UPDATED: UNDERSTANDING VERIFIED";
+
+  const activePhase = between(0, 2500) ? 1 : between(2500, 4500) ? 2 : between(4500, 10500) ? 3 : 4;
+  const responseProgress = prefersReducedMotion
+    ? 1
+    : Math.max(0, Math.min(1, (elapsedMs - 4500) / (8000 - 4500)));
+  const typedCount = Math.floor(HERO_RESPONSE.length * responseProgress);
+  const typedResponse = after(4500) ? HERO_RESPONSE.slice(0, typedCount) : "";
+
+  const nodesVisible = {
+    core: after(450),
+    a: after(850),
+    c: after(1200),
+    b: after(2750),
+    d: after(3150),
+    unknown: after(3450),
+  };
+
+  const showDrillPanel = after(2500);
+  const focusDrillPanel = after(4500);
+  const showEvaluation = after(10500);
+  const showCaption = after(13000);
+  const showRipple = between(10500, 11750);
 
   return (
-    <div id="loop" className="prototype-simulator w-full max-w-xl mx-auto subtle-shadow relative z-10">
-      <div className="prototype-simulator-frame bg-surface-container border border-outline-variant/50 rounded-2xl flex flex-col overflow-hidden relative glass-card">
-        
-        {/* Stepper Controls (Horizontal Tabs) */}
-        <div className="prototype-stepper flex bg-surface/60 border-b border-outline-variant/40 p-2 gap-1 overflow-x-auto shrink-0 z-20 relative backdrop-blur-md">
-          {[
-            { n: 1, title: 'Extraction' },
-            { n: 2, title: 'Vault' },
-            { n: 3, title: 'reTink' },
-            { n: 4, title: 'Scaffolding' },
-          ].map(step => (
-            <button 
-              key={step.n}
-              onClick={() => setPhase(step.n)} 
-              className={`prototype-step flex-1 min-w-[70px] flex flex-col items-center gap-1.5 p-2 rounded-xl transition-all ${
-                phase === step.n ? 'bg-surface-container border border-primary/20 shadow-[0_2px_10px_rgba(144,103,198,0.08)]' : 'border border-transparent hover:bg-surface-container/50'
-              }`}
-            >
-              <div className={`w-6 h-6 rounded-full border flex items-center justify-center font-bold text-[11px] shrink-0 transition-colors ${
-                phase === step.n ? 'bg-primary/10 border-primary text-primary' : 'bg-surface border-outline-variant text-ink-muted'
-              }`}>
-                {step.n}
-              </div>
-              <span className={`text-[9px] uppercase tracking-wider font-bold transition-colors ${
-                phase === step.n ? 'text-ink' : 'text-ink-muted'
-              }`}>
-                {step.title}
-              </span>
-            </button>
-          ))}
-        </div>
-
-        {/* Simulation Visualizer */}
-        <div className="prototype-canvas bg-surface-container relative flex flex-col h-72 sm:h-80 w-full overflow-hidden shrink-0">
-          
-          {/* Header Data */}
-          <div className="prototype-toolbar px-5 py-3 border-b border-outline-variant/30 flex justify-between items-center bg-surface/40 z-20 shrink-0 backdrop-blur-sm">
-            <span id="sim-status" className="text-[10px] sm:text-[11px] font-mono text-primary uppercase tracking-widest truncate font-medium">
-              System: {
-                phase === 1 ? "Extracting Signal..." :
-                phase === 2 ? "Categorizing Pattern..." :
-                phase === 3 ? "Socratic Dialogue Initiated..." :
-                "Knowledge Mapped..."
-              }
-            </span>
-            <div className="flex space-x-1.5 shrink-0 ml-4">
-              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-outline-variant"></div>
-              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-outline-variant"></div>
-              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-outline-variant"></div>
+    <>
+      <div className="hero-demo-frame">
+        <div className="demo-window glass-card">
+          <div className="demo-topbar">
+            <div className="demo-brand">
+              <span className="demo-brand__mark" aria-hidden="true" />
+              <span>socraTink</span>
+            </div>
+            <div className="demo-phases" aria-hidden="true">
+              {[
+                { number: 1, label: "Extraction" },
+                { number: 2, label: "Vault" },
+                { number: 3, label: "Retink" },
+                { number: 4, label: "Scaffolding" },
+              ].map((phase) => (
+                <div
+                  key={phase.number}
+                  className={`demo-phase-pill ${activePhase === phase.number ? "is-active" : ""}`}
+                >
+                  <span className="demo-phase-pill__number">{phase.number}</span>
+                  <span className="demo-phase-pill__label">{phase.label}</span>
+                </div>
+              ))}
+            </div>
+            <div className="demo-window-controls" aria-hidden="true">
+              <span />
+              <span />
+              <span />
             </div>
           </div>
 
-          {/* Split View Area */}
-          <div className="prototype-grid flex-1 flex relative w-full h-full text-sm bg-[linear-gradient(to_right,#8D86C908_1px,transparent_1px),linear-gradient(to_bottom,#8D86C908_1px,transparent_1px)] bg-[size:24px_24px]">
-            
-            {/* Graph / Study View Simulator (Left/Full) */}
-            <div id="sim-main-view" className={`h-full relative p-4 transition-all duration-500 ease-in-out ${phase === 3 ? 'w-1/2 sm:w-[55%] border-r border-outline-variant/30' : 'w-full'} flex items-center justify-center`}>
-              {/* Graph Simulation using DOM elements */}
-              <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500`}>
-                
-                {/* Connecting Lines */}
-                <div id="line-1" className={`absolute w-20 sm:w-28 h-[2px] top-1/2 left-1/2 -mt-[1px] transform origin-left -rotate-45 transition-colors duration-500 ${phase >= 4 ? 'bg-primary' : 'bg-outline-variant/50'}`}></div>
-                <div id="line-2" className={`absolute w-20 sm:w-28 h-[2px] top-1/2 left-1/2 -mt-[1px] transform origin-left rotate-45 transition-colors duration-500 ${phase >= 4 ? 'bg-primary-dim' : 'bg-outline-variant/50'}`}></div>
-                <div id="line-3" className={`absolute w-16 sm:w-20 h-[2px] top-1/2 right-1/2 -mt-[1px] transform origin-right rotate-12 transition-opacity duration-500 ${phase >= 4 ? 'opacity-100 bg-outline-variant/50' : 'opacity-0'}`}></div>
+          <div className="demo-body">
+            <div className="demo-status-strip">
+              <span>{statusText}</span>
+            </div>
 
-                {/* Nodes */}
-                {/* Center Backbone */}
-                <div id="node-center" className="absolute w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-surface-container border border-primary/40 shadow-[0_4px_16px_rgba(144,103,198,0.15)] flex items-center justify-center cursor-pointer z-10 transition-transform hover:scale-105">
-                  <span className="text-ink font-bold text-lg font-display">B</span>
-                </div>
-                
-                {/* Cluster 1 (Top Right) */}
-                <div id="node-c1" className={`absolute w-8 h-8 sm:w-10 sm:h-10 rounded-2xl border flex items-center justify-center -translate-y-16 translate-x-16 sm:-translate-y-20 sm:translate-x-20 transition-all duration-500 z-10 ${
-                  phase >= 4 ? 'bg-surface-container border-primary shadow-[0_4px_12px_rgba(144,103,198,0.2)] border-solid' : 
-                  phase >= 2 ? 'bg-surface-high border-primary-dim border-dashed shadow-sm' : 
-                  'bg-surface-high border-outline-variant border-dashed'
-                }`}>
-                  {phase >= 4 ? <Check size={14} className="text-primary" /> : <span className={`text-[10px] sm:text-xs font-bold ${phase >= 2 ? 'text-primary-dim' : 'text-outline-variant'}`}>?</span>}
+            <div className="demo-stage">
+              <div className="demo-graph-panel">
+                <div className={`graph-grid-bg ${after(300) ? "is-visible" : ""}`} />
+                <svg className="graph-edges" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                  <line className={`graph-edge ${nodesVisible.core && nodesVisible.a ? "is-visible" : ""}`} x1="34" y1="52" x2="23" y2="26" />
+                  <line className={`graph-edge ${nodesVisible.core && nodesVisible.c ? "is-visible" : ""}`} x1="34" y1="52" x2="25" y2="75" />
+                  <line className={`graph-edge ${nodesVisible.core && nodesVisible.b ? "is-visible" : ""}`} x1="34" y1="52" x2="50" y2="52" />
+                  <line className={`graph-edge ${nodesVisible.b && nodesVisible.d ? "is-visible" : ""} ${after(8000) ? "is-highlighted" : ""}`} x1="50" y1="52" x2="74" y2="28" />
+                  <line className={`graph-edge ${nodesVisible.b && nodesVisible.unknown ? "is-visible" : ""}`} x1="50" y1="52" x2="74" y2="74" />
+                </svg>
+
+                <div className="graph-nodes" aria-hidden="true">
+                  <div className={`graph-node graph-node--a ${nodesVisible.a ? "is-visible is-solidified" : ""}`}>
+                    <span className="graph-node__label">A</span>
+                  </div>
+                  <div className={`graph-node graph-node--core ${nodesVisible.core ? "is-visible is-solidified" : ""}`}>
+                    <span className="graph-node__label">Core</span>
+                  </div>
+                  <div className={`graph-node graph-node--c ${nodesVisible.c ? "is-visible is-drilled" : ""}`}>
+                    <span className="graph-node__label">C</span>
+                  </div>
+                  <div className={`graph-node graph-node--b ${nodesVisible.b ? "is-visible" : ""} ${after(10500) ? "is-solidified" : after(2500) ? "is-active" : ""}`}>
+                    <span className={`graph-node__ripple ${showRipple ? "is-visible" : ""}`} />
+                    <span className="graph-node__label">B</span>
+                  </div>
+                  <div className={`graph-node graph-node--d ${nodesVisible.d ? "is-visible" : ""} ${after(10500) ? "is-open" : "is-locked"}`}>
+                    <span className="graph-node__label">D</span>
+                  </div>
+                  <div className={`graph-node graph-node--unknown ${nodesVisible.unknown ? "is-visible is-locked" : ""}`}>
+                    <span className="graph-node__label">?</span>
+                  </div>
                 </div>
 
-                {/* Cluster 2 (Bottom Right) */}
-                <div id="node-c2" className={`absolute w-8 h-8 sm:w-10 sm:h-10 rounded-2xl border flex items-center justify-center translate-y-16 translate-x-16 sm:translate-y-20 sm:translate-x-20 transition-all duration-500 z-10 ${
-                  phase >= 4 ? 'bg-surface-container border-primary-dim shadow-[0_4px_12px_rgba(141,134,201,0.2)] border-solid' : 
-                  phase >= 2 ? 'bg-surface-high border-outline-variant border-dashed' :
-                  'bg-surface-high border-outline-variant/50 border-dashed'
-                }`}>
-                  {phase >= 4 ? <Check size={14} className="text-primary-dim" /> : <span className="text-outline-variant font-bold text-[10px] sm:text-xs">?</span>}
+                <div className="graph-legend-minimal" aria-hidden="true">
+                  <span className="graph-legend-dot graph-legend-dot--solid" />
+                  <span className="graph-legend-dot graph-legend-dot--active" />
+                  <span className="graph-legend-dot graph-legend-dot--open" />
                 </div>
               </div>
 
-              {/* Text Blur Simulation */}
-              <div id="sim-text-content" className={`absolute inset-0 bg-surface-container/90 backdrop-blur-sm p-5 sm:p-6 flex flex-col justify-center pointer-events-none transition-all duration-700 z-10 ${phase >= 2 ? 'opacity-100' : 'opacity-0 z-[-1]'}`}>
-                <h3 className="text-sm sm:text-base font-bold text-ink mb-2 font-display">Backbone Principle</h3>
-                <p id="blur-text" className={`text-ink-muted text-[10px] sm:text-xs leading-relaxed transition-all duration-1000 select-none ${phase >= 4 ? 'blur-none opacity-100' : 'blur-[4px] opacity-40'}`}>
-                  Machine learning fundamentally redefines task automation by enabling systems to learn from data rather than relying on explicit programming. This paradigm shift allows for adaptation to unseen data, forming the prerequisite foundation for advanced techniques like neural networks.
-                </p>
+              <div className={`demo-drill-panel ${showDrillPanel ? "is-visible" : ""} ${focusDrillPanel ? "is-focused" : ""}`}>
+                <div className="drill-kicker">Socratic Drill</div>
+                <div className={`drill-prompt ${after(4500) ? "is-visible" : ""}`}>Explain why node B matters in the system.</div>
+                <div className={`drill-response ${after(4500) ? "is-visible" : ""}`}>
+                  <span>{typedResponse}</span>
+                  <span className={`drill-cursor ${between(4500, 8000) ? "is-visible" : ""}`} aria-hidden="true" />
+                </div>
+                <div className={`drill-evaluation ${showEvaluation ? "is-visible" : ""}`}>Solid understanding detected</div>
               </div>
             </div>
 
-            {/* Chat Sidebar Simulator (Right) */}
-            <div id="sim-chat-view" className={`bg-surface-high border-l border-outline-variant/30 overflow-hidden transition-all duration-500 ease-in-out flex flex-col absolute right-0 top-0 bottom-0 ${phase === 3 ? 'w-1/2 sm:w-[45%] opacity-100' : 'w-0 opacity-0'}`}>
-              <div className="p-2 sm:p-3 border-b border-outline-variant/30 bg-surface-container shrink-0">
-                <span className="text-[10px] sm:text-[11px] font-semibold text-ink-muted flex items-center truncate">
-                  <span className="w-2 h-2 rounded-full bg-primary mr-2 shrink-0"></span> Socratic AI
-                </span>
-              </div>
-              <div className="flex-1 p-3 flex flex-col justify-end space-y-3 overflow-y-auto">
-                <div id="chat-msg-1" className={`bg-surface-container border border-outline-variant/40 shadow-sm p-3 rounded-2xl rounded-tl-sm text-[10px] sm:text-[11px] leading-relaxed text-ink self-start max-w-[95%] transition-all duration-500 ${phase >= 3 ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-                  Explain the core thesis to me from memory. Apply it to weather prediction.
-                </div>
-                <div id="chat-msg-2" className={`bg-primary border border-primary p-3 rounded-2xl rounded-tr-sm text-[10px] sm:text-[11px] leading-relaxed text-white self-end max-w-[95%] transition-all duration-500 delay-150 shadow-[0_4px_10px_rgba(144,103,198,0.2)] ${phase >= 3 ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-                  It's using data to predict outcomes instead of hardcoding rules. Like analyzing past weather data.
-                </div>
-                <div id="chat-msg-3" className={`bg-surface-container border border-tertiary/30 shadow-[0_4px_12px_rgba(77,186,138,0.1)] p-3 rounded-2xl rounded-tl-sm text-[10px] sm:text-[11px] leading-relaxed text-ink self-start max-w-[95%] transition-all duration-500 delay-300 ${phase === 3 ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-                  Spot on! Let's lock it in. <br/><span className="text-tertiary mt-2 block font-mono bg-tertiary/10 px-1.5 py-0.5 rounded truncate text-[9px]">[&#123;"action":"UNLOCK"&#125;]</span>
-                </div>
-              </div>
+            <div className={`demo-footer-caption ${showCaption ? "is-visible" : ""}`}>
+              The map changes only when understanding is real.
             </div>
-
           </div>
         </div>
       </div>
-    </div>
+      <p className="sr-only">
+        Animated socraTink vignette showing extraction, a knowledge map resolving, node B selected for recall, a learner explanation, evaluation, and one truthful graph update.
+      </p>
+    </>
   );
 }
 
@@ -377,12 +429,12 @@ export default function HyFeynLanding() {
 
       {/* ─── HERO ─── */}
       <section className="landing-hero relative pt-32 pb-20 px-6 hero-gradient overflow-hidden border-b border-outline-variant/20">
-        <div className="landing-hero-panel max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="landing-hero-copy space-y-8 relative z-10">
-            <h1 className="landing-hero-title text-5xl md:text-7xl font-display font-bold leading-tight tracking-tight text-ink">
+        <div className="landing-hero-panel max-w-[86rem] mx-auto grid grid-cols-1 lg:grid-cols-[minmax(0,0.96fr)_minmax(0,1.04fr)] gap-8 xl:gap-10 items-center">
+          <div className="landing-hero-copy min-w-0 space-y-8 relative z-10">
+            <h1 className="landing-hero-title text-[clamp(3.85rem,5.2vw,5.6rem)] font-display font-bold leading-[0.92] tracking-tight text-ink">
               See what you can <span className="text-primary">actually explain.</span>
             </h1>
-            <p className="landing-hero-lede text-xl text-ink-muted max-w-lg leading-relaxed font-light">
+            <p className="landing-hero-lede text-[1.03rem] md:text-[1.1rem] text-ink-muted max-w-[29rem] leading-relaxed font-light">
               Upload your material. socraTink turns it into a knowledge map, then asks you to rebuild one idea at a time from memory. The map only changes when understanding is real.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -390,7 +442,7 @@ export default function HyFeynLanding() {
                 href="https://app.socratink.ai/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="landing-demo-button px-8 py-4 rounded-full font-display font-semibold text-lg text-center button-glow"
+                className="landing-demo-button px-7 py-3.5 rounded-full font-display font-semibold text-[0.98rem] text-center button-glow"
               >
                 Try the Demo
               </a>
@@ -403,11 +455,11 @@ export default function HyFeynLanding() {
               </a>
             </div>
           </div>
-          <div className="landing-hero-preview relative">
+          <div className="landing-hero-preview relative min-w-0">
             <div className="absolute -inset-4 bg-primary/10 blur-[120px] rounded-full" />
             <div className="absolute -inset-10 bg-surface-container/60 blur-[60px] rounded-full" />
-            <div className="relative z-10 transition-transform hover:-translate-y-2 duration-500">
-              <UXLoopSimulator />
+            <div className="hero-demo-scale-shell relative z-10 transition-transform hover:-translate-y-2 duration-500">
+              <HeroProductVignette />
             </div>
           </div>
         </div>
@@ -468,11 +520,11 @@ export default function HyFeynLanding() {
           </p>
         </div>
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
-          {STEPS.map(({ Illustration, ...step }) => (
+          {STEPS.map((step) => (
             <StageCard
               key={step.number}
               {...step}
-              illustration={<Illustration accent="#9067C6" />}
+              illustration={createElement(step.Illustration, { accent: "#9067C6" })}
               visible={pipeVis}
             />
           ))}
@@ -704,37 +756,33 @@ export default function HyFeynLanding() {
 // ─── ThemeToggle Component ───
 function ThemeToggle() {
   const THEME_STORAGE_KEY = 'learnops-theme';
-  const [themePreference, setThemePreference] = useState('light');
-
-  const updateThemeToggleUi = (resolvedTheme) => {
-    setThemePreference(resolvedTheme);
+  const readStoredThemePreference = () => {
+    try {
+      return localStorage.getItem(THEME_STORAGE_KEY) === 'dark' ? 'dark' : 'light';
+    } catch (error) {
+      console.warn('Theme preference unavailable.', error);
+      return 'light';
+    }
   };
+  const [themePreference, setThemePreference] = useState(readStoredThemePreference);
 
-  const applyThemePreference = (nextPreference, persist = true) => {
-    const resolvedTheme = nextPreference === 'dark' ? 'dark' : 'light';
+  const applyThemePreference = (resolvedTheme) => {
     document.body.classList.toggle('night', resolvedTheme === 'dark');
     document.body.dataset.theme = resolvedTheme;
     document.documentElement.dataset.theme = resolvedTheme;
-    updateThemeToggleUi(resolvedTheme);
-    if (persist) {
-      try {
-        localStorage.setItem(THEME_STORAGE_KEY, resolvedTheme);
-      } catch (err) {}
-    }
   };
 
   useEffect(() => {
+    applyThemePreference(themePreference);
     try {
-      const stored = localStorage.getItem(THEME_STORAGE_KEY);
-      applyThemePreference(stored === 'dark' ? 'dark' : 'light', false);
-    } catch (err) {
-      console.warn('Theme preference unavailable.', err);
-      applyThemePreference('light', false);
+      localStorage.setItem(THEME_STORAGE_KEY, themePreference);
+    } catch (error) {
+      console.warn('Theme preference unavailable.', error);
     }
-  }, []);
+  }, [themePreference]);
 
   const toggleTheme = () => {
-    applyThemePreference(themePreference === 'dark' ? 'light' : 'dark');
+    setThemePreference(themePreference === 'dark' ? 'light' : 'dark');
   };
 
   const isDark = themePreference === 'dark';
