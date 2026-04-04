@@ -372,6 +372,20 @@ export default function HyFeynLanding() {
   const [iframeRef, iframeVis] = useInView(0.05);
   const [testRef, testVis] = useInView(0.1);
 
+  const heroShellRef = useRef(null);
+  const [heroScale, setHeroScale] = useState(1);
+
+  useEffect(() => {
+    if (!heroShellRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      const { width } = entries[0].contentRect;
+      // Synthesize exact scaling regardless of scrollbars or mystery paddings based on a 760px source window
+      setHeroScale(Math.min(1, width / 760));
+    });
+    observer.observe(heroShellRef.current);
+    return () => observer.disconnect();
+  }, []);
+
   const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -458,7 +472,11 @@ export default function HyFeynLanding() {
           <div className="landing-hero-preview relative min-w-0">
             <div className="absolute -inset-4 bg-primary/10 blur-[120px] rounded-full" />
             <div className="absolute -inset-10 bg-surface-container/60 blur-[60px] rounded-full" />
-            <div className="hero-demo-scale-shell relative z-10 transition-transform hover:-translate-y-2 duration-500">
+            <div
+              ref={heroShellRef}
+              style={{ "--hero-demo-scale": heroScale }}
+              className="hero-demo-scale-shell relative z-10 transition-transform hover:-translate-y-2 duration-500"
+            >
               <HeroProductVignette />
             </div>
           </div>

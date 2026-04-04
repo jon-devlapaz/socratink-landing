@@ -1573,8 +1573,12 @@ body[data-theme="dark"] .drill-evaluation {
 
 @media (max-width: 899px) {
   .landing-hero-panel {
-    padding: 1.75rem;
-    border-radius: 2rem;
+    padding: 1.25rem 1rem;
+    border-radius: 1.5rem;
+  }
+
+  .landing-hero-preview {
+    padding: 0;
   }
 
   .landing-value-strip__inner {
@@ -1582,57 +1586,27 @@ body[data-theme="dark"] .drill-evaluation {
   }
 
   .landing-hero-title {
-    font-size: clamp(3rem, 13vw, 4.25rem);
+    font-size: clamp(2.5rem, 11vw, 4.25rem);
   }
 
   .landing-value-item {
     padding: 0.8rem 0.4rem;
   }
 
-  .demo-window {
-    min-height: 0;
-  }
-
   .hero-demo-scale-shell {
-    --hero-demo-scale: 1;
-    aspect-ratio: auto;
+    --hero-demo-scale: calc((100vw - 5rem) / 760);
+    aspect-ratio: 760 / 520;
+    overflow: hidden;
+    border-radius: 1.5rem;
   }
 
   .hero-demo-scale-shell > .hero-demo-frame {
-    position: relative;
-    inset: auto;
-    width: 100%;
-    height: auto;
-    transform: none;
-  }
-
-  .demo-topbar {
-    grid-template-columns: 1fr;
-    justify-items: start;
-  }
-
-  .demo-phases {
-    width: 100%;
-  }
-
-  .demo-window-controls {
-    display: none;
-  }
-
-  .demo-stage {
-    grid-template-columns: 1fr;
-  }
-
-  .demo-graph-panel {
-    min-height: 21rem;
-  }
-
-  .demo-drill-panel {
-    min-height: 0;
-  }
-
-  .drill-response {
-    min-height: 7rem;
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 760px;
+    height: 520px;
+    transform: scale(var(--hero-demo-scale));
+    transform-origin: top left;
   }
 
   .theme-toggle {
