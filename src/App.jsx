@@ -1,12 +1,12 @@
 import { createElement, useEffect, useRef, useState } from "react";
 import {
   Brain, Shield, ChevronRight, ChevronDown,
-  ArrowRight, Sparkles, Lock, AlertCircle, CheckCircle2,
+  ArrowRight, Sparkles, Lock,
   Activity
 } from "lucide-react";
 
 // ─── Constants ───
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const APP_LOGIN_URL = "https://app.socratink.ai/login";
 
 // ─── Animation Hook ───
 function useInView(threshold = 0.15) {
@@ -368,8 +368,6 @@ function HeroProductVignette() {
 export default function HyFeynLanding() {
   const [probRef, probVis] = useInView(0.1);
   const [pipeRef, pipeVis] = useInView(0.1);
-  const [previewRef, previewVis] = useInView(0.1);
-  const [iframeRef, iframeVis] = useInView(0.05);
   const [testRef, testVis] = useInView(0.1);
 
   const heroShellRef = useRef(null);
@@ -386,41 +384,6 @@ export default function HyFeynLanding() {
     return () => observer.disconnect();
   }, []);
 
-  const [firstName, setFirstName] = useState("");
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [formError, setFormError] = useState("");
-
-  const canSubmit = firstName && email && EMAIL_REGEX.test(email);
-
-  async function handleWaitlist(e) {
-    e.preventDefault();
-    if (!canSubmit) return;
-    setLoading(true);
-    setFormError("");
-    try {
-      const res = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({
-          access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY,
-          name: firstName,
-          email,
-          subject: "socratink Waitlist Sign-up",
-          from_name: "socratink Waitlist",
-        }),
-      });
-      const result = await res.json();
-      if (result.success) setSubmitted(true);
-      else setFormError("Something went wrong. Please try again.");
-    } catch {
-      setFormError("Network error. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
   return (
     <div className="landing-shell min-h-screen bg-surface text-ink font-body selection:bg-primary/20 selection:text-ink">
 
@@ -434,8 +397,13 @@ export default function HyFeynLanding() {
           <div className="hidden md:flex items-center space-x-8">
             <a href="#how-it-works" className="text-ink-muted font-display font-medium text-[15px] hover:text-primary transition-colors duration-300">How It Works</a>
             <a href="#why-different" className="text-ink-muted font-display font-medium text-[15px] hover:text-primary transition-colors duration-300">Why It's Different</a>
-            <a href="#waitlist" className="btn-primary px-6 py-2.5 rounded-full font-medium text-[15px]">
-              Join Waitlist
+            <a
+              href={APP_LOGIN_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary px-6 py-2.5 rounded-full font-medium text-[15px]"
+            >
+              Try It
             </a>
           </div>
         </div>
@@ -453,12 +421,12 @@ export default function HyFeynLanding() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <a
-                href="https://app.socratink.ai/"
+                href={APP_LOGIN_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="landing-demo-button px-7 py-3.5 rounded-full font-display font-semibold text-[0.98rem] text-center button-glow"
               >
-                Try the Demo
+                Try It
               </a>
               <a
                 href="#how-it-works"
@@ -549,71 +517,6 @@ export default function HyFeynLanding() {
         </div>
       </section>
 
-      {/* ─── PRODUCT PREVIEW ─── */}
-      <section ref={previewRef} className="landing-preview-section py-24 px-6 bg-surface-container border-y border-outline-variant/30 relative overflow-hidden">
-        <div className="absolute inset-0 bg-surface/10 pointer-events-none"></div>
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary/5 blur-[120px] rounded-full pointer-events-none"></div>
-        <div className="max-w-5xl mx-auto relative z-10">
-          <div className={`text-center mb-12 transition-all duration-700 ${previewVis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-            <p className="text-xs font-semibold text-primary-dim tracking-widest uppercase mb-3">Live prototype</p>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-ink mb-4 tracking-tight">
-              The map is real. Try it.
-            </h2>
-            <p className="text-ink-muted max-w-xl mx-auto text-lg font-light">
-              This is the working prototype — not a mockup. Upload material, drill a node, and see the graph respond to what you actually understand.
-            </p>
-          </div>
-
-          {/* Browser frame */}
-          <div className={`transition-all duration-700 delay-200 ${previewVis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-            <div className="preview-window landing-card rounded-2xl overflow-hidden border border-outline-variant/50 shadow-[0_20px_60px_rgba(36,32,56,0.08)] bg-surface-high">
-              {/* Browser chrome */}
-              <div className="preview-window__chrome bg-surface-container px-5 py-3.5 flex items-center gap-4 border-b border-outline-variant/40 shadow-sm">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-[#E05C6B]/80" />
-                  <div className="w-3 h-3 rounded-full bg-[#F5A623]/80" />
-                  <div className="w-3 h-3 rounded-full bg-tertiary/80" />
-                </div>
-                <div className="preview-window__address flex-1 bg-surface/50 rounded-md xl:rounded-lg px-4 py-1.5 text-xs text-ink-muted font-mono truncate text-center mx-auto max-w-lg border border-outline-variant/30">
-                  app.socratink.ai/
-                </div>
-                <a
-                  href="https://app.socratink.ai/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="preview-window__link text-xs text-primary hover:text-ink transition-colors whitespace-nowrap flex items-center gap-1.5 font-medium"
-                >
-                  Open full screen
-                  <ArrowRight size={14} />
-                </a>
-              </div>
-              {/* iframe — only mounts once section enters viewport */}
-              <div ref={iframeRef} style={{ height: "600px" }} className="preview-window__viewport bg-surface-container rounded-b-2xl overflow-hidden">
-                {iframeVis && (
-                  <iframe
-                    src="https://app.socratink.ai/"
-                    title="socratink Prototype"
-                    className="w-full h-full border-0"
-                  />
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className={`text-center mt-10 transition-all duration-700 delay-300 ${previewVis ? "opacity-100" : "opacity-0"}`}>
-            <a
-              href="https://app.socratink.ai/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="preview-inline-cta inline-flex items-center gap-2 text-sm text-ink-muted font-medium hover:text-primary transition-colors bg-surface px-5 py-2.5 rounded-full border border-outline-variant/40"
-            >
-              Open in a new tab for the full experience
-              <ArrowRight size={16} />
-            </a>
-          </div>
-        </div>
-      </section>
-
       {/* ─── WHY IT FEELS DIFFERENT ─── */}
       <section id="why-different" className="py-24 px-6 bg-surface-high">
         <div className="max-w-5xl mx-auto">
@@ -688,62 +591,25 @@ export default function HyFeynLanding() {
         </div>
       </section>
 
-      {/* ─── WAITLIST ─── */}
-      <section id="waitlist" className="py-32 px-6 relative bg-surface border-t border-outline-variant/30 overflow-hidden">
+      {/* ─── CTA ─── */}
+      <section className="py-28 px-6 relative bg-surface border-t border-outline-variant/30 overflow-hidden">
         <div className="max-w-3xl mx-auto relative z-10">
           <div className="waitlist-card landing-card bg-surface-container rounded-3xl p-10 md:p-14 border border-outline-variant/40 shadow-[0_24px_80px_rgba(144,103,198,0.12)]">
-            {submitted ? (
-              <div className="text-center py-8">
-                <div className="w-20 h-20 rounded-full bg-tertiary/10 border border-tertiary/30 flex items-center justify-center mx-auto mb-6">
-                  <CheckCircle2 size={40} className="text-tertiary" />
-                </div>
-                <h3 className="text-3xl font-display font-bold text-ink mb-3">You're on the list!</h3>
-                <p className="text-ink-muted text-lg leading-relaxed max-w-sm mx-auto">
-                  We'll notify <strong className="text-primary font-medium">{email}</strong> the moment socratink is ready for you.
-                </p>
-              </div>
-            ) : (
-              <>
-                <div className="text-center mb-10">
-                  <h2 className="text-3xl md:text-4xl font-display font-bold mb-4 text-ink tracking-tight">Build a map you can trust.</h2>
-                  <p className="text-ink-muted text-lg font-light">Join the waitlist. No spam — just signal when socratink is ready.</p>
-                </div>
-                <form onSubmit={handleWaitlist} className="space-y-6 max-w-lg mx-auto">
-                  {formError && (
-                    <div className="p-4 rounded-xl bg-[#E05C6B]/10 border border-[#E05C6B]/20 text-[#E05C6B] text-sm flex items-center gap-2">
-                      <AlertCircle size={16} /> {formError}
-                    </div>
-                  )}
-                  <div>
-                    <label className="block text-xs uppercase tracking-widest text-ink-muted mb-2 font-medium">First Name</label>
-                    <input
-                      type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)}
-                      placeholder="Jane" required
-                      className="waitlist-input w-full bg-surface-high border border-outline-variant/50 rounded-xl focus:border-primary focus:ring-4 focus:ring-primary/10 text-ink p-4 outline-none transition-all"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs uppercase tracking-widest text-ink-muted mb-2 font-medium">Email Address</label>
-                    <input
-                      type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                      placeholder="jane@example.com" required
-                      className="waitlist-input w-full bg-surface-high border border-outline-variant/50 rounded-xl focus:border-primary focus:ring-4 focus:ring-primary/10 text-ink p-4 outline-none transition-all"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={!canSubmit || loading}
-                    className="w-full btn-primary py-4 mt-2 rounded-xl font-display font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {loading ? "Sending..." : "Join the Waitlist"}
-                  </button>
-                  <p className="text-center text-sm text-ink-muted/80 flex items-center justify-center gap-2 mt-4 font-medium">
-                    <Lock size={14} />
-                    No spam. Unsubscribe any time.
-                  </p>
-                </form>
-              </>
-            )}
+            <div className="text-center">
+              <h2 className="text-3xl md:text-4xl font-display font-bold mb-4 text-ink tracking-tight">Build a map you can test.</h2>
+              <p className="text-ink-muted text-lg font-light max-w-xl mx-auto mb-8">
+                socratink is now in minimum viable testing. Enter through the app login and start using the real product.
+              </p>
+              <a
+                href={APP_LOGIN_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-display font-semibold text-lg"
+              >
+                Try It
+                <ArrowRight size={18} />
+              </a>
+            </div>
           </div>
         </div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-primary/10 blur-[150px] rounded-full pointer-events-none" />
