@@ -139,10 +139,11 @@ function StageCard({ number, title, description, illustration, accentClass, dela
       }`}
       style={{ transitionDelay: `${delay}ms`, transitionProperty: "opacity, transform", transitionDuration: "700ms" }}
     >
-      <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 ${accentClass}`}>
-        <div className="w-10 h-10">{illustration}</div>
+      <div className={`stage-illustration relative rounded-xl mb-6 h-44 border border-outline-variant/20 overflow-hidden flex items-center justify-center ${accentClass}`}>
+        <span className="absolute top-3 left-3 w-7 h-7 rounded-full bg-primary text-white text-xs font-display font-bold flex items-center justify-center shadow-md">{number}</span>
+        <div className="w-32 h-32">{illustration}</div>
       </div>
-      <h4 className="font-display font-medium text-xl text-ink mb-3">{number}. {title}</h4>
+      <h4 className="font-display font-medium text-xl text-ink mb-3">{title}</h4>
       <p className="text-sm text-ink-muted leading-relaxed">{description}</p>
     </div>
   );
@@ -599,21 +600,30 @@ export default function HyFeynLanding() {
         </div>
       </section>
 
-      {/* ─── EARLY ADOPTERS ─── */}
+      {/* ─── FOUNDER NOTE ─── */}
       <section ref={testRef} className="py-24 px-6 bg-surface-container border-y border-outline-variant/20 overflow-hidden relative">
         <div className="absolute top-0 right-0 w-[40%] h-full bg-primary/5 blur-[100px] pointer-events-none rounded-full"></div>
-        <div className="max-w-2xl mx-auto text-center relative z-10">
+        <div className="max-w-2xl mx-auto relative z-10">
           <div className={`transition-all duration-700 ${testVis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
-            <div className="w-14 h-14 rounded-2xl bg-surface border border-outline-variant/50 flex items-center justify-center mx-auto mb-6 subtle-shadow">
-              <Sparkles size={24} className="text-primary" />
+            <div className="flex items-center justify-center mb-6">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface border border-outline-variant/50 text-xs font-semibold tracking-widest uppercase text-primary">
+                <Sparkles size={12} />
+                A note from the founder
+              </span>
             </div>
-            <h2 className="text-3xl font-display font-bold mb-4 text-ink tracking-tight">Still testing. Still learning.</h2>
-            <p className="text-ink-muted leading-relaxed mb-4 text-lg font-light">
-              socratink is in active development. The map is being built the same way we ask you to build yours — one verified step at a time.
-            </p>
-            <p className="text-ink-muted leading-relaxed font-medium">
-              To our early adopters: thank you. Your feedback is shaping every decision.
-            </p>
+            <h2 className="text-3xl font-display font-bold mb-6 text-ink tracking-tight text-center">Still testing. Still learning.</h2>
+            <div className="space-y-4 text-ink-muted leading-relaxed text-lg font-light">
+              <p>
+                socratink started because I kept fooling myself — highlighter-sure one minute, floored the next when someone asked why.
+              </p>
+              <p>
+                I wanted a system that refused to let me hide. What&rsquo;s here today is the first honest version of that. It&rsquo;s rough in places. The map you drill tomorrow will be sharper than today&rsquo;s — because you tested today&rsquo;s.
+              </p>
+              <p>
+                If you&rsquo;re here early, you&rsquo;re not just a user. You&rsquo;re a co-builder. Every session you run and every place the map feels wrong shapes what ships next. Tell me when it breaks.
+              </p>
+            </div>
+            <p className="mt-8 text-sm font-display font-semibold text-ink">— Jon, founder</p>
           </div>
         </div>
       </section>
