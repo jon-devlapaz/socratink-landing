@@ -414,23 +414,26 @@ export default function HyFeynLanding() {
             <img src="/logo.png" alt="socratink Logo" className="w-10 h-10 object-contain rounded-md shadow-sm" />
             socratink
           </div>
-          <div className="hidden md:flex items-center space-x-8">
-            <a href="#how-it-works" className="text-ink-muted font-display font-medium text-[15px] hover:text-primary transition-colors duration-300">How It Works</a>
-            <a href="#why-different" className="text-ink-muted font-display font-medium text-[15px] hover:text-primary transition-colors duration-300">Why It's Different</a>
-            <a
-              href={DISCORD_INVITE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Join the socratink Discord"
-              className="discord-icon-link"
-            >
-              <DiscordIcon size={21} />
-            </a>
+          <div className="flex items-center gap-3 md:gap-5">
+            <div className="hidden md:flex items-center space-x-8">
+              <a href="#how-it-works" className="text-ink-muted font-display font-medium text-[15px] hover:text-primary transition-colors duration-300">How It Works</a>
+              <a href="#why-different" className="text-ink-muted font-display font-medium text-[15px] hover:text-primary transition-colors duration-300">Why It's Different</a>
+              <a
+                href={DISCORD_INVITE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Join the socratink Discord"
+                className="discord-icon-link"
+              >
+                <DiscordIcon size={21} />
+              </a>
+            </div>
+            <ThemeToggle variant="inline" />
             <a
               href={APP_LOGIN_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-primary px-6 py-2.5 rounded-full font-medium text-[15px]"
+              className="btn-primary px-6 py-2.5 rounded-full font-medium text-[15px] hidden md:inline-flex"
             >
               tink it
             </a>
@@ -700,7 +703,6 @@ export default function HyFeynLanding() {
             <a href="/privacy.html" className="hover:text-primary transition-colors">Privacy</a>
             <a href="#how-it-works" className="hover:text-primary transition-colors">How it works</a>
             <a href="#why-different" className="hover:text-primary transition-colors">Why it&rsquo;s different</a>
-            <ThemeToggle variant="inline" />
           </div>
         </div>
       </footer>
