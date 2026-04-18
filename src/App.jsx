@@ -200,7 +200,7 @@ const ILLUSION_ITEMS = [
 ];
 
 const HERO_LOOP_MS = 16000;
-const HERO_RESPONSE = "B is the active mechanism that connects the core idea to the next branch. If I can explain B clearly, the map can open what depends on it.";
+const HERO_RESPONSE = "Momentum is what force produces over time. If I can explain how a force applied for an interval changes motion, the map can open Energy.";
 
 function usePrefersReducedMotion() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(() => {
@@ -330,20 +330,20 @@ function HeroProductVignette() {
 
                 <div className="graph-nodes" aria-hidden="true">
                   <div className={`graph-node graph-node--a ${nodesVisible.a ? "is-visible is-solidified" : ""}`}>
-                    <span className="graph-node__label">A</span>
+                    <span className="graph-node__label">Force</span>
                   </div>
                   <div className={`graph-node graph-node--core ${nodesVisible.core ? "is-visible is-solidified" : ""}`}>
-                    <span className="graph-node__label">Core</span>
+                    <span className="graph-node__label">Motion</span>
                   </div>
                   <div className={`graph-node graph-node--c ${nodesVisible.c ? "is-visible is-drilled" : ""}`}>
-                    <span className="graph-node__label">C</span>
+                    <span className="graph-node__label">Mass</span>
                   </div>
                   <div className={`graph-node graph-node--b ${nodesVisible.b ? "is-visible" : ""} ${after(10500) ? "is-solidified" : after(2500) ? "is-active" : ""}`}>
                     <span className={`graph-node__ripple ${showRipple ? "is-visible" : ""}`} />
-                    <span className="graph-node__label">B</span>
+                    <span className="graph-node__label">Momentum</span>
                   </div>
                   <div className={`graph-node graph-node--d ${nodesVisible.d ? "is-visible" : ""} ${after(10500) ? "is-open" : "is-locked"}`}>
-                    <span className="graph-node__label">D</span>
+                    <span className="graph-node__label">Energy</span>
                   </div>
                   <div className={`graph-node graph-node--unknown ${nodesVisible.unknown ? "is-visible is-locked" : ""}`}>
                     <span className="graph-node__label">?</span>
@@ -359,7 +359,7 @@ function HeroProductVignette() {
 
               <div className={`demo-drill-panel ${showDrillPanel ? "is-visible" : ""} ${focusDrillPanel ? "is-focused" : ""}`}>
                 <div className="drill-kicker">Socratic Drill</div>
-                <div className={`drill-prompt ${after(4500) ? "is-visible" : ""}`}>Explain why node B matters in the system.</div>
+                <div className={`drill-prompt ${after(4500) ? "is-visible" : ""}`}>Explain why Momentum matters in this system.</div>
                 <div className={`drill-response ${after(4500) ? "is-visible" : ""}`}>
                   <span>{typedResponse}</span>
                   <span className={`drill-cursor ${between(4500, 8000) ? "is-visible" : ""}`} aria-hidden="true" />
@@ -454,7 +454,7 @@ export default function HyFeynLanding() {
               </h1>
             </div>
             <p className="landing-hero-lede text-[1.03rem] md:text-[1.1rem] text-ink-muted max-w-[29rem] leading-relaxed font-light">
-              Bring your own notes or transcript. Get a map. Explain one idea from memory. Tell me where the experience breaks.
+              Paste in what you are studying. socratink builds a map. You rebuild one idea from memory. The map only moves when your understanding does.
             </p>
             <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4">
               <a
@@ -593,14 +593,14 @@ export default function HyFeynLanding() {
                 <Lock size={22} className="text-tertiary" />
               </div>
               <h3 className="font-display font-semibold text-xl text-ink mb-2">Progression is earned</h3>
-              <p className="text-[15px] text-ink-muted leading-relaxed">New territory opens when prerequisite ideas are actually solid. No shortcuts.</p>
+              <p className="text-[15px] text-ink-muted leading-relaxed">Advanced nodes stay locked until the prerequisite ideas hold up under drill. Skip ahead and the map quietly returns you.</p>
             </div>
             <div className="feature-card landing-card rounded-2xl bg-surface-container border border-outline-variant/30 p-8 subtle-shadow hover:-translate-y-1 transition-transform duration-300">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5 border border-primary/20">
                 <Activity size={22} className="text-primary" />
               </div>
               <h3 className="font-display font-semibold text-xl text-ink mb-2">Weak spots are useful</h3>
-              <p className="text-[15px] text-ink-muted leading-relaxed">"Not solid yet" is not failure. It is the next place to grow.</p>
+              <p className="text-[15px] text-ink-muted leading-relaxed">&ldquo;Not solid yet&rdquo; is the marker for your next session — visible on the map, not hidden under a streak.</p>
             </div>
           </div>
         </div>
@@ -654,7 +654,7 @@ export default function HyFeynLanding() {
         <div className="max-w-3xl mx-auto relative z-10">
           <div className="waitlist-card landing-card bg-surface-container rounded-3xl p-10 md:p-14 border border-outline-variant/40 shadow-[0_24px_80px_rgba(144,103,198,0.12)]">
             <div className="text-center">
-              <h2 className="text-3xl md:text-4xl font-display font-bold mb-4 text-ink tracking-tight">Build a map you can test.</h2>
+              <h2 className="text-3xl md:text-4xl font-display font-bold mb-4 text-ink tracking-tight">Find out what you can actually explain.</h2>
               <p className="text-ink-muted text-lg font-light max-w-xl mx-auto mb-8">
                 Paste notes or a transcript you are actually trying to learn. Rebuild one idea from memory. Then decide whether the map tells the truth.
               </p>
