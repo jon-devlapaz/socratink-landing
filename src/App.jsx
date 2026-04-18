@@ -111,25 +111,20 @@ function IsoreFeyn({ accent = "#9067C6" }) {
   );
 }
 
-// ─── FAQ Accordion (document style) ───
-function FAQItem({ question, answer, num, defaultOpen = false }) {
-  const [open, setOpen] = useState(defaultOpen);
+// ─── FAQ Accordion ───
+function FAQItem({ question, answer }) {
+  const [open, setOpen] = useState(false);
   return (
-    <div className={`faq-doc__item ${open ? "is-open" : ""}`}>
-      <div className="faq-doc__num tabular">Q.{String(num).padStart(2, "0")}</div>
-      <div>
-        <button
-          type="button"
-          onClick={() => setOpen(!open)}
-          className="faq-doc__btn"
-          aria-expanded={open}
-        >
-          <span className="faq-doc__q">{question}</span>
-          <ChevronDown size={18} className="faq-doc__chev" />
-        </button>
-        <div className="faq-doc__a">
-          <p>{answer}</p>
-        </div>
+    <div className="border-b border-outline-variant/40">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between py-5 text-left group"
+      >
+        <span className="text-ink font-medium text-base pr-4 group-hover:text-primary transition-colors">{question}</span>
+        <ChevronDown size={18} className={`text-primary shrink-0 transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
+      </button>
+      <div className={`overflow-hidden transition-all duration-300 ${open ? "max-h-48 pb-5" : "max-h-0"}`}>
+        <p className="text-ink-muted text-sm leading-relaxed">{answer}</p>
       </div>
     </div>
   );
@@ -202,33 +197,6 @@ const ILLUSION_ITEMS = [
   { title: "You read it", detail: "Highlighted, summarized, reviewed the notes. Felt like progress." },
   { title: "You recognized it", detail: "Saw the answer on a flashcard and thought — yeah, I know that." },
   { title: "Then you tried to explain it", detail: "From memory, out loud, to someone who asked why. And the floor dropped out." },
-];
-
-const PILLARS = [
-  {
-    num: "01",
-    title: "The graph tells the <em>truth.</em>",
-    body: "Not a browser. Not a checklist. A record of verified understanding — every edge earned by reconstruction, not page-views.",
-    icon: <Shield size={18} strokeWidth={1.5} />,
-  },
-  {
-    num: "02",
-    title: "Drill protects <em>recall.</em>",
-    body: "When it is time to answer, the explanation disappears. You generate first. Evaluation comes second. Feedback, last.",
-    icon: <Brain size={18} strokeWidth={1.5} />,
-  },
-  {
-    num: "03",
-    title: "Progression is <em>earned.</em>",
-    body: "Advanced nodes stay locked until the prerequisite ideas hold up under drill. Skip ahead and the map quietly returns you.",
-    icon: <Lock size={18} strokeWidth={1.5} />,
-  },
-  {
-    num: "04",
-    title: "Weak spots are <em>useful.</em>",
-    body: "\u201CNot solid yet\u201D is the marker for your next session — visible on the map, not hidden under a streak that rewards returning, not understanding.",
-    icon: <Activity size={18} strokeWidth={1.5} />,
-  },
 ];
 
 const HERO_LOOP_MS = 16000;
@@ -477,40 +445,45 @@ export default function HyFeynLanding() {
       <section className="landing-hero relative pt-32 pb-20 px-6 hero-gradient overflow-hidden border-b border-outline-variant/20">
         <div className="landing-hero-panel max-w-[86rem] mx-auto grid grid-cols-1 lg:grid-cols-[minmax(0,0.96fr)_minmax(0,1.04fr)] gap-8 xl:gap-10 items-center">
           <div className="landing-hero-copy min-w-0 space-y-8 relative z-10">
-            <div className="space-y-5">
-              <p className="hero-section-mark">
-                <span className="hero-section-mark__glyph">§</span>
-                <span>Study tool · reconstruction over recognition</span>
+            <div className="space-y-3">
+              <p className="landing-hero-eyebrow font-display text-[0.72rem] md:text-sm tracking-[0.18em] uppercase text-primary/80 font-semibold">
+                A study tool for deep understanding through reconstruction
               </p>
-              <h1 className="landing-hero-title text-[clamp(3.85rem,5.2vw,5.6rem)] font-display leading-[0.92] text-ink">
-                See what you can <span className="hero-accent">actually</span> explain.
+              <h1 className="landing-hero-title text-[clamp(3.85rem,5.2vw,5.6rem)] font-display font-bold leading-[0.92] tracking-tight text-ink">
+                See what you can <span className="text-primary">actually explain.</span>
               </h1>
             </div>
-            <p className="landing-hero-lede text-[1.03rem] md:text-[1.13rem] text-ink-muted max-w-[30rem] leading-relaxed">
+            <p className="landing-hero-lede text-[1.03rem] md:text-[1.1rem] text-ink-muted max-w-[29rem] leading-relaxed font-light">
               Paste in what you are studying. socratink builds a map. You rebuild one idea from memory. The map only moves when your understanding does.
             </p>
-            <div className="hero-cta-cluster">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4">
               <a
                 href={APP_LOGIN_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="landing-demo-button px-7 py-3.5 rounded-full font-body font-medium text-[0.98rem] text-center button-glow"
+                className="landing-demo-button px-7 py-3.5 rounded-full font-display font-semibold text-[0.98rem] text-center button-glow"
               >
                 tink it
-                <ArrowRight size={16} className="ml-2" />
               </a>
               <a
                 href={DISCORD_INVITE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-ghost"
+                className="landing-inline-link flex items-center gap-2 px-4 py-4 text-ink-muted hover:text-primary text-sm font-medium transition-colors"
               >
-                <DiscordIcon size={16} />
-                Join the Discord
+                <DiscordIcon size={18} />
+                Join Discord
+              </a>
+              <a
+                href="#how-it-works"
+                className="landing-inline-link flex items-center gap-2 px-4 py-4 text-ink-muted hover:text-primary text-sm font-medium transition-colors"
+              >
+                See how the map works
+                <ChevronRight size={16} />
               </a>
             </div>
-            <p className="landing-hero-meta text-xs text-ink-muted/75 font-mono tracking-[0.12em] -mt-2">
-              your material · free during beta · no credit card
+            <p className="landing-hero-meta text-xs md:text-sm text-ink-muted/80 font-medium -mt-2">
+              Start your first drill with your own material · free during beta · no credit card
             </p>
           </div>
           <div className="landing-hero-preview relative min-w-0">
@@ -529,165 +502,123 @@ export default function HyFeynLanding() {
 
       {/* ─── VALUE STRIP ─── */}
       <section className="landing-value-strip py-12 px-6 bg-surface-container border-b border-outline-variant/20">
-        <div className="landing-value-strip__inner max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
-          {[
-            { n: "01", t: "One room at a time", d: "Know exactly what you are working on." },
-            { n: "02", t: "No fake progress", d: "The map updates only when you actually get it." },
-            { n: "03", t: "Weak spots stay visible", d: "Unfinished ideas stay return-worthy, not shameful." },
-          ].map((item) => (
-            <div key={item.n} className="landing-value-item text-left">
-              <div className="font-mono text-[0.7rem] tracking-[0.22em] uppercase text-primary mb-2 opacity-80">/ {item.n}</div>
-              <p className="font-display text-[1.3rem] leading-[1.2] text-ink mb-1.5">{item.t}</p>
-              <p className="text-sm text-ink-muted leading-relaxed">{item.d}</p>
-            </div>
-          ))}
+        <div className="landing-value-strip__inner max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <div className="landing-value-item">
+            <p className="font-display font-semibold text-lg text-ink mb-1">One room at a time</p>
+            <p className="text-sm text-ink-muted">Know exactly what you are working on.</p>
+          </div>
+          <div className="landing-value-item">
+            <p className="font-display font-semibold text-lg text-ink mb-1">No fake progress</p>
+            <p className="text-sm text-ink-muted">The map updates only when you actually get it.</p>
+          </div>
+          <div className="landing-value-item">
+            <p className="font-display font-semibold text-lg text-ink mb-1">Your weak spots stay visible</p>
+            <p className="text-sm text-ink-muted">Unfinished ideas stay return-worthy, not shameful.</p>
+          </div>
         </div>
       </section>
 
-      {/* ─── FAILURE LADDER ─── */}
-      <section ref={probRef} className="py-28 px-6 bg-surface-high">
-        <div className="max-w-5xl mx-auto">
+      {/* ─── PROBLEM ─── */}
+      <section ref={probRef} className="py-24 px-6 bg-surface-high">
+        <div className="max-w-3xl mx-auto">
           <div className={`transition-all duration-700 ${probVis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-            <div className="mb-14 max-w-2xl">
-              <p className="eyebrow-mono mb-5">
-                <span className="bullet">§</span>
-                The problem
-              </p>
-              <h2 className="text-[clamp(2.2rem,4vw,3.15rem)] font-display leading-[1.05] text-ink">
-                Most study tools reward <em className="hero-accent">exposure.</em>
-              </h2>
-              <p className="mt-5 text-lg text-ink-muted leading-relaxed max-w-xl">
-                socratink is built against that illusion. Here is the ladder you climb before you notice you are stuck.
-              </p>
-            </div>
-
-            <div className="failure-ladder">
+            <h2 className="font-display text-3xl md:text-4xl font-bold mb-6 text-ink text-center tracking-tight">
+              Most study tools reward exposure.
+            </h2>
+            <p className="text-lg text-ink-muted text-center mb-12 max-w-2xl mx-auto leading-relaxed">
+              socratink is built against that illusion.
+            </p>
+            <div className="space-y-6">
               {ILLUSION_ITEMS.map((item, i) => (
-                <div key={i} className="failure-row">
-                  <div className="failure-row__number">
-                    0{i + 1} <span className="opacity-40">/</span> 03
+                <div key={i} className="illusion-card landing-card flex items-start gap-5 rounded-2xl bg-surface-container border border-outline-variant/30 p-6 subtle-shadow hover:shadow-[0_8px_30px_rgba(144,103,198,0.06)] transition-shadow">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 mt-0.5">
+                    <span className="text-primary font-bold text-sm">{i + 1}</span>
                   </div>
-                  <div className="failure-row__body">
-                    <div className="failure-row__title">
-                      {item.title}
-                    </div>
-                    <p className="failure-row__detail">{item.detail}</p>
-                  </div>
-                  <div className="failure-row__marker">
-                    {i === 0 ? "felt like progress" : i === 1 ? "felt like knowing" : "no floor"}
+                  <div>
+                    <p className="font-semibold text-ink text-[17px] mb-1 font-display">{item.title}</p>
+                    <p className="text-[15px] text-ink-muted">{item.detail}</p>
                   </div>
                 </div>
               ))}
             </div>
-
-            <div className="failure-payoff">
-              <span className="failure-payoff__mark">→ payoff</span>
-              <p className="failure-payoff__text">
-                Recognition isn&rsquo;t recall. Reading isn&rsquo;t reconstruction. A map that moves on exposure <em>lies to you.</em>
-              </p>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* ─── METRICS STRIP (honest signals) ─── */}
-      <section aria-label="Beta signals" className="bg-surface">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="metrics-strip">
-            <div className="metrics-strip__label">
-              <strong>Beta · v0</strong>
-              What is true right now, not the pitch.
-            </div>
-            <div className="metric-cell">
-              <span className="metric-cell__value tabular">100<em>%</em></span>
-              <span className="metric-cell__key">your material</span>
-            </div>
-            <div className="metric-cell">
-              <span className="metric-cell__value tabular">0</span>
-              <span className="metric-cell__key">streak mechanics</span>
-            </div>
-            <div className="metric-cell">
-              <span className="metric-cell__value">1<em>&nbsp;idea</em></span>
-              <span className="metric-cell__key">at a time</span>
-            </div>
-            <div className="metric-cell">
-              <span className="metric-cell__value">only<em>&nbsp;on&nbsp;verify</em></span>
-              <span className="metric-cell__key">map advances</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── HOW IT WORKS (inverted ink section) ─── */}
-      <section id="how-it-works" ref={pipeRef} className="section-dark py-28 px-6">
-        <div className="max-w-6xl mx-auto text-center mb-20 relative">
-          <p className="eyebrow-mono mb-5 !text-[rgba(247,236,225,0.58)]">
-            <span className="bullet">§</span>
-            The loop
-          </p>
-          <h2 className="text-[clamp(2.4rem,4vw,3.4rem)] font-display leading-[1.05]">
-            Three steps. One <em className="hero-accent">honest</em> map.
-          </h2>
-          <p className="mt-5 text-[rgba(247,236,225,0.6)] max-w-xl mx-auto text-lg">
-            Your material, your map, your understanding — verified in that order.
+      {/* ─── HOW IT WORKS ─── */}
+      <section id="how-it-works" ref={pipeRef} className="py-24 px-6 bg-surface relative">
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-outline-variant/50 to-transparent"></div>
+        <div className="max-w-7xl mx-auto text-center mb-16 relative z-10">
+          <h2 className="text-4xl font-display font-bold mb-4 text-ink tracking-tight">How It Works</h2>
+          <p className="text-ink-muted max-w-2xl mx-auto text-lg font-light">
+            Three steps. Your material, your map, your understanding — verified.
           </p>
         </div>
-        <div className="relative max-w-6xl mx-auto">
-          <div className="step-connector" aria-hidden="true" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {STEPS.map((step) => (
-              <StageCard
-                key={step.number}
-                {...step}
-                illustration={createElement(step.Illustration, { accent: "#cac4ce" })}
-                visible={pipeVis}
-              />
-            ))}
-          </div>
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+          {STEPS.map((step) => (
+            <StageCard
+              key={step.number}
+              {...step}
+              illustration={createElement(step.Illustration, { accent: "#9067C6" })}
+              visible={pipeVis}
+            />
+          ))}
         </div>
       </section>
 
       {/* ─── WHY IT FEELS DIFFERENT ─── */}
-      <section id="why-different" className="py-28 px-6 bg-surface-high">
+      <section id="why-different" className="py-24 px-6 bg-surface-high">
         <div className="max-w-5xl mx-auto">
-          <div className="mb-16 max-w-3xl">
-            <p className="eyebrow-mono mb-5">
-              <span className="bullet">§</span>
-              Positioning · not an AI summary app
-            </p>
-            <h2 className="text-[clamp(2.2rem,4vw,3.15rem)] font-display leading-[1.05] text-ink">
-              Four commitments we <em className="hero-accent">refuse</em> to break.
-            </h2>
+          <div className="text-center mb-6">
+            <p className="text-xs font-semibold text-primary-dim tracking-widest uppercase mb-3">Not another AI summary app. Not a prettier flashcard deck. Not a note graph.</p>
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-ink tracking-tight">Why It's Different</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {PILLARS.map((p) => (
-              <article key={p.title} className="pillar-card">
-                <div className="pillar-card__tag">
-                  <span className="pillar-card__tag-label">/ pillar · {p.num}</span>
-                  <span className="pillar-card__tag-icon">{p.icon}</span>
-                </div>
-                <h3 className="pillar-card__title" dangerouslySetInnerHTML={{ __html: p.title }} />
-                <p className="pillar-card__body">{p.body}</p>
-              </article>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
+            <div className="feature-card landing-card rounded-2xl bg-surface-container border border-outline-variant/30 p-8 subtle-shadow hover:-translate-y-1 transition-transform duration-300">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5 border border-primary/20">
+                <Shield size={22} className="text-primary" />
+              </div>
+              <h3 className="font-display font-semibold text-xl text-ink mb-2">The graph tells the truth</h3>
+              <p className="text-[15px] text-ink-muted leading-relaxed">It is not a browser. It is not a checklist. It is a record of verified understanding.</p>
+            </div>
+            <div className="feature-card landing-card rounded-2xl bg-surface-container border border-outline-variant/30 p-8 subtle-shadow hover:-translate-y-1 transition-transform duration-300">
+              <div className="w-12 h-12 rounded-xl bg-primary-dim/10 flex items-center justify-center mb-5 border border-primary-dim/20">
+                <Brain size={22} className="text-primary-dim" />
+              </div>
+              <h3 className="font-display font-semibold text-xl text-ink mb-2">Drill protects recall</h3>
+              <p className="text-[15px] text-ink-muted leading-relaxed">When it is time to answer, explanation disappears. You generate first.</p>
+            </div>
+            <div className="feature-card landing-card rounded-2xl bg-surface-container border border-outline-variant/30 p-8 subtle-shadow hover:-translate-y-1 transition-transform duration-300">
+              <div className="w-12 h-12 rounded-xl bg-tertiary/10 flex items-center justify-center mb-5 border border-tertiary/20">
+                <Lock size={22} className="text-tertiary" />
+              </div>
+              <h3 className="font-display font-semibold text-xl text-ink mb-2">Progression is earned</h3>
+              <p className="text-[15px] text-ink-muted leading-relaxed">Advanced nodes stay locked until the prerequisite ideas hold up under drill. Skip ahead and the map quietly returns you.</p>
+            </div>
+            <div className="feature-card landing-card rounded-2xl bg-surface-container border border-outline-variant/30 p-8 subtle-shadow hover:-translate-y-1 transition-transform duration-300">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5 border border-primary/20">
+                <Activity size={22} className="text-primary" />
+              </div>
+              <h3 className="font-display font-semibold text-xl text-ink mb-2">Weak spots are useful</h3>
+              <p className="text-[15px] text-ink-muted leading-relaxed">&ldquo;Not solid yet&rdquo; is the marker for your next session — visible on the map, not hidden under a streak.</p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ─── FOUNDER NOTE ─── */}
-      <section ref={testRef} className="py-28 px-6 bg-surface-container border-y border-outline-variant/20 overflow-hidden relative">
+      <section ref={testRef} className="py-24 px-6 bg-surface-container border-y border-outline-variant/20 overflow-hidden relative">
         <div className="absolute top-0 right-0 w-[40%] h-full bg-primary/5 blur-[100px] pointer-events-none rounded-full"></div>
-        <div className="max-w-3xl mx-auto relative z-10 founder-note">
+        <div className="max-w-2xl mx-auto relative z-10">
           <div className={`transition-all duration-700 ${testVis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
-            <p className="eyebrow-mono mb-6 flex items-center gap-2">
-              <Sparkles size={12} className="text-primary" />
-              <span className="bullet">§</span>
-              A note from the founder
-            </p>
-            <h2 className="text-[clamp(2rem,3.4vw,2.6rem)] font-display leading-[1.1] mb-8 text-ink">
-              Still testing. <em className="hero-accent">Still learning.</em>
-            </h2>
-            <div className="space-y-5 text-ink-muted">
+            <div className="flex items-center justify-center mb-6">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface border border-outline-variant/50 text-xs font-semibold tracking-widest uppercase text-primary">
+                <Sparkles size={12} />
+                A note from the founder
+              </span>
+            </div>
+            <h2 className="text-3xl font-display font-bold mb-6 text-ink tracking-tight text-center">Still testing. Still learning.</h2>
+            <div className="space-y-4 text-ink-muted leading-relaxed text-lg font-light">
               <p>
                 socratink started because I kept fooling myself. Highlighter sure one minute, floored the next when someone asked why. I wanted a system that refused to let me hide.
               </p>
@@ -698,67 +629,49 @@ export default function HyFeynLanding() {
                 If you&rsquo;re reading this early, you&rsquo;re not just a user. You&rsquo;re building it with me. Every session you run and every place the map feels wrong shapes what ships next. Tell me when it breaks.
               </p>
             </div>
-            <p className="mt-10 founder-signature">— Jon, founder</p>
+            <p className="mt-8 text-sm font-display font-semibold text-ink">— Jon, founder</p>
           </div>
         </div>
       </section>
 
       {/* ─── FAQ ─── */}
-      <section className="py-28 px-6 bg-surface-high">
-        <div className="max-w-4xl mx-auto">
-          <div className="mb-14 max-w-3xl">
-            <p className="eyebrow-mono mb-5">
-              <span className="bullet">§</span>
-              FAQ · fair questions, fair answers
-            </p>
-            <h2 className="text-[clamp(2.2rem,4vw,3.15rem)] font-display leading-[1.05] text-ink">
-              Questions <em className="hero-accent">before</em> you ask.
-            </h2>
+      <section className="py-24 px-6 bg-surface-high">
+        <div className="max-w-2xl mx-auto">
+          <div className="text-center mb-12">
+            <p className="text-xs font-semibold text-primary-dim tracking-widest uppercase mb-3">FAQ</p>
+            <h2 className="font-display font-bold text-3xl text-ink tracking-tight">Questions before you ask</h2>
           </div>
-          <div className="faq-doc">
-            {FAQ_ITEMS.map((item, i) => (
-              <FAQItem key={item.question} {...item} num={i + 1} defaultOpen={i === 0} />
+          <div className="faq-shell landing-card bg-surface-container rounded-2xl p-6 border border-outline-variant/30 shadow-sm">
+            {FAQ_ITEMS.map((item) => (
+              <FAQItem key={item.question} {...item} />
             ))}
           </div>
         </div>
       </section>
 
       {/* ─── CTA ─── */}
-      <section className="py-32 px-6 relative bg-surface border-t border-outline-variant/30 overflow-hidden">
-        <div className="max-w-4xl mx-auto relative z-10 text-center">
-          <p className="eyebrow-mono mb-6 justify-center inline-flex">
-            <span className="bullet">§</span>
-            End of pitch
-          </p>
-          <h2 className="final-cta-title text-[clamp(2.6rem,5vw,4.2rem)] font-display leading-[1.02] text-ink mb-7 tracking-tight">
-            Find out what you can <em>actually</em> explain.
-          </h2>
-          <p className="text-ink-muted text-lg max-w-xl mx-auto mb-10 leading-relaxed">
-            Paste what you&rsquo;re studying. Rebuild one idea from memory. Then decide whether the map tells the truth.
-          </p>
-          <div className="hero-cta-cluster justify-center">
-            <a
-              href={APP_LOGIN_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="landing-demo-button px-8 py-4 rounded-full font-body font-medium text-[1rem] button-glow"
-            >
-              tink it
-              <ArrowRight size={16} className="ml-2" />
-            </a>
-            <a
-              href={DISCORD_INVITE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-ghost"
-            >
-              <DiscordIcon size={16} />
-              Join the Discord
-            </a>
+      <section className="py-28 px-6 relative bg-surface border-t border-outline-variant/30 overflow-hidden">
+        <div className="max-w-3xl mx-auto relative z-10">
+          <div className="waitlist-card landing-card bg-surface-container rounded-3xl p-10 md:p-14 border border-outline-variant/40 shadow-[0_24px_80px_rgba(144,103,198,0.12)]">
+            <div className="text-center">
+              <h2 className="text-3xl md:text-4xl font-display font-bold mb-4 text-ink tracking-tight">Find out what you can actually explain.</h2>
+              <p className="text-ink-muted text-lg font-light max-w-xl mx-auto mb-8">
+                Paste notes or a transcript you are actually trying to learn. Rebuild one idea from memory. Then decide whether the map tells the truth.
+              </p>
+              <a
+                href={APP_LOGIN_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-display font-semibold text-lg"
+              >
+                tink it
+                <ArrowRight size={18} />
+              </a>
+              <p className="text-xs md:text-sm text-ink-muted/80 font-medium mt-5">
+                Free during beta · no credit card · your notes stay yours
+              </p>
+            </div>
           </div>
-          <p className="text-xs text-ink-muted/70 font-mono tracking-[0.18em] mt-8 uppercase">
-            free during beta · no credit card · your notes stay yours
-          </p>
         </div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-primary/10 blur-[150px] rounded-full pointer-events-none" />
       </section>
