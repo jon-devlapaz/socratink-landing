@@ -680,12 +680,12 @@ export default function HyFeynLanding() {
       <footer className="landing-footer w-full border-t border-outline-variant/40 bg-surface-container">
         <div className="flex flex-col items-center gap-6 px-12 py-12 w-full max-w-7xl mx-auto">
           <div className="flex flex-col gap-2 items-center text-center">
+            <img src="/logo.png" alt="socratink Logo" className="w-7 h-7 object-contain rounded" />
             <div
-              className="font-display font-bold text-ink text-xl flex items-center gap-2"
+              className="font-display font-bold text-ink text-xl"
               title="socratink — sō·krə·tink (Socrates + think + ink)"
             >
-              <img src="/logo.png" alt="socratink Logo" className="w-6 h-6 object-contain rounded flex-shrink-0" />
-              <span>socra<span className="text-primary">tink</span></span>
+              socra<span className="text-primary">tink</span>
             </div>
             <p className="text-xs tracking-widest uppercase text-ink-muted/70 font-medium">sō·krə·tink</p>
             <a
