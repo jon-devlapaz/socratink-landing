@@ -1,33 +1,873 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
     <link rel="apple-touch-icon" href="/favicon-192x192.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>socratink</title>
-
-    <!-- SEO -->
-    <meta name="description" content="socratink is a reading room for learning by reconstruction. Bring source material, try from memory, and let the evidence map change only when you reconstruct." />
-
-    <!-- Open Graph -->
-    <meta property="og:title" content="socratink" />
-    <meta property="og:description" content="See what you can actually explain. Bring source material, sketch your starting model, then try from memory before any explanation appears." />
+    <meta name="description" content="Know what you can explain without notes. Socratink finds the link your reasoning cannot yet support and gives you the next part to repair." />
+    <meta property="og:title" content="socratink — learning by reconstruction" />
+    <meta property="og:description" content="Know what you can explain without notes." />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="/og-image.svg" />
-
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="socratink" />
-    <meta name="twitter:description" content="See what you can actually explain. Bring source material, sketch your starting model, then try from memory before any explanation appears." />
+    <meta name="twitter:title" content="socratink — learning by reconstruction" />
+    <meta name="twitter:description" content="Know what you can explain without notes." />
     <meta name="twitter:image" content="/og-image.svg" />
+    <meta name="color-scheme" content="light" />
+    <title>socratink — learning by reconstruction</title>
+    <style>
+      @font-face {
+        font-family: "Geom";
+        src: url("/fonts/Geom-VariableFont_wght.ttf") format("truetype");
+        font-weight: 100 900;
+        font-display: swap;
+      }
 
-    <!-- Font: Geom, self-hosted and declared via @font-face in src/index.css. -->
-    <link rel="preload" href="/fonts/Geom-VariableFont_wght.ttf" as="font" type="font/ttf" crossorigin />
+      @font-face {
+        font-family: "Inter";
+        src: url("/fonts/Inter-VariableFont_opsz,wght.ttf") format("truetype");
+        font-weight: 100 900;
+        font-display: swap;
+      }
+
+      :root {
+        --field: #f3f2f5;
+        --paper: #fcfbfd;
+        --ink: #18171c;
+        --muted: #65616d;
+        --quiet: #85808c;
+        --line: #d8d4dc;
+        --line-strong: #aaa3b2;
+        --grid: rgba(78, 48, 111, 0.09);
+        --violet: #6e4aa0;
+        --violet-dark: #4e306f;
+        --violet-wash: #eee8f5;
+        --white: #fff;
+        font-family: "Inter", system-ui, sans-serif;
+        color: var(--ink);
+        background: var(--field);
+      }
+
+      * { box-sizing: border-box; }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        min-width: 320px;
+        margin: 0;
+        background: var(--field);
+      }
+
+      button,
+      a { font: inherit; }
+
+      a { color: inherit; }
+
+      button,
+      a { touch-action: manipulation; }
+
+      h1,
+      h2 { text-wrap: balance; }
+
+      [id] { scroll-margin-top: 82px; }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .skip-link {
+        position: fixed;
+        z-index: 10;
+        top: 12px;
+        left: 12px;
+        padding: 10px 14px;
+        background: var(--ink);
+        color: var(--white);
+        transform: translateY(-160%);
+      }
+
+      .skip-link:focus { transform: translateY(0); }
+
+      .nav {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        min-height: 70px;
+        padding: 0 clamp(22px, 4.8vw, 72px);
+        border-bottom: 1px solid var(--line);
+        background: rgba(243, 242, 245, 0.94);
+        backdrop-filter: blur(14px);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        width: fit-content;
+        font-family: "Geom", sans-serif;
+        font-size: 20px;
+        font-weight: 760;
+        letter-spacing: -0.04em;
+        text-decoration: none;
+      }
+
+      .brand img {
+        width: 27px;
+        height: 27px;
+        border-radius: 6px;
+      }
+
+      .nav-action {
+        justify-self: end;
+        color: var(--ink);
+        font-size: 13px;
+        font-weight: 680;
+        text-decoration: none;
+      }
+
+      .nav-action::after {
+        content: " ↗";
+        color: var(--violet);
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(340px, 0.78fr) minmax(560px, 1.22fr);
+        min-height: calc(100vh - 70px);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .hero-copy {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: clamp(64px, 8vw, 122px) clamp(34px, 5.5vw, 86px);
+        border-right: 1px solid var(--line);
+      }
+
+      .eyebrow {
+        margin: 0 0 24px;
+        color: var(--violet);
+        font-size: 11px;
+        font-weight: 760;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      p { margin-top: 0; }
+
+      h1,
+      h2,
+      .display { font-family: "Geom", sans-serif; }
+
+      h1 {
+        max-width: 690px;
+        margin-bottom: 30px;
+        font-size: clamp(52px, 5.6vw, 84px);
+        font-weight: 560;
+        line-height: 0.93;
+        letter-spacing: -0.055em;
+      }
+
+      .lede {
+        max-width: 590px;
+        margin-bottom: 18px;
+        color: #46414c;
+        font-size: clamp(17px, 1.5vw, 21px);
+        line-height: 1.55;
+      }
+
+      .primary-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 28px;
+        width: fit-content;
+        min-height: 54px;
+        padding: 0 20px;
+        border: 1px solid var(--violet-dark);
+        border-radius: 2px;
+        background: var(--violet-dark);
+        color: var(--white);
+        font-size: 14px;
+        font-weight: 720;
+        text-decoration: none;
+        transition: background 160ms ease, transform 160ms ease;
+      }
+
+      .primary-action::after { content: "→"; font-size: 18px; }
+
+      .primary-action:hover { background: #3e235c; transform: translateY(-1px); }
+
+      .entry-note {
+        margin: 12px 0 0;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.45;
+      }
+
+      :focus-visible {
+        outline: 3px solid #9c7ac5;
+        outline-offset: 3px;
+      }
+
+      .proof-stage {
+        display: flex;
+        align-items: center;
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
+        padding: clamp(34px, 5vw, 76px);
+        perspective: 1100px;
+        background:
+          linear-gradient(var(--grid) 1px, transparent 1px),
+          linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+          var(--paper);
+        background-size: 64px 64px;
+      }
+
+      .reasoning-field {
+        position: absolute;
+        z-index: 1;
+        right: -3%;
+        bottom: -18px;
+        left: 12%;
+        display: grid;
+        grid-template-columns: repeat(9, minmax(32px, 1fr));
+        grid-auto-rows: 30px;
+        gap: 3px;
+        opacity: 0.9;
+        pointer-events: none;
+        transform: rotateX(52deg) rotateZ(-6deg) scale(1.04);
+        transform-origin: center bottom;
+        transform-style: preserve-3d;
+      }
+
+      .reasoning-map {
+        position: relative;
+        height: 148px;
+        margin-top: 28px;
+        overflow: hidden;
+        border-block: 1px solid var(--line);
+        background:
+          radial-gradient(circle at 52% 82%, rgba(110, 74, 160, 0.18), transparent 44%),
+          linear-gradient(var(--grid) 1px, transparent 1px),
+          linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+          rgba(243, 242, 245, 0.72);
+        background-size: auto, 32px 32px, 32px 32px, auto;
+        perspective: 760px;
+      }
+
+      .reasoning-map::before {
+        content: attr(data-label);
+        position: absolute;
+        z-index: 2;
+        top: 12px;
+        left: 14px;
+        color: var(--violet-dark);
+        font-size: 9px;
+        font-weight: 760;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .field-cell {
+        border: 1px solid rgba(78, 48, 111, 0.24);
+        background: rgba(252, 251, 253, 0.66);
+        box-shadow: 0 1px 0 rgba(78, 48, 111, 0.04);
+        transform: translateZ(0);
+        transform-style: preserve-3d;
+      }
+
+      .field--gap .field-cell {
+        animation: field-ripple 760ms cubic-bezier(.2,.75,.2,1);
+        animation-delay: calc(var(--distance) * 18ms);
+      }
+
+      .field--gap {
+        animation: field-tilt 760ms cubic-bezier(.2,.75,.2,1);
+      }
+
+      .field--gap .field-cell[data-focus="true"] {
+        border-color: rgba(110, 74, 160, 0.5);
+        background: rgba(110, 74, 160, 0.24);
+        box-shadow: 0 10px 0 rgba(78, 48, 111, 0.12), 0 18px 24px rgba(78, 48, 111, 0.14);
+        transform: translateZ(18px);
+      }
+
+      .field--repair .field-cell {
+        animation: field-settle 620ms cubic-bezier(.2,.8,.2,1);
+        animation-delay: calc(var(--distance) * 12ms);
+      }
+
+      .field--repair .field-cell[data-path="true"] {
+        border-color: rgba(110, 74, 160, 0.46);
+        background: rgba(110, 74, 160, 0.28);
+        box-shadow: 0 20px 0 rgba(78, 48, 111, 0.12), 0 28px 36px rgba(78, 48, 111, 0.16);
+        transform: translateZ(20px);
+      }
+
+      .field--return .field-cell {
+        animation: field-return 560ms cubic-bezier(.2,.8,.2,1);
+        animation-delay: calc(var(--distance) * 10ms);
+      }
+
+      .field--return .field-cell[data-path="true"] {
+        border-color: rgba(110, 74, 160, 0.34);
+        background: rgba(110, 74, 160, 0.14);
+        box-shadow: 0 7px 0 rgba(78, 48, 111, 0.08), 0 14px 22px rgba(78, 48, 111, 0.1);
+        transform: translateZ(7px);
+      }
+
+      @keyframes field-ripple {
+        0% { transform: translateZ(0); }
+        42% {
+          transform: translateZ(32px);
+        }
+        100% { transform: translateZ(calc(var(--rest) * 18px)); }
+      }
+
+      @keyframes field-tilt {
+        0%, 100% { transform: rotateX(52deg) rotateZ(-6deg) scale(1.04); }
+        45% { transform: rotateX(46deg) rotateZ(-6deg) translateY(-8px) scale(1.07); }
+      }
+
+      @keyframes field-settle {
+        0% { transform: translateZ(0); }
+        46% { transform: translateZ(13px); }
+      }
+
+      @keyframes field-return {
+        0% { transform: translateZ(0); }
+        45% { transform: translateZ(9px); }
+      }
+
+      .proof-sheet {
+        position: relative;
+        z-index: 2;
+        width: min(100%, 830px);
+        margin: auto;
+        border: 1px solid var(--line-strong);
+        border-radius: 2px;
+        background: rgba(252, 251, 253, 0.97);
+        box-shadow: 0 32px 90px rgba(44, 34, 55, 0.13);
+      }
+
+      .proof-sheet::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 72px;
+        width: 1px;
+        background: #c9b6dc;
+      }
+
+      .proof-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        min-height: 50px;
+        padding: 0 22px 0 94px;
+        border-bottom: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .proof-meta strong {
+        color: var(--violet-dark);
+        font-weight: 760;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .proof-body {
+        min-height: 510px;
+        padding: 54px clamp(30px, 5vw, 72px) 44px 108px;
+      }
+
+      .proof-index {
+        position: absolute;
+        top: 112px;
+        left: 21px;
+        color: var(--quiet);
+        font-family: "Geom", sans-serif;
+        font-size: 12px;
+        font-weight: 660;
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .proof-kicker {
+        margin-bottom: 12px;
+        color: var(--quiet);
+        font-size: 10px;
+        font-weight: 720;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .proof-question {
+        max-width: 680px;
+        margin-bottom: 46px;
+        font-family: "Geom", sans-serif;
+        font-size: clamp(25px, 2.6vw, 39px);
+        font-weight: 570;
+        line-height: 1.08;
+        letter-spacing: -0.035em;
+      }
+
+      .attempt-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 12px;
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .attempt-label span:last-child { color: var(--violet); }
+
+      .attempt {
+        min-height: 126px;
+        margin: 0;
+        padding: 22px 0 24px;
+        border-top: 1px solid var(--ink);
+        border-bottom: 1px solid var(--line);
+        color: #29252e;
+        font-family: "Geom", sans-serif;
+        font-size: clamp(21px, 2vw, 29px);
+        font-weight: 470;
+        line-height: 1.48;
+      }
+
+      .examined {
+        position: relative;
+        white-space: nowrap;
+      }
+
+      .examined::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        bottom: -5px;
+        left: 0;
+        height: 2px;
+        background: var(--violet);
+        transform: scaleX(0);
+        transform-origin: left;
+      }
+
+      .is-gap .examined::after,
+      .is-repair .examined::after { animation: mark 500ms cubic-bezier(.2,.8,.2,1) forwards; }
+
+      @keyframes mark { to { transform: scaleX(1); } }
+
+      .margin-note {
+        display: grid;
+        grid-template-columns: 92px 1fr;
+        gap: 18px;
+        max-height: 0;
+        margin-top: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition: max-height 400ms ease, margin 300ms ease, opacity 250ms ease;
+      }
+
+      .is-gap .margin-note,
+      .is-repair .margin-note {
+        max-height: 190px;
+        margin-top: 28px;
+        opacity: 1;
+      }
+
+      .margin-note strong {
+        color: var(--violet-dark);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .margin-note p {
+        margin-bottom: 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.55;
+      }
+
+      .repair {
+        display: none;
+        margin-top: 28px;
+        padding: 22px;
+        border-left: 2px solid var(--violet);
+        background: var(--violet-wash);
+      }
+
+      .is-repair .repair { display: block; animation: reveal 350ms ease both; }
+
+      @keyframes reveal {
+        from { opacity: 0; transform: translateY(8px); }
+      }
+
+      .repair small {
+        display: block;
+        margin-bottom: 7px;
+        color: var(--violet-dark);
+        font-weight: 760;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .repair p {
+        margin-bottom: 0;
+        font-family: "Geom", sans-serif;
+        font-size: 19px;
+        line-height: 1.45;
+      }
+
+      .later-attempt { display: none; }
+
+      .is-return .first-attempt { display: none; }
+
+      .is-return .later-attempt {
+        display: block;
+        animation: reveal 350ms ease both;
+      }
+
+      .later-note {
+        display: grid;
+        grid-template-columns: 92px 1fr;
+        gap: 18px;
+        margin-top: 28px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.55;
+      }
+
+      .later-note strong {
+        color: var(--violet-dark);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .proof-controls {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 22px;
+        min-height: 68px;
+        padding: 10px 22px 10px 94px;
+        border-top: 1px solid var(--line);
+      }
+
+      .proof-status {
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .proof-control {
+        min-height: 40px;
+        padding: 0 16px;
+        border: 1px solid var(--ink);
+        border-radius: 2px;
+        background: var(--ink);
+        color: var(--white);
+        font-size: 12px;
+        font-weight: 680;
+        cursor: pointer;
+      }
+
+      .mobile-proof-control { display: none; }
+
+      .method {
+        display: grid;
+        grid-template-columns: 0.7fr 1.3fr;
+        gap: clamp(42px, 9vw, 150px);
+        padding: clamp(76px, 10vw, 140px) clamp(34px, 7vw, 110px);
+        background: var(--ink);
+        color: var(--white);
+      }
+
+      .method h2 {
+        max-width: 520px;
+        margin-bottom: 0;
+        font-size: clamp(36px, 4.6vw, 68px);
+        font-weight: 540;
+        line-height: 0.98;
+        letter-spacing: -0.045em;
+      }
+
+      .method-list { margin: 0; padding: 0; list-style: none; }
+
+      .method-list li {
+        display: grid;
+        grid-template-columns: 38px 1fr;
+        gap: 20px;
+        padding: 26px 0;
+        border-top: 1px solid #47434c;
+      }
+
+      .method-list li:last-child { border-bottom: 1px solid #47434c; }
+
+      .method-list span { color: #a989ca; font-family: "Geom", sans-serif; }
+
+      .method-list strong {
+        display: block;
+        margin-bottom: 6px;
+        font-family: "Geom", sans-serif;
+        font-size: 20px;
+        font-weight: 600;
+      }
+
+      .method-list p { margin-bottom: 0; color: #aaa6af; font-size: 14px; line-height: 1.6; }
+
+      .method .eyebrow { color: #b896dd; }
+
+      @media (max-width: 980px) {
+        .nav { grid-template-columns: 1fr auto; }
+        .hero { grid-template-columns: 1fr; }
+        .hero-copy { min-height: 720px; border-right: 0; border-bottom: 1px solid var(--line); }
+        .proof-stage { min-height: 760px; }
+      }
+
+      @media (max-width: 620px) {
+        .nav { min-height: 62px; padding: 0 18px; }
+        .nav-action { font-size: 12px; }
+        .hero-copy { min-height: auto; padding: 34px 22px 38px; }
+        .eyebrow { margin-bottom: 18px; }
+        h1 { margin-bottom: 16px; font-size: clamp(44px, 12.8vw, 56px); }
+        .lede { margin-bottom: 24px; font-size: 16px; line-height: 1.45; }
+        .primary-action { min-height: 50px; }
+        .proof-stage { min-height: auto; padding: 20px 12px 54px; background-size: 40px 40px; }
+        .proof-sheet::before { left: 42px; }
+        .proof-meta { align-items: flex-start; flex-direction: column; padding: 15px 14px 15px 60px; }
+        .proof-meta span { display: none; }
+        .proof-index { left: 10px; }
+        .proof-body { min-height: 560px; padding: 42px 18px 34px 62px; }
+        .proof-question { margin-bottom: 18px; font-size: 29px; }
+        .attempt { font-size: 21px; }
+        .mobile-proof-control {
+          width: 100%;
+          min-height: 48px;
+          margin-top: 18px;
+          border: 1px solid var(--ink);
+          border-radius: 2px;
+          background: var(--ink);
+          color: var(--white);
+          font-size: 12px;
+          font-weight: 680;
+          cursor: pointer;
+        }
+        .proof-sheet:not(.is-gap):not(.is-repair):not(.is-return) .mobile-proof-control { display: block; }
+        .reasoning-map { height: 118px; margin-top: 22px; }
+        .reasoning-field {
+          right: -18%;
+          bottom: -28px;
+          left: 6%;
+          grid-template-columns: repeat(9, minmax(22px, 1fr));
+          grid-auto-rows: 24px;
+        }
+        .margin-note,
+        .later-note { grid-template-columns: 1fr; gap: 7px; }
+        .proof-controls { align-items: flex-start; flex-direction: column; padding: 14px 14px 14px 60px; }
+        .proof-control { width: 100%; }
+        .method { grid-template-columns: 1fr; padding: 82px 24px; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          scroll-behavior: auto !important;
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <header class="nav">
+      <a class="brand" href="#main" aria-label="socratink home">
+        <img src="/favicon-192x192.png" width="27" height="27" alt="" />
+        <span>socratink</span>
+      </a>
+      <a class="nav-action" href="https://app.socratink.ai/">Open socratink</a>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">For students learning concept-heavy material</p>
+          <h1 id="hero-title">Know what you can explain without notes.</h1>
+          <p class="lede">
+            Socratink asks you to reconstruct an idea in your own words, finds the link your reasoning cannot yet support, and gives you the next part to repair.
+          </p>
+          <a class="primary-action" href="https://app.socratink.ai/">Start with what you’re studying</a>
+          <p class="entry-note">Bring a topic or source. No account required—continue as guest.</p>
+        </div>
+
+        <div class="proof-stage" id="proof">
+          <article class="proof-sheet" data-proof aria-labelledby="proof-question">
+            <div class="proof-meta">
+              <strong>Illustrative reconstruction</strong>
+              <span>No explanation shown before the attempt</span>
+            </div>
+            <span class="proof-index" data-index>01 · attempt from memory</span>
+            <div class="proof-body">
+              <p class="proof-kicker">Everyday physics · source closed</p>
+              <h2 class="proof-question" id="proof-question">Why does metal feel colder than wood in the same room?</h2>
+
+              <div class="first-attempt">
+                <div class="attempt-label">
+                  <span>Learner’s first explanation</span>
+                  <span>Unscored</span>
+                </div>
+                <p class="attempt">
+                  Metal is <span class="examined">naturally colder</span> than wood, so it pulls heat out of your hand.
+                </p>
+
+                <button class="mobile-proof-control" type="button" data-control>Examine this explanation</button>
+
+                <div class="margin-note" aria-live="polite">
+                  <strong>Question the link</strong>
+                  <p>Both materials began at room temperature. What property—not temperature—would make heat leave your hand at different rates?</p>
+                </div>
+
+                <div class="repair">
+                  <small>Repair to reconstruct later</small>
+                  <p>Metal conducts heat away from skin faster, even when the metal and wood begin at the same temperature.</p>
+                </div>
+              </div>
+
+              <div class="later-attempt" aria-live="polite">
+                <div class="attempt-label">
+                  <span>Learner’s later reconstruction</span>
+                  <span>Source closed again</span>
+                </div>
+                <p class="attempt">
+                  Metal feels colder because it conducts heat away from my skin faster, even though the metal and wood begin at the same temperature.
+                </p>
+                <div class="later-note">
+                  <strong>Now evidence</strong>
+                  <span>The learner rebuilt the connection after spacing. The explanation they read remains context.</span>
+                </div>
+              </div>
+
+              <div class="reasoning-map" data-field-label data-label="Your explanation" aria-hidden="true">
+                <div class="reasoning-field" data-field></div>
+              </div>
+            </div>
+            <footer class="proof-controls">
+              <span class="proof-status" data-status>Learner language is the evidence.</span>
+              <button class="proof-control" type="button" data-control>Examine this explanation</button>
+            </footer>
+          </article>
+        </div>
+      </section>
+
+      <section class="method" aria-labelledby="method-title">
+        <div>
+          <p class="eyebrow">The learning loop</p>
+          <h2 id="method-title">Attempt first. Repair one link. Return later.</h2>
+        </div>
+        <ol class="method-list">
+          <li>
+            <span>01</span>
+            <div><strong>Reconstruct</strong><p>Explain the idea from memory before study material appears.</p></div>
+          </li>
+          <li>
+            <span>02</span>
+            <div><strong>Examine</strong><p>Find the narrow causal link your explanation cannot yet support.</p></div>
+          </li>
+          <li>
+            <span>03</span>
+            <div><strong>Return</strong><p>Rebuild the connection later. Reading remains context; your own reconstruction becomes evidence.</p></div>
+          </li>
+        </ol>
+      </section>
+    </main>
+
+    <script>
+      const proof = document.querySelector("[data-proof]");
+      const controls = [...document.querySelectorAll("[data-control]")];
+      const status = document.querySelector("[data-status]");
+      const field = document.querySelector("[data-field]");
+      const fieldLabel = document.querySelector("[data-field-label]");
+      const stages = [
+        { className: "", index: "01 · attempt from memory", label: "Examine this explanation", fieldLabel: "Your explanation", status: "Learner language is the evidence." },
+        { className: "is-gap", index: "02 · examine the link", label: "Show the narrow repair", fieldLabel: "Where the explanation breaks", status: "The unsupported phrase is now visible." },
+        { className: "is-repair", index: "03 · narrow repair", label: "Return to this later", fieldLabel: "The link to rebuild", status: "Study remains context until the learner reconstructs again." },
+        { className: "is-return", index: "04 · return later", label: "Replay the example", fieldLabel: "What you can explain later", status: "A later reconstruction can strengthen the learning record." },
+      ];
+
+      const stageNames = ["attempt", "gap", "repair", "return"];
+      const requestedStage = new URLSearchParams(location.search).get("state");
+      let stage = Math.max(0, stageNames.indexOf(requestedStage));
+
+      function buildField() {
+        const columns = 9;
+        const rows = 5;
+        const focusColumn = 4;
+        const focusRow = 2;
+        const cells = document.createDocumentFragment();
+
+        for (let row = 0; row < rows; row += 1) {
+          for (let column = 0; column < columns; column += 1) {
+            const cell = document.createElement("span");
+            const distance = Math.hypot(column - focusColumn, row - focusRow).toFixed(2);
+            const inFocus = Number(distance) < 2.35;
+            const onPath = Math.abs(row - (column * 0.36 + 0.5)) < 0.65;
+            cell.className = "field-cell";
+            cell.style.setProperty("--distance", distance);
+            cell.style.setProperty("--rest", inFocus ? "1" : "0");
+            cell.dataset.focus = String(inFocus);
+            cell.dataset.path = String(onPath);
+            cells.append(cell);
+          }
+        }
+
+        field.append(cells);
+      }
+
+      function renderStage() {
+        proof.classList.remove("is-gap", "is-repair", "is-return");
+        if (stages[stage].className) proof.classList.add(stages[stage].className);
+        field.className = `reasoning-field field--${stageNames[stage]}`;
+        document.querySelector("[data-index]").textContent = stages[stage].index;
+        controls.forEach((control) => { control.textContent = stages[stage].label; });
+        fieldLabel.dataset.label = stages[stage].fieldLabel;
+        status.textContent = stages[stage].status;
+        const url = new URL(location.href);
+        url.searchParams.set("state", stageNames[stage]);
+        history.replaceState(null, "", url);
+      }
+
+      controls.forEach((control) => {
+        control.addEventListener("click", () => {
+          stage = (stage + 1) % stages.length;
+          renderStage();
+        });
+      });
+
+      buildField();
+      renderStage();
+    </script>
   </body>
 </html>
