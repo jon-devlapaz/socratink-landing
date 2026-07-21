@@ -6,17 +6,17 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
     <link rel="apple-touch-icon" href="/favicon-192x192.png" />
-    <meta name="description" content="Know what you can explain without notes. Socratink finds the link your reasoning cannot yet support and gives you the next part to repair." />
-    <meta property="og:title" content="socratink — learning by reconstruction" />
-    <meta property="og:description" content="Know what you can explain without notes." />
+    <meta name="description" content="Paste material you care about. Socratink helps you find the precise break, then brings you back later to reconstruct without the source or AI." />
+    <meta property="og:title" content="socratink — understand without the source or AI" />
+    <meta property="og:description" content="Turn material you care about into understanding you can explain, connect, and apply later." />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="/og-image.svg" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="socratink — learning by reconstruction" />
-    <meta name="twitter:description" content="Know what you can explain without notes." />
+    <meta name="twitter:title" content="socratink — understand without the source or AI" />
+    <meta name="twitter:description" content="Turn material you care about into understanding you can explain, connect, and apply later." />
     <meta name="twitter:image" content="/og-image.svg" />
     <meta name="color-scheme" content="light" />
-    <title>socratink — learning by reconstruction</title>
+    <title>socratink — understand without the source or AI</title>
     <style>
       @font-face {
         font-family: "Geom";
@@ -37,7 +37,7 @@
         --paper: #fcfbfd;
         --ink: #18171c;
         --muted: #65616d;
-        --quiet: #85808c;
+        --quiet: #76717c;
         --line: #d8d4dc;
         --line-strong: #aaa3b2;
         --grid: rgba(78, 48, 111, 0.09);
@@ -114,6 +114,7 @@
         align-items: center;
         gap: 10px;
         width: fit-content;
+        min-height: 44px;
         font-family: "Geom", sans-serif;
         font-size: 20px;
         font-weight: 760;
@@ -128,7 +129,10 @@
       }
 
       .nav-action {
+        display: inline-flex;
+        align-items: center;
         justify-self: end;
+        min-height: 44px;
         color: var(--ink);
         font-size: 13px;
         font-weight: 680;
@@ -136,8 +140,10 @@
       }
 
       .nav-action::after {
-        content: " ↗";
+        content: "↗";
+        margin-left: 3px;
         color: var(--violet);
+        transform: translateY(-1px);
       }
 
       .hero {
@@ -196,7 +202,7 @@
         gap: 28px;
         width: fit-content;
         min-height: 54px;
-        padding: 0 20px;
+        padding: 0 18px 0 20px;
         border: 1px solid var(--violet-dark);
         border-radius: 2px;
         background: var(--violet-dark);
@@ -204,12 +210,20 @@
         font-size: 14px;
         font-weight: 720;
         text-decoration: none;
-        transition: background 160ms ease, transform 160ms ease;
+        transition: background-color 160ms ease, transform 150ms cubic-bezier(.2, 0, 0, 1);
       }
 
-      .primary-action::after { content: "→"; font-size: 18px; }
+      .primary-action::after {
+        content: "→";
+        font-size: 18px;
+        transform: translateY(-1px);
+      }
 
       .primary-action:hover { background: #3e235c; transform: translateY(-1px); }
+
+      .primary-action:active,
+      .proof-control:active,
+      .trace-step:active { transform: scale(0.96); }
 
       .entry-note {
         margin: 12px 0 0;
@@ -241,46 +255,19 @@
       .reasoning-field {
         position: absolute;
         z-index: 1;
-        right: -3%;
+        right: -12%;
         bottom: -18px;
-        left: 12%;
+        left: 2%;
         display: grid;
-        grid-template-columns: repeat(9, minmax(32px, 1fr));
-        grid-auto-rows: 30px;
-        gap: 3px;
-        opacity: 0.9;
+        grid-template-columns: repeat(9, minmax(48px, 1fr));
+        grid-auto-rows: 38px;
+        gap: 4px;
+        opacity: 0.42;
         pointer-events: none;
         transform: rotateX(52deg) rotateZ(-6deg) scale(1.04);
         transform-origin: center bottom;
         transform-style: preserve-3d;
-      }
-
-      .reasoning-map {
-        position: relative;
-        height: 148px;
-        margin-top: 28px;
-        overflow: hidden;
-        border-block: 1px solid var(--line);
-        background:
-          radial-gradient(circle at 52% 82%, rgba(110, 74, 160, 0.18), transparent 44%),
-          linear-gradient(var(--grid) 1px, transparent 1px),
-          linear-gradient(90deg, var(--grid) 1px, transparent 1px),
-          rgba(243, 242, 245, 0.72);
-        background-size: auto, 32px 32px, 32px 32px, auto;
-        perspective: 760px;
-      }
-
-      .reasoning-map::before {
-        content: attr(data-label);
-        position: absolute;
-        z-index: 2;
-        top: 12px;
-        left: 14px;
-        color: var(--violet-dark);
-        font-size: 9px;
-        font-weight: 760;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
+        transition: transform 560ms cubic-bezier(.2, .8, .2, 1);
       }
 
       .field-cell {
@@ -289,39 +276,38 @@
         box-shadow: 0 1px 0 rgba(78, 48, 111, 0.04);
         transform: translateZ(0);
         transform-style: preserve-3d;
-      }
-
-      .field--gap .field-cell {
-        animation: field-ripple 760ms cubic-bezier(.2,.75,.2,1);
-        animation-delay: calc(var(--distance) * 18ms);
+        transition:
+          transform 560ms cubic-bezier(.2, .8, .2, 1),
+          background-color 400ms ease,
+          border-color 400ms ease,
+          box-shadow 400ms ease;
+        transition-delay: calc(var(--distance) * 10ms);
       }
 
       .field--gap {
-        animation: field-tilt 760ms cubic-bezier(.2,.75,.2,1);
+        transform: rotateX(44deg) rotateZ(-6deg) translateY(-22px) scale(1.09);
       }
 
       .field--gap .field-cell[data-focus="true"] {
         border-color: rgba(110, 74, 160, 0.5);
         background: rgba(110, 74, 160, 0.24);
         box-shadow: 0 10px 0 rgba(78, 48, 111, 0.12), 0 18px 24px rgba(78, 48, 111, 0.14);
-        transform: translateZ(18px);
+        transform: translateZ(28px);
       }
 
-      .field--repair .field-cell {
-        animation: field-settle 620ms cubic-bezier(.2,.8,.2,1);
-        animation-delay: calc(var(--distance) * 12ms);
+      .field--repair {
+        transform: rotateX(49deg) rotateZ(-6deg) translateY(-3px) scale(1.05);
       }
 
       .field--repair .field-cell[data-path="true"] {
         border-color: rgba(110, 74, 160, 0.46);
         background: rgba(110, 74, 160, 0.28);
         box-shadow: 0 20px 0 rgba(78, 48, 111, 0.12), 0 28px 36px rgba(78, 48, 111, 0.16);
-        transform: translateZ(20px);
+        transform: translateZ(30px);
       }
 
-      .field--return .field-cell {
-        animation: field-return 560ms cubic-bezier(.2,.8,.2,1);
-        animation-delay: calc(var(--distance) * 10ms);
+      .field--return {
+        transform: rotateX(52deg) rotateZ(-6deg) scale(1.04);
       }
 
       .field--return .field-cell[data-path="true"] {
@@ -329,29 +315,6 @@
         background: rgba(110, 74, 160, 0.14);
         box-shadow: 0 7px 0 rgba(78, 48, 111, 0.08), 0 14px 22px rgba(78, 48, 111, 0.1);
         transform: translateZ(7px);
-      }
-
-      @keyframes field-ripple {
-        0% { transform: translateZ(0); }
-        42% {
-          transform: translateZ(32px);
-        }
-        100% { transform: translateZ(calc(var(--rest) * 18px)); }
-      }
-
-      @keyframes field-tilt {
-        0%, 100% { transform: rotateX(52deg) rotateZ(-6deg) scale(1.04); }
-        45% { transform: rotateX(46deg) rotateZ(-6deg) translateY(-8px) scale(1.07); }
-      }
-
-      @keyframes field-settle {
-        0% { transform: translateZ(0); }
-        46% { transform: translateZ(13px); }
-      }
-
-      @keyframes field-return {
-        0% { transform: translateZ(0); }
-        45% { transform: translateZ(9px); }
       }
 
       .proof-sheet {
@@ -362,7 +325,10 @@
         border: 1px solid var(--line-strong);
         border-radius: 2px;
         background: rgba(252, 251, 253, 0.97);
-        box-shadow: 0 32px 90px rgba(44, 34, 55, 0.13);
+        box-shadow:
+          0 1px 2px rgba(44, 34, 55, 0.06),
+          0 18px 44px rgba(44, 34, 55, 0.09),
+          0 32px 90px rgba(44, 34, 55, 0.08);
       }
 
       .proof-sheet::before {
@@ -395,8 +361,8 @@
       }
 
       .proof-body {
-        min-height: 510px;
-        padding: 54px clamp(30px, 5vw, 72px) 44px 108px;
+        min-height: 520px;
+        padding: 42px clamp(30px, 5vw, 72px) 38px 108px;
       }
 
       .proof-index {
@@ -424,12 +390,73 @@
 
       .proof-question {
         max-width: 680px;
-        margin-bottom: 46px;
+        margin-bottom: 24px;
         font-family: "Geom", sans-serif;
         font-size: clamp(25px, 2.6vw, 39px);
         font-weight: 570;
         line-height: 1.08;
         letter-spacing: -0.035em;
+      }
+
+      .trace-nav {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        margin: 0 0 34px;
+        border: 1px solid var(--line);
+        background: rgba(252, 251, 253, 0.82);
+      }
+
+      .trace-step {
+        position: relative;
+        min-height: 48px;
+        padding: 6px 8px 6px 28px;
+        border: 0;
+        border-right: 1px solid var(--line);
+        background: transparent;
+        color: var(--quiet);
+        font-size: 10px;
+        font-weight: 720;
+        letter-spacing: 0.06em;
+        text-align: left;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background-color 150ms ease-out, color 150ms ease-out, transform 150ms cubic-bezier(.2, 0, 0, 1);
+      }
+
+      .trace-step:last-child { border-right: 0; }
+
+      .trace-step::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 11px;
+        width: 7px;
+        height: 7px;
+        border: 1px solid var(--line-strong);
+        border-radius: 50%;
+        background: var(--paper);
+        transform: translateY(-50%);
+        transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+      }
+
+      .trace-step[aria-current="step"] {
+        background: var(--violet-wash);
+        color: var(--violet-dark);
+      }
+
+      .trace-step[aria-current="step"]::before {
+        border-color: var(--violet);
+        background: var(--violet);
+        box-shadow: 0 0 0 4px rgba(110, 74, 160, 0.12);
+      }
+
+      @media (hover: hover) {
+        .trace-step:not([aria-current="step"]):hover {
+          background: rgba(110, 74, 160, 0.06);
+          color: var(--violet-dark);
+        }
+
+        .proof-control:hover { background: var(--violet-dark); }
       }
 
       .attempt-label {
@@ -445,7 +472,7 @@
       .attempt-label span:last-child { color: var(--violet); }
 
       .attempt {
-        min-height: 126px;
+        min-height: 118px;
         margin: 0;
         padding: 22px 0 24px;
         border-top: 1px solid var(--ink);
@@ -459,7 +486,22 @@
 
       .examined {
         position: relative;
+        display: inline-block;
+        z-index: 1;
+        padding: 0 2px;
         white-space: nowrap;
+        transition: color 260ms ease, transform 420ms cubic-bezier(.2,.8,.2,1);
+      }
+
+      .examined::before {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        inset: -5px -7px -4px;
+        border: 1px solid transparent;
+        background: transparent;
+        transform: scale(.92);
+        transition: background-color 260ms ease, border-color 260ms ease, transform 420ms cubic-bezier(.2,.8,.2,1), box-shadow 260ms ease;
       }
 
       .examined::after {
@@ -477,7 +519,142 @@
       .is-gap .examined::after,
       .is-repair .examined::after { animation: mark 500ms cubic-bezier(.2,.8,.2,1) forwards; }
 
+      .is-gap .examined,
+      .is-repair .examined {
+        color: var(--violet-dark);
+        transform: translateY(-3px);
+      }
+
+      .is-gap .examined::before,
+      .is-repair .examined::before {
+        border-color: #b69bd2;
+        background: #f3edf8;
+        box-shadow: 0 9px 22px rgba(78, 48, 111, 0.13);
+        transform: scale(1);
+      }
+
       @keyframes mark { to { transform: scaleX(1); } }
+
+      .xray {
+        display: grid;
+        grid-template-rows: 0fr;
+        margin-top: 0;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(10px);
+        visibility: hidden;
+        transition: grid-template-rows 440ms cubic-bezier(.2,.8,.2,1), margin 360ms ease, opacity 260ms ease, transform 440ms cubic-bezier(.2,.8,.2,1);
+      }
+
+      .xray-inner {
+        min-height: 0;
+        overflow: hidden;
+        border: 1px solid #cfc2dc;
+        background:
+          linear-gradient(rgba(110, 74, 160, 0.055) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(110, 74, 160, 0.055) 1px, transparent 1px),
+          #f8f5fb;
+        background-size: 24px 24px;
+      }
+
+      .is-gap .xray,
+      .is-repair .xray {
+        grid-template-rows: 1fr;
+        margin-top: 24px;
+        opacity: 1;
+        transform: translateY(0);
+        visibility: visible;
+      }
+
+      .xray-meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 12px 15px;
+        border-bottom: 1px solid #d9cee4;
+        color: var(--violet-dark);
+        font-size: 9px;
+        font-weight: 780;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+      }
+
+      .xray-meta span:last-child { color: var(--quiet); }
+
+      .xray-flow {
+        display: grid;
+        grid-template-columns: 1fr 46px 1fr 46px 1fr;
+        align-items: center;
+        gap: 0;
+        padding: 22px 15px 20px;
+      }
+
+      .reason-node {
+        display: grid;
+        place-items: center;
+        min-height: 58px;
+        padding: 8px;
+        border: 1px solid #bba8cf;
+        background: rgba(252, 251, 253, .94);
+        color: var(--violet-dark);
+        font-family: "Geom", sans-serif;
+        font-size: 12px;
+        font-weight: 630;
+        line-height: 1.2;
+        text-align: center;
+        box-shadow: 0 7px 18px rgba(78, 48, 111, 0.08);
+        transition: background-color 300ms ease, color 300ms ease, transform 420ms cubic-bezier(.2,.8,.2,1), box-shadow 300ms ease;
+      }
+
+      .reason-node--missing {
+        border-style: dashed;
+        background: rgba(252, 251, 253, .56);
+        color: var(--quiet);
+      }
+
+      .reason-node--missing .repair-term { display: none; }
+
+      .is-repair .reason-node--missing {
+        border-style: solid;
+        border-color: var(--violet-dark);
+        background: var(--violet-dark);
+        color: var(--white);
+        box-shadow: 0 12px 24px rgba(78, 48, 111, 0.2);
+        transform: translateY(-4px);
+      }
+
+      .is-repair .reason-node--missing .gap-term { display: none; }
+      .is-repair .reason-node--missing .repair-term { display: inline; }
+
+      .reason-link {
+        position: relative;
+        height: 1px;
+        background: #b7a8c6;
+        transform-origin: left;
+      }
+
+      .reason-link::after {
+        content: "";
+        position: absolute;
+        top: -3px;
+        right: -1px;
+        width: 6px;
+        height: 6px;
+        border-top: 1px solid #806694;
+        border-right: 1px solid #806694;
+        transform: rotate(45deg);
+      }
+
+      .reason-link--broken {
+        background: repeating-linear-gradient(90deg, #8f759e 0 6px, transparent 6px 11px);
+      }
+
+      .is-repair .reason-link {
+        background: var(--violet);
+        animation: connect 480ms cubic-bezier(.2,.8,.2,1) both;
+      }
+
+      @keyframes connect { from { transform: scaleX(0); } }
 
       .margin-note {
         display: grid;
@@ -487,14 +664,15 @@
         margin-top: 0;
         overflow: hidden;
         opacity: 0;
+        visibility: hidden;
         transition: max-height 400ms ease, margin 300ms ease, opacity 250ms ease;
       }
 
-      .is-gap .margin-note,
-      .is-repair .margin-note {
+      .is-gap .margin-note {
         max-height: 190px;
         margin-top: 28px;
         opacity: 1;
+        visibility: visible;
       }
 
       .margin-note strong {
@@ -543,24 +721,76 @@
 
       .later-attempt { display: none; }
 
-      .is-return .first-attempt { display: none; }
+      .is-return .proof-body { padding-bottom: 32px; }
+
+      .is-return .evidence-pair {
+        display: grid;
+        grid-template-columns: 1fr 1.08fr;
+        gap: 12px;
+      }
+
+      .is-return .first-attempt {
+        display: block;
+        padding: 16px;
+        border: 1px solid var(--line);
+        background: #f4f2f5;
+        opacity: .68;
+      }
+
+      .is-return .first-attempt .margin-note,
+      .is-return .first-attempt .repair,
+      .is-return .first-attempt .xray { display: none; }
+
+      .is-return .first-attempt .attempt {
+        min-height: 0;
+        padding: 14px 0 0;
+        border-bottom: 0;
+        font-size: 17px;
+        line-height: 1.38;
+      }
+
+      .is-return .first-attempt .attempt-label span:last-child { display: none; }
 
       .is-return .later-attempt {
         display: block;
-        animation: reveal 350ms ease both;
+        padding: 16px;
+        border: 1px solid #bba8cf;
+        background: #fbf9fd;
+        box-shadow: 0 14px 30px rgba(78, 48, 111, 0.11);
+        animation: return-evidence 480ms cubic-bezier(.2,.8,.2,1) both;
+      }
+
+      .is-return .later-attempt .attempt {
+        min-height: 0;
+        padding: 14px 0 0;
+        border-bottom: 0;
+        font-size: 18px;
+        line-height: 1.38;
+      }
+
+      .evidence-change {
+        background: #e4d7f0;
+        color: var(--violet-dark);
+        box-shadow: 0 0 0 3px #e4d7f0;
+      }
+
+      @keyframes return-evidence {
+        from { opacity: 0; transform: translateX(18px) rotateY(-4deg); }
       }
 
       .later-note {
-        display: grid;
-        grid-template-columns: 92px 1fr;
-        gap: 18px;
-        margin-top: 28px;
+        display: block;
+        margin-top: 18px;
+        padding-top: 14px;
+        border-top: 1px solid #d7cbe2;
         color: var(--muted);
-        font-size: 14px;
+        font-size: 11px;
         line-height: 1.55;
       }
 
       .later-note strong {
+        display: block;
+        margin-bottom: 5px;
         color: var(--violet-dark);
         font-size: 10px;
         letter-spacing: 0.1em;
@@ -592,6 +822,7 @@
         font-size: 12px;
         font-weight: 680;
         cursor: pointer;
+        transition: background-color 150ms ease-out, transform 150ms cubic-bezier(.2, 0, 0, 1);
       }
 
       .mobile-proof-control { display: none; }
@@ -643,7 +874,7 @@
       @media (max-width: 980px) {
         .nav { grid-template-columns: 1fr auto; }
         .hero { grid-template-columns: 1fr; }
-        .hero-copy { min-height: 720px; border-right: 0; border-bottom: 1px solid var(--line); }
+        .hero-copy { border-right: 0; border-bottom: 1px solid var(--line); }
         .proof-stage { min-height: 760px; }
       }
 
@@ -660,34 +891,30 @@
         .proof-meta { align-items: flex-start; flex-direction: column; padding: 15px 14px 15px 60px; }
         .proof-meta span { display: none; }
         .proof-index { left: 10px; }
-        .proof-body { min-height: 560px; padding: 42px 18px 34px 62px; }
+        .proof-body { min-height: 0; padding: 34px 18px 30px 62px; }
         .proof-question { margin-bottom: 18px; font-size: 29px; }
-        .attempt { font-size: 21px; }
-        .mobile-proof-control {
-          width: 100%;
+        .trace-nav { margin-bottom: 26px; }
+        .trace-step {
           min-height: 48px;
-          margin-top: 18px;
-          border: 1px solid var(--ink);
-          border-radius: 2px;
-          background: var(--ink);
-          color: var(--white);
-          font-size: 12px;
-          font-weight: 680;
-          cursor: pointer;
+          padding: 25px 3px 6px;
+          font-size: 8px;
+          text-align: center;
         }
-        .proof-sheet:not(.is-gap):not(.is-repair):not(.is-return) .mobile-proof-control { display: block; }
-        .reasoning-map { height: 118px; margin-top: 22px; }
-        .reasoning-field {
-          right: -18%;
-          bottom: -28px;
-          left: 6%;
-          grid-template-columns: repeat(9, minmax(22px, 1fr));
-          grid-auto-rows: 24px;
+        .trace-step::before { top: 13px; left: 50%; transform: translate(-50%, -50%); }
+        .attempt { font-size: 21px; }
+        .reasoning-field { display: none; }
+        .xray-flow {
+          grid-template-columns: 1fr;
+          gap: 12px;
+          padding: 18px 14px;
         }
+        .reason-link { width: 1px; height: 24px; margin: -6px auto; }
+        .reason-link::after { top: auto; right: -3px; bottom: 0; transform: rotate(135deg); }
         .margin-note,
         .later-note { grid-template-columns: 1fr; gap: 7px; }
+        .is-return .evidence-pair { grid-template-columns: 1fr; }
         .proof-controls { align-items: flex-start; flex-direction: column; padding: 14px 14px 14px 60px; }
-        .proof-control { width: 100%; }
+        .proof-control { width: 100%; min-height: 44px; }
         .method { grid-template-columns: 1fr; padding: 82px 24px; }
       }
 
@@ -714,69 +941,92 @@
     <main id="main">
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <p class="eyebrow">For students learning concept-heavy material</p>
-          <h1 id="hero-title">Know what you can explain without notes.</h1>
+          <p class="eyebrow">For learners working through difficult material</p>
+          <h1 id="hero-title">Understand it without the source—or the AI.</h1>
           <p class="lede">
-            Socratink asks you to reconstruct an idea in your own words, finds the link your reasoning cannot yet support, and gives you the next part to repair.
+            Paste material you care about and name what you want to understand. Socratink asks what you know first, helps you find the precise break, and brings you back later to explain, connect, and apply it on your own.
           </p>
-          <a class="primary-action" href="https://app.socratink.ai/">Start with what you’re studying</a>
-          <p class="entry-note">Bring a topic or source. No account required—continue as guest.</p>
+          <a class="primary-action" href="https://app.socratink.ai/">Start with pasted text</a>
+          <p class="entry-note">Start by pasting text. No account required—continue as guest.</p>
         </div>
 
         <div class="proof-stage" id="proof">
+          <div class="reasoning-field" data-field aria-hidden="true"></div>
           <article class="proof-sheet" data-proof aria-labelledby="proof-question">
             <div class="proof-meta">
-              <strong>Illustrative reconstruction</strong>
-              <span>No explanation shown before the attempt</span>
+              <strong>Illustrative learning trace</strong>
+              <span>AI responds after the learner’s attempt</span>
             </div>
-            <span class="proof-index" data-index>01 · attempt from memory</span>
+            <span class="proof-index" data-index>01 · closed-source attempt</span>
             <div class="proof-body">
               <p class="proof-kicker">Everyday physics · source closed</p>
               <h2 class="proof-question" id="proof-question">Why does metal feel colder than wood in the same room?</h2>
 
-              <div class="first-attempt">
-                <div class="attempt-label">
-                  <span>Learner’s first explanation</span>
-                  <span>Unscored</span>
-                </div>
-                <p class="attempt">
-                  Metal is <span class="examined">naturally colder</span> than wood, so it pulls heat out of your hand.
-                </p>
+              <nav class="trace-nav" aria-label="Learning trace stages">
+                <button class="trace-step" type="button" data-stage="0" aria-current="step">Attempt</button>
+                <button class="trace-step" type="button" data-stage="1">Break</button>
+                <button class="trace-step" type="button" data-stage="2">Repair</button>
+                <button class="trace-step" type="button" data-stage="3">Return</button>
+              </nav>
 
-                <button class="mobile-proof-control" type="button" data-control>Examine this explanation</button>
+              <div class="evidence-pair">
+                <div class="first-attempt">
+                  <div class="attempt-label">
+                    <span>Learner’s first reconstruction</span>
+                    <span>Source closed</span>
+                  </div>
+                  <p class="attempt">
+                    Metal is <span class="examined">naturally colder</span> than wood, so it pulls heat out of your hand.
+                  </p>
 
-                <div class="margin-note" aria-live="polite">
-                  <strong>Question the link</strong>
-                  <p>Both materials began at room temperature. What property—not temperature—would make heat leave your hand at different rates?</p>
+                  <div class="xray" aria-live="polite">
+                    <div class="xray-inner">
+                      <div class="xray-meta">
+                        <strong>Reasoning X-ray</strong>
+                        <span>One connection is unsupported</span>
+                      </div>
+                      <div class="xray-flow" aria-label="Reasoning connection">
+                        <span class="reason-node">Same room temperature</span>
+                        <span class="reason-link reason-link--broken" aria-hidden="true"></span>
+                        <span class="reason-node reason-node--missing">
+                          <span class="gap-term">Missing property</span>
+                          <span class="repair-term">Thermal conductivity</span>
+                        </span>
+                        <span class="reason-link reason-link--broken" aria-hidden="true"></span>
+                        <span class="reason-node">Heat leaves your hand</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="margin-note" aria-live="polite">
+                    <strong>Locate the break</strong>
+                    <p>Both materials began at room temperature. What property—not temperature—would make heat leave your hand at different rates?</p>
+                  </div>
+
+                  <div class="repair">
+                    <small>Study and repair this link</small>
+                    <p>Metal conducts heat away from skin faster, even when the metal and wood begin at the same temperature.</p>
+                  </div>
                 </div>
 
-                <div class="repair">
-                  <small>Repair to reconstruct later</small>
-                  <p>Metal conducts heat away from skin faster, even when the metal and wood begin at the same temperature.</p>
+                <div class="later-attempt" aria-live="polite">
+                  <div class="attempt-label">
+                    <span>Learner’s later reconstruction</span>
+                    <span>Source and AI closed</span>
+                  </div>
+                  <p class="attempt">
+                    Metal feels colder because it <span class="evidence-change">conducts heat away from my skin faster</span>, even though the metal and wood begin at the same temperature.
+                  </p>
+                  <div class="later-note">
+                    <strong>Stronger independent understanding</strong>
+                    <span>This becomes evidence only when the learner rebuilds the connection after real spacing. The repair they studied remains context—not proof.</span>
+                  </div>
                 </div>
-              </div>
-
-              <div class="later-attempt" aria-live="polite">
-                <div class="attempt-label">
-                  <span>Learner’s later reconstruction</span>
-                  <span>Source closed again</span>
-                </div>
-                <p class="attempt">
-                  Metal feels colder because it conducts heat away from my skin faster, even though the metal and wood begin at the same temperature.
-                </p>
-                <div class="later-note">
-                  <strong>Now evidence</strong>
-                  <span>The learner rebuilt the connection after spacing. The explanation they read remains context.</span>
-                </div>
-              </div>
-
-              <div class="reasoning-map" data-field-label data-label="Your explanation" aria-hidden="true">
-                <div class="reasoning-field" data-field></div>
               </div>
             </div>
             <footer class="proof-controls">
-              <span class="proof-status" data-status>Learner language is the evidence.</span>
-              <button class="proof-control" type="button" data-control>Examine this explanation</button>
+              <span class="proof-status" data-status>Illustration only—this attempt is preserved, not scored.</span>
+              <button class="proof-control" type="button" data-control>Show the precise break</button>
             </footer>
           </article>
         </div>
@@ -784,21 +1034,21 @@
 
       <section class="method" aria-labelledby="method-title">
         <div>
-          <p class="eyebrow">The learning loop</p>
-          <h2 id="method-title">Attempt first. Repair one link. Return later.</h2>
+          <p class="eyebrow">The path to ownership</p>
+          <h2 id="method-title">Bring the source. Explain first. Return without it.</h2>
         </div>
         <ol class="method-list">
           <li>
             <span>01</span>
-            <div><strong>Reconstruct</strong><p>Explain the idea from memory before study material appears.</p></div>
+            <div><strong>Bring and aim</strong><p>Paste text you care about and name what you want to understand.</p></div>
           </li>
           <li>
             <span>02</span>
-            <div><strong>Examine</strong><p>Find the narrow causal link your explanation cannot yet support.</p></div>
+            <div><strong>Attempt and repair</strong><p>Close the source and explain what you know. Socratink points to the precise break; you study and repair it.</p></div>
           </li>
           <li>
             <span>03</span>
-            <div><strong>Return</strong><p>Rebuild the connection later. Reading remains context; your own reconstruction becomes evidence.</p></div>
+            <div><strong>Return and compare</strong><p>Come back later without the source or AI. Explain, connect, or apply the idea again. Both attempts preserve what changed.</p></div>
           </li>
         </ol>
       </section>
@@ -807,14 +1057,14 @@
     <script>
       const proof = document.querySelector("[data-proof]");
       const controls = [...document.querySelectorAll("[data-control]")];
+      const stageButtons = [...document.querySelectorAll("[data-stage]")];
       const status = document.querySelector("[data-status]");
       const field = document.querySelector("[data-field]");
-      const fieldLabel = document.querySelector("[data-field-label]");
       const stages = [
-        { className: "", index: "01 · attempt from memory", label: "Examine this explanation", fieldLabel: "Your explanation", status: "Learner language is the evidence." },
-        { className: "is-gap", index: "02 · examine the link", label: "Show the narrow repair", fieldLabel: "Where the explanation breaks", status: "The unsupported phrase is now visible." },
-        { className: "is-repair", index: "03 · narrow repair", label: "Return to this later", fieldLabel: "The link to rebuild", status: "Study remains context until the learner reconstructs again." },
-        { className: "is-return", index: "04 · return later", label: "Replay the example", fieldLabel: "What you can explain later", status: "A later reconstruction can strengthen the learning record." },
+        { className: "", index: "01 · closed-source attempt", label: "Show the precise break", status: "Illustration only—this attempt is preserved, not scored." },
+        { className: "is-gap", index: "02 · precise break", label: "Show the repair", status: "The AI points to the break without completing the explanation." },
+        { className: "is-repair", index: "03 · study and repair", label: "Show a later reconstruction", status: "The repair is study material—not evidence of ownership." },
+        { className: "is-return", index: "04 · reconstruct later", label: "Replay the learning trace", status: "The later closed-source attempt can show what actually changed." },
       ];
 
       const stageNames = ["attempt", "gap", "repair", "return"];
@@ -852,7 +1102,10 @@
         field.className = `reasoning-field field--${stageNames[stage]}`;
         document.querySelector("[data-index]").textContent = stages[stage].index;
         controls.forEach((control) => { control.textContent = stages[stage].label; });
-        fieldLabel.dataset.label = stages[stage].fieldLabel;
+        stageButtons.forEach((button, index) => {
+          if (index === stage) button.setAttribute("aria-current", "step");
+          else button.removeAttribute("aria-current");
+        });
         status.textContent = stages[stage].status;
         const url = new URL(location.href);
         url.searchParams.set("state", stageNames[stage]);
@@ -862,6 +1115,13 @@
       controls.forEach((control) => {
         control.addEventListener("click", () => {
           stage = (stage + 1) % stages.length;
+          renderStage();
+        });
+      });
+
+      stageButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          stage = Number(button.dataset.stage);
           renderStage();
         });
       });
