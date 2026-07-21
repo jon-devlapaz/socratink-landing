@@ -33,17 +33,16 @@
       }
 
       :root {
-        --field: #f3f2f5;
-        --paper: #fcfbfd;
-        --ink: #18171c;
-        --muted: #65616d;
-        --quiet: #76717c;
-        --line: #d8d4dc;
-        --line-strong: #aaa3b2;
-        --grid: rgba(78, 48, 111, 0.09);
-        --violet: #6e4aa0;
-        --violet-dark: #4e306f;
-        --violet-wash: #eee8f5;
+        --field: #f7f7f8;
+        --paper: #ffffff;
+        --ink: #19191d;
+        --muted: #5f5f68;
+        --quiet: #72727b;
+        --line: #dedee3;
+        --line-strong: #c7c7cf;
+        --violet: #62438d;
+        --violet-dark: #4f3475;
+        --violet-wash: #f2eef7;
         --white: #fff;
         font-family: "Inter", system-ui, sans-serif;
         color: var(--ink);
@@ -71,7 +70,7 @@
       h1,
       h2 { text-wrap: balance; }
 
-      [id] { scroll-margin-top: 82px; }
+      [id] { scroll-margin-top: 72px; }
 
       .sr-only {
         position: absolute;
@@ -102,35 +101,28 @@
         display: grid;
         grid-template-columns: 1fr auto;
         align-items: center;
-        min-height: 82px;
+        min-height: 72px;
         padding: 0 clamp(22px, 4.8vw, 72px);
         border-bottom: 1px solid var(--line);
-        background: rgba(243, 242, 245, 0.94);
-        backdrop-filter: blur(14px);
+        background: var(--field);
       }
 
       .brand {
         display: inline-flex;
         align-items: center;
-        gap: 13px;
+        gap: 10px;
         width: fit-content;
         min-height: 44px;
         font-family: "Geom", sans-serif;
-        font-size: 25px;
-        font-weight: 780;
+        font-size: 22px;
+        font-weight: 740;
         letter-spacing: -0.055em;
         text-decoration: none;
       }
 
       .brand img {
-        width: 42px;
-        height: 42px;
-        padding: 5px;
-        border-radius: 11px;
-        background: var(--white);
-        box-shadow:
-          0 0 0 1px rgba(78, 48, 111, 0.1),
-          0 7px 18px rgba(78, 48, 111, 0.12);
+        width: 34px;
+        height: 34px;
       }
 
       .nav-action {
@@ -154,7 +146,7 @@
       .hero {
         display: grid;
         grid-template-columns: minmax(420px, 0.8fr) minmax(600px, 1.2fr);
-        min-height: calc(100vh - 82px);
+        min-height: calc(100vh - 72px);
         border-bottom: 1px solid var(--line);
       }
 
@@ -206,22 +198,17 @@
         display: inline-flex;
         align-items: center;
         justify-content: space-between;
-        gap: 34px;
-        width: min(100%, 390px);
-        min-height: 70px;
-        padding: 0 18px 0 20px;
+        gap: 24px;
+        width: min(100%, 220px);
+        min-height: 54px;
+        padding: 0 16px 0 18px;
         border: 0;
-        border-radius: 12px;
-        background: linear-gradient(135deg, var(--violet-dark), #684092);
+        border-radius: 5px;
+        background: var(--violet-dark);
         color: var(--white);
         text-decoration: none;
-        box-shadow:
-          0 0 0 1px rgba(78, 48, 111, 0.18),
-          0 14px 30px rgba(78, 48, 111, 0.2);
-        transition: box-shadow 160ms ease, transform 150ms cubic-bezier(.2, 0, 0, 1);
+        transition: background-color 150ms ease, transform 150ms cubic-bezier(.2, 0, 0, 1);
       }
-
-      .action-copy { display: grid; gap: 3px; }
 
       .action-copy strong {
         font-family: "Geom", sans-serif;
@@ -230,40 +217,23 @@
         letter-spacing: -0.02em;
       }
 
-      .action-copy small { color: #e2d6ed; font-size: 11px; font-weight: 560; }
-
       .action-arrow {
-        display: grid;
-        place-items: center;
-        width: 34px;
-        height: 34px;
+        display: inline-block;
         flex: 0 0 auto;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.14);
-        font-size: 20px;
+        font-size: 18px;
         transform: translateX(0);
-        transition: background-color 160ms ease, transform 160ms cubic-bezier(.2, 0, 0, 1);
+        transition: transform 160ms cubic-bezier(.2, 0, 0, 1);
       }
 
       .primary-action:hover {
-        box-shadow:
-          0 0 0 1px rgba(78, 48, 111, 0.22),
-          0 18px 34px rgba(78, 48, 111, 0.25);
-        transform: translateY(-2px);
+        background: var(--violet);
       }
 
-      .primary-action:hover .action-arrow { background: rgba(255, 255, 255, 0.22); transform: translateX(2px); }
+      .primary-action:hover .action-arrow { transform: translateX(2px); }
 
       .primary-action:active,
       .proof-control:active,
       .trace-step:active { transform: scale(0.96); }
-
-      .entry-note {
-        margin: 14px 0 0 4px;
-        color: var(--muted);
-        font-size: 12px;
-        line-height: 1.45;
-      }
 
       :focus-visible {
         outline: 3px solid #9c7ac5;
@@ -275,22 +245,14 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 22px;
+        gap: 24px;
         position: relative;
-        isolation: isolate;
-        overflow: hidden;
         padding: clamp(28px, 3.4vw, 52px);
-        perspective: 1100px;
-        background:
-          linear-gradient(var(--grid) 1px, transparent 1px),
-          linear-gradient(90deg, var(--grid) 1px, transparent 1px),
-          var(--paper);
-        background-size: 64px 64px;
+        background: var(--paper);
       }
 
       .proof-intro {
         position: relative;
-        z-index: 2;
         display: grid;
         grid-template-columns: minmax(240px, .85fr) minmax(280px, 1.15fr);
         align-items: end;
@@ -316,131 +278,18 @@
         line-height: 1.55;
       }
 
-      .reasoning-field {
-        position: absolute;
-        z-index: 1;
-        right: -12%;
-        bottom: -18px;
-        left: 2%;
-        display: grid;
-        grid-template-columns: repeat(9, minmax(48px, 1fr));
-        grid-auto-rows: 38px;
-        gap: 4px;
-        opacity: 0.42;
-        pointer-events: none;
-        transform: rotateX(52deg) rotateZ(-6deg) scale(1.04);
-        transform-origin: center bottom;
-        transform-style: preserve-3d;
-        transition: transform 560ms cubic-bezier(.2, .8, .2, 1);
-      }
-
-      .field-cell {
-        border: 1px solid rgba(78, 48, 111, 0.24);
-        background: rgba(252, 251, 253, 0.66);
-        box-shadow: 0 1px 0 rgba(78, 48, 111, 0.04);
-        transform: translateZ(0);
-        transform-style: preserve-3d;
-        transition:
-          transform 560ms cubic-bezier(.2, .8, .2, 1),
-          background-color 400ms ease,
-          border-color 400ms ease,
-          box-shadow 400ms ease;
-        transition-delay: calc(var(--distance) * 10ms);
-      }
-
-      .field--gap {
-        transform: rotateX(44deg) rotateZ(-6deg) translateY(-22px) scale(1.09);
-      }
-
-      .field--gap .field-cell[data-focus="true"] {
-        border-color: rgba(110, 74, 160, 0.5);
-        background: rgba(110, 74, 160, 0.24);
-        box-shadow: 0 10px 0 rgba(78, 48, 111, 0.12), 0 18px 24px rgba(78, 48, 111, 0.14);
-        transform: translateZ(28px);
-      }
-
-      .field--repair {
-        transform: rotateX(49deg) rotateZ(-6deg) translateY(-3px) scale(1.05);
-      }
-
-      .field--repair .field-cell[data-path="true"] {
-        border-color: rgba(110, 74, 160, 0.46);
-        background: rgba(110, 74, 160, 0.28);
-        box-shadow: 0 20px 0 rgba(78, 48, 111, 0.12), 0 28px 36px rgba(78, 48, 111, 0.16);
-        transform: translateZ(30px);
-      }
-
-      .field--return {
-        transform: rotateX(52deg) rotateZ(-6deg) scale(1.04);
-      }
-
-      .field--return .field-cell[data-path="true"] {
-        border-color: rgba(110, 74, 160, 0.34);
-        background: rgba(110, 74, 160, 0.14);
-        box-shadow: 0 7px 0 rgba(78, 48, 111, 0.08), 0 14px 22px rgba(78, 48, 111, 0.1);
-        transform: translateZ(7px);
-      }
-
       .proof-sheet {
         position: relative;
-        z-index: 2;
         width: min(100%, 830px);
         margin: auto;
-        border: 1px solid var(--line-strong);
-        border-radius: 2px;
-        background: rgba(252, 251, 253, 0.97);
-        box-shadow:
-          0 1px 2px rgba(44, 34, 55, 0.06),
-          0 18px 44px rgba(44, 34, 55, 0.09),
-          0 32px 90px rgba(44, 34, 55, 0.08);
-      }
-
-      .proof-sheet::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 72px;
-        width: 1px;
-        background: #c9b6dc;
-      }
-
-      .proof-meta {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 20px;
-        min-height: 50px;
-        padding: 0 22px 0 94px;
-        border-bottom: 1px solid var(--line);
-        color: var(--muted);
-        font-size: 11px;
-      }
-
-      .proof-meta strong {
-        color: var(--violet-dark);
-        font-weight: 760;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--paper);
       }
 
       .proof-body {
         min-height: 410px;
-        padding: 42px clamp(30px, 5vw, 72px) 38px 108px;
-      }
-
-      .proof-index {
-        position: absolute;
-        top: 112px;
-        left: 21px;
-        color: var(--quiet);
-        font-family: "Geom", sans-serif;
-        font-size: 12px;
-        font-weight: 660;
-        writing-mode: vertical-rl;
-        transform: rotate(180deg);
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
+        padding: 34px clamp(24px, 4vw, 48px) 32px;
       }
 
       .proof-kicker {
@@ -511,7 +360,6 @@
       .trace-step[aria-current="step"]::before {
         border-color: var(--violet);
         background: var(--violet);
-        box-shadow: 0 0 0 4px rgba(110, 74, 160, 0.12);
       }
 
       @media (hover: hover) {
@@ -593,7 +441,6 @@
       .is-repair .examined::before {
         border-color: #b69bd2;
         background: #f3edf8;
-        box-shadow: 0 9px 22px rgba(78, 48, 111, 0.13);
         transform: scale(1);
       }
 
@@ -614,11 +461,7 @@
         min-height: 0;
         overflow: hidden;
         border: 1px solid #cfc2dc;
-        background:
-          linear-gradient(rgba(110, 74, 160, 0.055) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(110, 74, 160, 0.055) 1px, transparent 1px),
-          #f8f5fb;
-        background-size: 24px 24px;
+        background: #f8f6fa;
       }
 
       .is-gap .xray,
@@ -666,8 +509,7 @@
         font-weight: 630;
         line-height: 1.2;
         text-align: center;
-        box-shadow: 0 7px 18px rgba(78, 48, 111, 0.08);
-        transition: background-color 300ms ease, color 300ms ease, transform 420ms cubic-bezier(.2,.8,.2,1), box-shadow 300ms ease;
+        transition: background-color 300ms ease, color 300ms ease, transform 420ms cubic-bezier(.2,.8,.2,1);
       }
 
       .reason-node--missing {
@@ -683,7 +525,6 @@
         border-color: var(--violet-dark);
         background: var(--violet-dark);
         color: var(--white);
-        box-shadow: 0 12px 24px rgba(78, 48, 111, 0.2);
         transform: translateY(-4px);
       }
 
@@ -710,10 +551,14 @@
       }
 
       .reason-link--broken {
-        background: repeating-linear-gradient(90deg, #8f759e 0 6px, transparent 6px 11px);
+        height: 0;
+        border-top: 1px dashed #8f759e;
+        background: transparent;
       }
 
       .is-repair .reason-link {
+        height: 1px;
+        border-top: 0;
         background: var(--violet);
         animation: connect 480ms cubic-bezier(.2,.8,.2,1) both;
       }
@@ -820,8 +665,7 @@
         padding: 16px;
         border: 1px solid #bba8cf;
         background: #fbf9fd;
-        box-shadow: 0 14px 30px rgba(78, 48, 111, 0.11);
-        animation: return-evidence 480ms cubic-bezier(.2,.8,.2,1) both;
+        animation: return-evidence 360ms ease both;
       }
 
       .is-return .later-attempt .attempt {
@@ -839,7 +683,7 @@
       }
 
       @keyframes return-evidence {
-        from { opacity: 0; transform: translateX(18px) rotateY(-4deg); }
+        from { opacity: 0; transform: translateY(6px); }
       }
 
       .later-note {
@@ -867,7 +711,7 @@
         justify-content: space-between;
         gap: 22px;
         min-height: 68px;
-        padding: 10px 22px 10px 94px;
+        padding: 10px clamp(24px, 4vw, 48px);
         border-top: 1px solid var(--line);
       }
 
@@ -945,22 +789,18 @@
       @media (max-width: 620px) {
         .nav { min-height: 70px; padding: 0 18px; }
         .brand { gap: 9px; font-size: 21px; }
-        .brand img { width: 36px; height: 36px; border-radius: 9px; }
+        .brand img { width: 32px; height: 32px; }
         .nav-action { font-size: 12px; }
         .hero-copy { min-height: auto; padding: 34px 22px 38px; }
         .eyebrow { margin-bottom: 18px; }
         h1 { margin-bottom: 16px; font-size: clamp(44px, 12.8vw, 56px); }
         .lede { margin-bottom: 24px; font-size: 16px; line-height: 1.45; }
-        .primary-action { min-height: 68px; }
-        .proof-stage { min-height: auto; gap: 26px; padding: 34px 12px 54px; background-size: 40px 40px; }
+        .primary-action { min-height: 54px; }
+        .proof-stage { min-height: auto; gap: 26px; padding: 34px 12px 54px; }
         .proof-intro { grid-template-columns: 1fr; gap: 14px; padding: 0 8px; }
         .proof-intro h2 { max-width: 330px; font-size: 36px; }
         .proof-intro p:last-child { font-size: 14px; }
-        .proof-sheet::before { left: 42px; }
-        .proof-meta { align-items: flex-start; flex-direction: column; padding: 15px 14px 15px 60px; }
-        .proof-meta span { display: none; }
-        .proof-index { left: 10px; }
-        .proof-body { min-height: 0; padding: 34px 18px 30px 62px; }
+        .proof-body { min-height: 0; padding: 28px 18px 26px; }
         .proof-question { margin-bottom: 18px; font-size: 29px; }
         .trace-nav { margin-bottom: 26px; }
         .trace-step {
@@ -971,7 +811,6 @@
         }
         .trace-step::before { top: 13px; left: 50%; transform: translate(-50%, -50%); }
         .attempt { font-size: 21px; }
-        .reasoning-field { display: none; }
         .xray-flow {
           grid-template-columns: 1fr;
           gap: 12px;
@@ -982,7 +821,7 @@
         .margin-note,
         .later-note { grid-template-columns: 1fr; gap: 7px; }
         .is-return .evidence-pair { grid-template-columns: 1fr; }
-        .proof-controls { align-items: flex-start; flex-direction: column; padding: 14px 14px 14px 60px; }
+        .proof-controls { align-items: flex-start; flex-direction: column; padding: 14px 18px; }
         .proof-control { width: 100%; min-height: 44px; }
         .method { grid-template-columns: 1fr; padding: 82px 24px; }
       }
@@ -1018,11 +857,9 @@
           <a class="primary-action" href="https://app.socratink.ai/">
             <span class="action-copy">
               <strong>Try Socratink</strong>
-              <small>Paste text and explain before AI helps</small>
             </span>
             <span class="action-arrow" aria-hidden="true">→</span>
           </a>
-          <p class="entry-note">No account required. Continue as guest.</p>
         </div>
 
         <div class="proof-stage" id="proof">
@@ -1033,13 +870,7 @@
             </div>
             <p>First you explain with the source closed. Socratink isolates one broken connection. Later, you rebuild it without the source or AI.</p>
           </div>
-          <div class="reasoning-field" data-field aria-hidden="true"></div>
           <article class="proof-sheet" data-proof aria-labelledby="proof-question">
-            <div class="proof-meta">
-              <strong>A four-step example</strong>
-              <span>Select any stage to inspect it</span>
-            </div>
-            <span class="proof-index" data-index>01 · closed-source attempt</span>
             <div class="proof-body">
               <p class="proof-kicker">Everyday physics · source closed</p>
               <h3 class="proof-question" id="proof-question">Why does metal feel colder than wood in the same room?</h3>
@@ -1141,48 +972,20 @@
       const controls = [...document.querySelectorAll("[data-control]")];
       const stageButtons = [...document.querySelectorAll("[data-stage]")];
       const status = document.querySelector("[data-status]");
-      const field = document.querySelector("[data-field]");
       const stages = [
-        { className: "", index: "01 · closed-source attempt", label: "Show the precise break", status: "Illustration only—this attempt is preserved, not scored." },
-        { className: "is-gap", index: "02 · precise break", label: "Show the repair", status: "The AI points to the break without completing the explanation." },
-        { className: "is-repair", index: "03 · study and repair", label: "Show a later reconstruction", status: "The repair is study material—not evidence of ownership." },
-        { className: "is-return", index: "04 · reconstruct later", label: "Replay the learning trace", status: "The later closed-source attempt can show what actually changed." },
+        { className: "", label: "Show the precise break", status: "Illustration only—this attempt is preserved, not scored." },
+        { className: "is-gap", label: "Show the repair", status: "The AI points to the break without completing the explanation." },
+        { className: "is-repair", label: "Show a later reconstruction", status: "The repair is study material—not evidence of ownership." },
+        { className: "is-return", label: "Replay the learning trace", status: "The later closed-source attempt can show what actually changed." },
       ];
 
       const stageNames = ["attempt", "gap", "repair", "return"];
       const requestedStage = new URLSearchParams(location.search).get("state");
       let stage = Math.max(0, stageNames.indexOf(requestedStage));
 
-      function buildField() {
-        const columns = 9;
-        const rows = 5;
-        const focusColumn = 4;
-        const focusRow = 2;
-        const cells = document.createDocumentFragment();
-
-        for (let row = 0; row < rows; row += 1) {
-          for (let column = 0; column < columns; column += 1) {
-            const cell = document.createElement("span");
-            const distance = Math.hypot(column - focusColumn, row - focusRow).toFixed(2);
-            const inFocus = Number(distance) < 2.35;
-            const onPath = Math.abs(row - (column * 0.36 + 0.5)) < 0.65;
-            cell.className = "field-cell";
-            cell.style.setProperty("--distance", distance);
-            cell.style.setProperty("--rest", inFocus ? "1" : "0");
-            cell.dataset.focus = String(inFocus);
-            cell.dataset.path = String(onPath);
-            cells.append(cell);
-          }
-        }
-
-        field.append(cells);
-      }
-
       function renderStage() {
         proof.classList.remove("is-gap", "is-repair", "is-return");
         if (stages[stage].className) proof.classList.add(stages[stage].className);
-        field.className = `reasoning-field field--${stageNames[stage]}`;
-        document.querySelector("[data-index]").textContent = stages[stage].index;
         controls.forEach((control) => { control.textContent = stages[stage].label; });
         stageButtons.forEach((button, index) => {
           if (index === stage) button.setAttribute("aria-current", "step");
@@ -1208,7 +1011,6 @@
         });
       });
 
-      buildField();
       renderStage();
     </script>
   </body>
