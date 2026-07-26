@@ -249,9 +249,17 @@
       .hero-note {
         width: 100%;
         margin: 4px 0 0;
-        color: #747984;
+        color: #8a8f9a;
         font-size: 12px;
         font-weight: 650;
+      }
+
+      .hero-moments {
+        width: 100%;
+        margin: 4px 0 0;
+        color: #a9adb7;
+        font-size: 12px;
+        line-height: 1.55;
       }
 
       .hero-product {
@@ -276,6 +284,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: 12px;
         min-height: 54px;
         padding: 0 18px;
         border-bottom: 1px solid #282b31;
@@ -286,11 +295,12 @@
 
       .product-breadcrumb {
         display: inline-flex;
+        min-width: 0;
         align-items: center;
         gap: 8px;
       }
 
-      .product-breadcrumb strong { color: #d8dbe1; font-weight: 680; }
+      .product-breadcrumb strong { overflow: hidden; color: #d8dbe1; font-weight: 680; text-overflow: ellipsis; white-space: nowrap; }
       .product-breadcrumb > span:last-child { color: #626772; }
 
       .product-sigil {
@@ -310,217 +320,186 @@
         border: 1px solid #30333a;
         border-radius: 999px;
         color: #858a95;
-        font-size: 9px;
+        font-size: 11px;
         letter-spacing: .04em;
         text-transform: uppercase;
       }
 
-      .map-canvas {
-        position: relative;
-        min-height: 512px;
-        overflow: hidden;
-        background:
-          radial-gradient(circle at 68% 36%, rgba(135, 104, 181, .15), transparent 26%),
-          radial-gradient(circle at 34% 68%, rgba(71, 137, 113, .08), transparent 24%);
-      }
-
-      .map-toolbar {
-        position: absolute;
-        z-index: 3;
-        top: 18px;
-        right: 20px;
-        left: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        color: #6e737e;
-        font-size: 9px;
-        font-weight: 730;
-        letter-spacing: .04em;
-        text-transform: uppercase;
-      }
-
-      .source-lock {
+      .topic-controls {
         display: inline-flex;
+        flex: 0 0 auto;
         align-items: center;
         gap: 6px;
-        color: #9c90b0;
       }
 
-      .source-lock svg { width: 11px; height: 11px; }
-
-      .map-paths {
-        position: absolute;
-        inset: 48px 14px 34px;
-        width: calc(100% - 28px);
-        height: calc(100% - 82px);
-        overflow: visible;
-        pointer-events: none;
+      .topic-toggle {
+        min-height: 30px;
+        padding: 0 9px;
+        border: 1px solid #3a3d45;
+        border-radius: 999px;
+        appearance: none;
+        background: transparent;
+        color: #b8bbc3;
+        cursor: pointer;
+        font: 720 11px/1 "Manrope", sans-serif;
+        transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, transform 120ms cubic-bezier(.23, 1, .32, 1);
       }
 
-      .map-path {
-        fill: none;
-        stroke: #3a3d45;
-        stroke-width: 1.3;
+      @media (hover: hover) and (pointer: fine) {
+        .topic-toggle:hover {
+          border-color: #6f6083;
+          background: rgba(103, 83, 134, .14);
+          color: #f1eef5;
+        }
+
+        .topic-toggle:active:not(:focus-visible) { transform: scale(.97); }
       }
 
-      .map-path--evidence {
-        stroke: #89bea6;
-        stroke-dasharray: 7 10;
-        stroke-linecap: round;
-        animation: evidence-flow 5s linear infinite;
+      .return-canvas {
+        position: relative;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        min-height: 512px;
+        overflow: hidden;
+        padding: 28px 30px 24px;
+        background:
+          radial-gradient(circle at 82% 28%, rgba(135, 104, 181, .14), transparent 30%),
+          radial-gradient(circle at 28% 74%, rgba(71, 137, 113, .08), transparent 26%);
       }
 
-      .map-path--missing {
-        stroke: #a98bcf;
-        stroke-dasharray: 3 8;
-        stroke-linecap: round;
-      }
-
-      @keyframes evidence-flow {
-        to { stroke-dashoffset: -68; }
-      }
-
-      .map-node {
-        position: absolute;
-        z-index: 2;
-        width: clamp(142px, 28%, 184px);
-        padding: 13px 14px;
-        border: 1px solid #30333a;
-        border-radius: 12px;
-        background: rgba(20, 22, 27, .92);
-        box-shadow: 0 14px 34px rgba(0, 0, 0, .24);
-      }
-
-      .map-node small {
+      .return-heading small {
         display: block;
-        margin-bottom: 6px;
-        color: #676c77;
-        font-size: 8px;
+        margin-bottom: 7px;
+        color: #8a8f9a;
+        font-size: 11px;
         font-weight: 760;
         letter-spacing: .08em;
         text-transform: uppercase;
       }
 
-      .map-node strong {
+      .return-heading strong {
         display: block;
-        color: #c5c9d0;
-        font-size: 12px;
-        font-weight: 690;
-        line-height: 1.3;
+        max-width: 420px;
+        color: #e1e3e8;
+        font-size: clamp(20px, 2.1vw, 26px);
+        font-weight: 610;
+        letter-spacing: -.025em;
+        line-height: 1.2;
       }
 
-      .node-context { top: 104px; left: 5%; }
-      .node-attempt { top: 274px; left: 26%; border-color: #355448; background: rgba(19, 29, 26, .94); }
-      .node-attempt small { color: #70a68e; }
-      .node-attempt strong { color: #d9eee4; }
-      .node-gap { top: 110px; left: 61%; border-color: #755d92; background: rgba(31, 24, 39, .96); }
-      .node-gap small { color: #b398d2; }
-      .node-gap strong { color: #eadff7; }
-      .node-outcome { top: 318px; left: 65%; opacity: .62; }
-
-      .node-gap::before {
-        position: absolute;
-        inset: -7px;
-        border: 1px solid rgba(185, 151, 226, .22);
-        border-radius: 16px;
-        content: "";
-        animation: gap-breathe 2.8s ease-in-out infinite;
-      }
-
-      @keyframes gap-breathe {
-        50% { opacity: .25; transform: scale(1.04); }
-      }
-
-      .node-state {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        margin-top: 9px;
-        color: #747a85;
-        font-size: 8px;
-        font-weight: 700;
-      }
-
-      .node-state::before {
-        width: 5px;
-        height: 5px;
-        border-radius: 50%;
-        background: currentColor;
-        content: "";
-      }
-
-      .node-attempt .node-state { color: #7fb79d; }
-      .node-gap .node-state { color: #c2a0e7; }
-
-      .repair-target {
-        position: absolute;
-        z-index: 3;
-        right: 30px;
-        bottom: 26px;
-        left: 30px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 13px 15px;
-        border: 1px solid #37313f;
-        border-radius: 12px;
-        background: rgba(18, 16, 22, .92);
-        backdrop-filter: blur(14px);
-      }
-
-      .repair-target > span {
+      .return-comparison {
         display: grid;
-        flex: 0 0 auto;
-        width: 28px;
-        height: 28px;
-        place-items: center;
-        border-radius: 9px;
-        background: #30243d;
-        color: #d4b5f1;
-        font-size: 12px;
+        grid-template-columns: minmax(0, 1fr) 46px minmax(0, 1fr);
+        align-items: stretch;
+        margin-top: 24px;
       }
 
-      .repair-target small {
-        display: block;
-        margin-bottom: 2px;
-        color: #8e789f;
-        font-size: 8px;
-        font-weight: 780;
-        letter-spacing: .08em;
+      .return-attempt {
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        padding: 20px 0 18px;
+        border-top: 1px solid #30333a;
+        border-bottom: 1px solid #30333a;
+      }
+
+      .return-attempt--return {
+        border-color: #355448;
+      }
+
+      .return-attempt-meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        color: #8a8f9a;
+        font-size: 11px;
+        font-weight: 760;
+        letter-spacing: .07em;
         text-transform: uppercase;
       }
 
-      .repair-target strong {
-        display: block;
-        color: #d8cde3;
+      .return-attempt--return .return-attempt-meta {
+        color: #70a68e;
+      }
+
+      .return-attempt blockquote {
+        margin: 22px 0 20px;
+        color: #c5c9d0;
+        font-size: clamp(16px, 1.45vw, 19px);
+        font-weight: 610;
+        letter-spacing: -.02em;
+        line-height: 1.4;
+      }
+
+      .return-attempt--return blockquote {
+        color: #d9eee4;
+      }
+
+      .return-detail {
+        display: grid;
+        gap: 5px;
+        margin-top: auto;
+        padding-top: 15px;
+        border-top: 1px solid #25282e;
+      }
+
+      .return-detail small {
+        color: #aa8fc9;
         font-size: 11px;
-        font-weight: 650;
+        font-weight: 760;
+        letter-spacing: .07em;
+        text-transform: uppercase;
       }
 
-      .map-legend {
-        position: absolute;
-        z-index: 3;
-        bottom: 92px;
-        left: 30px;
+      .return-detail strong {
+        color: #dacbea;
+        font-size: 12px;
+        font-weight: 670;
+        line-height: 1.35;
+      }
+
+      .return-attempt--return .return-detail small {
+        color: #70a68e;
+      }
+
+      .return-attempt--return .return-detail strong {
+        color: #b9ddcb;
+      }
+
+      .return-arrow {
+        display: grid;
+        place-items: center;
+        color: #a98bcf;
+        font-size: 18px;
+      }
+
+      .return-contract {
         display: flex;
-        gap: 13px;
-        color: #555b66;
-        font-size: 8px;
-        font-weight: 700;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 8px 16px;
+        margin: 22px 0 0;
+        padding: 18px 0 0;
+        border-top: 1px solid #282b31;
+        list-style: none;
       }
 
-      .map-legend span { display: inline-flex; align-items: center; gap: 5px; }
-      .map-legend i { width: 5px; height: 5px; border-radius: 50%; background: #666b75; }
-      .map-legend span:nth-child(2) i { background: #7fb79d; }
-      .map-legend span:nth-child(3) i { background: #b398d2; }
+      .return-contract li {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #9297a2;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .03em;
+      }
 
-      @media (prefers-reduced-motion: reduce) {
-        .map-path--evidence,
-        .node-gap::before {
-          animation: none;
-        }
+      .return-contract li::before {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #9c91b4;
+        content: "";
       }
 
       .proof-scroll {
@@ -985,6 +964,24 @@
       .footer-links a:hover { color: #d9dce2; }
 
       @media (prefers-reduced-motion: no-preference) {
+        .return-canvas > .return-heading,
+        .return-canvas > .return-comparison,
+        .return-canvas > .return-contract {
+          opacity: 1;
+          transform: translateY(0);
+          transition:
+            opacity 200ms cubic-bezier(.23, 1, .32, 1),
+            transform 200ms cubic-bezier(.23, 1, .32, 1);
+        }
+
+        .return-canvas.is-switching > .return-heading,
+        .return-canvas.is-switching > .return-comparison,
+        .return-canvas.is-switching > .return-contract {
+          opacity: 0;
+          transform: translateY(4px);
+          transition-duration: 140ms;
+        }
+
         .motion-ready [data-reveal] {
           opacity: 0;
           transform: translateY(28px);
@@ -1017,9 +1014,15 @@
 
       @media (max-width: 820px) {
         .hero { min-height: auto; }
-        .hero-main { grid-template-columns: 1fr; }
-        .hero-copy { max-width: 680px; }
-        .hero-product { max-width: 680px; }
+        .hero-main { grid-template-columns: 1fr; gap: 0; }
+        .hero-copy { display: contents; }
+        .hero-kicker { grid-row: 1; }
+        .hero-title { grid-row: 2; }
+        .hero-lede { grid-row: 3; }
+        .hero-cta { grid-row: 4; }
+        .hero-product { grid-row: 5; max-width: 680px; margin-top: 24px; }
+        .hero-note { grid-row: 6; margin-top: 16px; }
+        .hero-moments { grid-row: 7; }
         .section-head { grid-template-columns: 1fr; gap: 28px; }
         .proof-band { min-height: 680px; scroll-margin-top: 54vh; }
         .proof-session { top: 20px; right: 22px; left: 22px; }
@@ -1049,26 +1052,26 @@
         .site-nav { min-height: 58px; }
         .brand { font-size: 16px; }
         .brand img { width: 20px; height: 20px; }
-        .hero { padding-top: 56px; }
-        .hero-title { max-width: none; font-size: clamp(42px, 12vw, 58px); }
+        .hero { padding-top: 36px; }
+        .hero-kicker { margin-bottom: 16px; }
+        .hero-title { max-width: none; margin-bottom: 16px; font-size: clamp(42px, 12vw, 58px); }
+        .hero-lede { margin-bottom: 20px; font-size: 16px; line-height: 1.5; }
         .hero-cta { align-items: stretch; }
         .hero .primary-action { width: 100%; }
-        .hero-secondary { width: 100%; }
+        .hero-secondary { width: auto; min-width: 0; min-height: 36px; justify-content: flex-start; padding: 0 4px; border: 0; }
+        .hero-secondary::after { margin-left: 12px; }
         .product-breadcrumb > span:last-child { display: none; }
-        .concept-pill { font-size: 8px; }
-        .map-canvas { display: grid; min-height: 0; gap: 12px; padding: 20px 16px 22px; }
-        .map-canvas::before { position: absolute; top: 76px; bottom: 126px; left: 38px; width: 1px; background: linear-gradient(#3b3e46, #745c90, #3b3e46); content: ""; }
-        .map-toolbar,
-        .map-node,
-        .repair-target,
-        .map-legend { position: relative; inset: auto; }
-        .map-toolbar { align-items: flex-start; margin-bottom: 4px; }
-        .map-paths { display: none; }
-        .map-node { width: auto; margin-left: 22px; }
-        .node-gap { order: 4; }
-        .node-outcome { order: 5; }
-        .repair-target { order: 6; margin-top: 3px; }
-        .map-legend { order: 7; bottom: auto; left: auto; flex-wrap: wrap; margin: 4px 0 0 22px; }
+        .concept-pill { font-size: 11px; }
+        .topic-prefix { display: none; }
+        .return-canvas { min-height: 0; padding: 22px 18px 20px; }
+        .return-heading strong { font-size: 21px; }
+        .return-comparison { grid-template-columns: 1fr; margin-top: 20px; }
+        .return-attempt { display: grid; grid-template-columns: 64px 1fr; gap: 0 14px; padding: 16px 0; }
+        .return-attempt-meta { grid-row: 1 / span 2; grid-column: 1; flex-direction: column; justify-content: flex-start; gap: 5px; }
+        .return-attempt blockquote { grid-column: 2; margin: 0 0 14px; font-size: 16px; }
+        .return-detail { grid-column: 2; margin-top: 0; padding-top: 12px; }
+        .return-arrow { height: 28px; transform: rotate(90deg); }
+        .return-contract { display: grid; grid-template-columns: 1fr; margin-top: 18px; padding-top: 16px; }
         .method, .standard { padding-top: 88px; padding-bottom: 88px; }
         .section-head { margin-bottom: 58px; }
         .standard-line { padding: 24px 0 30px; }
@@ -1110,75 +1113,68 @@
           <div class="hero-copy">
             <p class="hero-kicker">Learning by reconstruction</p>
             <h2 class="hero-title" id="hero-title">Build the idea.<br /><span>See what holds.</span></h2>
-            <p class="hero-lede">Bring a paper, chapter, lecture, or your notes. Socratink closes the source before your first answer, then finds the connection worth rebuilding.</p>
+            <p class="hero-lede">Close the source before answering. Socratink preserves your explanation, then compares what you can rebuild when you return.</p>
             <div class="hero-cta">
               <a class="primary-action" href="https://app.socratink.ai/">Start with a source</a>
               <a class="hero-secondary" href="#evidence">See how evidence works</a>
-              <p class="hero-note">Paste text, add a URL, or attach a PDF · Continue as a guest</p>
             </div>
+            <p class="hero-note">RFCs, API docs, papers, lectures, or notes · Continue as a guest</p>
+            <p class="hero-moments">Use it before a design review, your first PR in an unfamiliar codebase, or an on-call rotation.</p>
           </div>
 
-          <div class="hero-product" aria-label="Illustrative Socratink reconstruction session">
+          <div class="hero-product" data-topic-series data-topic-index="0" data-rotation="paused" role="region" aria-roledescription="carousel" aria-label="Illustrative source-closed explanation examples">
             <div class="product-bar">
               <div class="product-breadcrumb">
                 <span class="product-sigil">◇</span>
-                <strong>AI agent basics</strong>
-                <span>/ Verification loop</span>
+                <strong data-topic-name>AI agent basics</strong>
+                <span data-topic-connection>/ Verification loop</span>
               </div>
-              <span class="concept-pill">Illustrative concept</span>
+              <div class="topic-controls">
+                <span class="concept-pill" data-topic-count aria-label="Example 1 of 3"><span class="topic-prefix">Illustrative · </span><span data-topic-position>1 / 3</span></span>
+                <button class="topic-toggle" data-topic-toggle type="button" aria-label="Pause illustrative examples">Pause</button>
+              </div>
             </div>
-            <div class="map-canvas">
-              <div class="map-toolbar">
-                <span class="source-lock">
-                  <svg viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                    <rect x="2.25" y="5.25" width="7.5" height="5" rx="1.25" stroke="currentColor" stroke-width="1.5"/>
-                    <path d="M4 5.25V3.75a2 2 0 0 1 4 0v1.5" stroke="currentColor" stroke-width="1.5"/>
-                  </svg>
-                  Source hidden
-                </span>
-                <span>Cold attempt · unscored</span>
+            <div class="return-canvas" data-topic-content aria-live="off" aria-atomic="true">
+              <div class="return-heading">
+                <small>One connection · two source-closed attempts</small>
+                <strong>Your own explanation, compared.</strong>
               </div>
 
-              <svg class="map-paths" viewBox="0 0 620 430" preserveAspectRatio="none" aria-hidden="true">
-                <path class="map-path" d="M92 132 C130 164 142 246 224 270"/>
-                <path class="map-path map-path--evidence" d="M270 274 C330 270 350 166 426 142"/>
-                <path class="map-path map-path--missing" d="M448 170 C478 216 484 258 468 308"/>
-              </svg>
+              <div class="return-comparison">
+                <article class="return-attempt return-attempt--cold">
+                  <h3 class="sr-only">Day 0 source-closed attempt</h3>
+                  <div class="return-attempt-meta">
+                    <span>Day 0</span>
+                    <span>Source closed</span>
+                  </div>
+                  <blockquote data-topic-cold>“The agent chooses a tool and uses it.”</blockquote>
+                  <div class="return-detail">
+                    <small>Missing connection</small>
+                    <strong data-topic-gap>How the tool result is checked</strong>
+                  </div>
+                </article>
 
-              <div class="map-node node-context">
-                <small>Source context</small>
-                <strong>A goal gives the agent a task</strong>
-                <span class="node-state">Not evidence</span>
-              </div>
-              <div class="map-node node-attempt">
-                <small>Reconstructed</small>
-                <strong>The agent chooses and uses a tool</strong>
-                <span class="node-state">Attempt recorded</span>
-              </div>
-              <div class="map-node node-gap">
-                <small>Missing connection</small>
-                <strong>What checks the tool result?</strong>
-                <span class="node-state">Repair target</span>
-              </div>
-              <div class="map-node node-outcome">
-                <small>Return later</small>
-                <strong>Feedback updates the plan</strong>
-                <span class="node-state">Not yet solidified</span>
-              </div>
+                <div class="return-arrow" aria-hidden="true">→</div>
 
-              <div class="map-legend" aria-label="Map state legend">
-                <span><i></i>Context</span>
-                <span><i></i>Reconstructed</span>
-                <span><i></i>Missing link</span>
+                <article class="return-attempt return-attempt--return">
+                  <h3 class="sr-only">Day 3 source-closed attempt</h3>
+                  <div class="return-attempt-meta">
+                    <span>Day 3</span>
+                    <span>Source closed</span>
+                  </div>
+                  <blockquote data-topic-return>“The agent uses a tool, checks the result against the goal, then continues, retries, or stops.”</blockquote>
+                  <div class="return-detail">
+                    <small>Rebuilt on Day 3</small>
+                    <strong data-topic-rebuilt>Tool use → verification → decision</strong>
+                  </div>
+                </article>
               </div>
 
-              <div class="repair-target">
-                <span>↳</span>
-                <div>
-                  <small>Study opens here</small>
-                  <strong>Connect the tool result to the verifier's check.</strong>
-                </div>
-              </div>
+              <ul class="return-contract" aria-label="Evidence contract">
+                <li>Exact words preserved</li>
+                <li>Source hidden first</li>
+                <li>Compared after spacing</li>
+              </ul>
             </div>
           </div>
         </div>
@@ -1300,6 +1296,159 @@
       </div>
     </footer>
     <script>
+      const topicSeries = document.querySelector("[data-topic-series]");
+
+      if (topicSeries) {
+        const topicMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+        const topicContent = topicSeries.querySelector("[data-topic-content]");
+        const topicName = topicSeries.querySelector("[data-topic-name]");
+        const topicConnection = topicSeries.querySelector("[data-topic-connection]");
+        const topicCold = topicSeries.querySelector("[data-topic-cold]");
+        const topicGap = topicSeries.querySelector("[data-topic-gap]");
+        const topicReturn = topicSeries.querySelector("[data-topic-return]");
+        const topicRebuilt = topicSeries.querySelector("[data-topic-rebuilt]");
+        const topicCount = topicSeries.querySelector("[data-topic-count]");
+        const topicPosition = topicSeries.querySelector("[data-topic-position]");
+        const topicToggle = topicSeries.querySelector("[data-topic-toggle]");
+        const topics = [
+          {
+            name: "AI agent basics",
+            connection: "/ Verification loop",
+            cold: "“The agent chooses a tool and uses it.”",
+            gap: "How the tool result is checked",
+            returned: "“The agent uses a tool, checks the result against the goal, then continues, retries, or stops.”",
+            rebuilt: "Tool use → verification → decision",
+          },
+          {
+            name: "Agent permissions",
+            connection: "/ Approval boundaries",
+            cold: "“The agent calls a tool to complete the task.”",
+            gap: "Which tool calls require approval",
+            returned: "“The agent checks whether the tool call is allowed, then calls it or asks for approval.”",
+            rebuilt: "Permission check → call or ask",
+          },
+          {
+            name: "Agent retrieval",
+            connection: "/ Grounded answers",
+            cold: "“The agent retrieves chunks related to the question.”",
+            gap: "Check relevance to the question",
+            returned: "“The agent retrieves chunks, checks relevance, then cites the evidence it uses.”",
+            rebuilt: "Retrieve → check → cite",
+          },
+        ];
+        let topicIndex = 0;
+        let topicInterval;
+        let topicSwapTimer;
+        let isTopicVisible = false;
+        let isTopicManuallyPaused = false;
+        let hasTopicResumeOverride = false;
+
+        function renderTopic(index) {
+          const topic = topics[index];
+          topicName.textContent = topic.name;
+          topicConnection.textContent = topic.connection;
+          topicCold.textContent = topic.cold;
+          topicGap.textContent = topic.gap;
+          topicReturn.textContent = topic.returned;
+          topicRebuilt.textContent = topic.rebuilt;
+          topicPosition.textContent = `${index + 1} / ${topics.length}`;
+          topicCount.setAttribute("aria-label", `Example ${index + 1} of ${topics.length}`);
+          topicSeries.dataset.topicIndex = index;
+          topicSeries.setAttribute(
+            "aria-label",
+            `Illustrative source-closed explanation example ${index + 1} of ${topics.length}: ${topic.name}`,
+          );
+        }
+
+        function showNextTopic(animate = true) {
+          topicIndex = (topicIndex + 1) % topics.length;
+          clearTimeout(topicSwapTimer);
+
+          if (!animate || topicMotion.matches) {
+            renderTopic(topicIndex);
+            return;
+          }
+
+          topicContent.classList.add("is-switching");
+          topicSwapTimer = setTimeout(() => {
+            renderTopic(topicIndex);
+            requestAnimationFrame(() => topicContent.classList.remove("is-switching"));
+          }, 140);
+        }
+
+        function isTopicRotationPaused() {
+          return (
+            topicMotion.matches ||
+            isTopicManuallyPaused ||
+            !isTopicVisible ||
+            document.hidden ||
+            (!hasTopicResumeOverride && (
+              topicSeries.matches(":hover") ||
+              topicSeries.contains(document.activeElement)
+            ))
+          );
+        }
+
+        function syncTopicRotation() {
+          clearInterval(topicInterval);
+          const isPaused = isTopicRotationPaused();
+          topicSeries.dataset.rotation = topicMotion.matches ? "reduced" : isPaused ? "paused" : "running";
+          topicContent.setAttribute("aria-live", topicMotion.matches ? "polite" : "off");
+          topicToggle.textContent = topicMotion.matches ? "Next" : isTopicManuallyPaused ? "Resume" : "Pause";
+          topicToggle.setAttribute(
+            "aria-label",
+            topicMotion.matches
+              ? "Show next illustrative example"
+              : isTopicManuallyPaused
+                ? "Resume illustrative examples"
+                : "Pause illustrative examples",
+          );
+
+          if (!isPaused) topicInterval = setInterval(showNextTopic, 6800);
+        }
+
+        topicToggle.addEventListener("click", () => {
+          if (topicMotion.matches) {
+            showNextTopic(false);
+            return;
+          }
+
+          if (isTopicManuallyPaused) {
+            isTopicManuallyPaused = false;
+            hasTopicResumeOverride = true;
+          } else {
+            isTopicManuallyPaused = true;
+            hasTopicResumeOverride = false;
+          }
+          syncTopicRotation();
+        });
+        topicSeries.addEventListener("mouseenter", syncTopicRotation);
+        topicSeries.addEventListener("mouseleave", () => {
+          if (!topicSeries.contains(document.activeElement)) hasTopicResumeOverride = false;
+          syncTopicRotation();
+        });
+        topicSeries.addEventListener("focusin", syncTopicRotation);
+        topicSeries.addEventListener("focusout", () => setTimeout(() => {
+          if (!topicSeries.matches(":hover")) hasTopicResumeOverride = false;
+          syncTopicRotation();
+        }));
+        document.addEventListener("visibilitychange", syncTopicRotation);
+        topicMotion.addEventListener("change", () => {
+          clearTimeout(topicSwapTimer);
+          topicContent.classList.remove("is-switching");
+          renderTopic(topicIndex);
+          syncTopicRotation();
+        });
+
+        const topicObserver = new IntersectionObserver(([entry]) => {
+          isTopicVisible = entry.isIntersecting;
+          syncTopicRotation();
+        }, { threshold: .55 });
+        topicObserver.observe(topicSeries);
+        renderTopic(topicIndex);
+        syncTopicRotation();
+      }
+
       const proofBand = document.querySelector("[data-proof-band]");
 
       if (proofBand) {

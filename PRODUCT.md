@@ -29,4 +29,4 @@ Scholarly, evidence-based, polished. Calm, precise, Socratic. Voice of a reading
 ## Accessibility & Inclusion
 - High contrast, legible typography across devices.
 - Visually hidden `<h1>` for screen readers is exactly `socratink`.
-- Calm, reduced motion (no rotating animations or particles).
+- Calm, reduced motion. Explanatory rotation pauses on interaction and becomes manual when the user requests reduced motion; no decorative loops or particles.
