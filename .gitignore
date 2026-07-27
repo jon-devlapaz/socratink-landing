@@ -31,3 +31,11 @@ Revised design Methodology/
 .env*.local
 .gm-stop-verified
 .codeinsight
+
+# Local agent / design debris (screenshots, prototypes, plans)
+.qa-runs/
+plans/
+reviews/
+mockups/landing-live-reference-prototype.html
+mockups/landing-overhaul-prototype.html
+mockups/proof-band-prototype.html
