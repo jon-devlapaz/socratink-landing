@@ -789,18 +789,6 @@
         transform: translate(-3px, -2px) rotate(-.34deg);
       }
 
-      .folio__paper::after,
-      .folio__press::before {
-        position: absolute;
-        z-index: 6;
-        inset: 0;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.16 0 0 0 0 0.13 0 0 0 0 0.09 0.16 0.16 0.16 0 0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23g)'/%3E%3C/svg%3E");
-        content: "";
-        mix-blend-mode: multiply;
-        opacity: .28;
-        pointer-events: none;
-      }
-
       .folio__defs {
         position: absolute;
         width: 0;
@@ -808,325 +796,319 @@
         overflow: hidden;
       }
 
-      .folio__travel {
-        position: absolute;
-        z-index: 4;
-        overflow: visible;
-        pointer-events: none;
-        transform-origin: 0 0;
+      @media (prefers-reduced-motion: no-preference) {
+        .motion-ready [data-reveal] {
+          opacity: 0;
+          transform: translateY(28px);
+          transition:
+            opacity 700ms cubic-bezier(.22, 1, .36, 1),
+            transform 700ms cubic-bezier(.22, 1, .36, 1);
+          transition-delay: var(--reveal-delay, 0ms);
+        }
+
+        .motion-ready [data-reveal].is-visible {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
-      .folio__travel path {
-        fill: none;
-        stroke: var(--proof-ink);
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        stroke-width: 3;
-        vector-effect: non-scaling-stroke;
+      /* The Ink Bridge keeps the proof legible at rest; motion only registers it. */
+      .ink-bridge {
+        min-height: clamp(540px, 45vw, 620px);
+        isolation: isolate;
       }
 
-      .folio.is-traveling .folio-line {
-        opacity: 0 !important;
-        transition: none;
+      .ink-bridge::before {
+        inset: 30px 10px 22px;
+        border-color: rgba(23, 23, 19, .12);
+        background: rgba(244, 241, 232, .3);
+        box-shadow: 0 40px 90px rgba(41, 36, 28, .08);
+        transform: rotate(.24deg);
       }
 
-      .folio.is-traveling .folio__source .folio__underline path { opacity: 0; }
-
-      .folio.is-traveled .folio__source .folio__underline path { animation: none !important; }
-
-      .folio__paper {
+      .ink-bridge__field {
         position: relative;
         z-index: 1;
-        display: flex;
-        min-height: clamp(500px, 44vw, 596px);
-        flex-direction: column;
-        border: 1px solid rgba(23, 23, 19, .24);
-        border-radius: 2px;
-        background:
-          linear-gradient(115deg, rgba(255, 255, 255, .55), rgba(255, 255, 255, 0) 42%),
-          linear-gradient(295deg, rgba(41, 36, 28, .05), rgba(41, 36, 28, 0) 46%),
-          var(--sheet);
-        box-shadow:
-          0 34px 80px rgba(41, 36, 28, .14),
-          0 1px 0 rgba(255, 255, 255, .78) inset;
-        transform: rotate(-.18deg);
-      }
-
-      .folio__press {
-        position: absolute;
-        z-index: 3;
-        inset: 0;
+        min-height: clamp(540px, 45vw, 620px);
         overflow: hidden;
-        padding: 0;
-        border: 1px solid rgba(23, 23, 19, .24);
-        border-radius: 2px;
-        appearance: none;
+      }
+
+      .ink-bridge__meta {
+        position: absolute;
+        z-index: 5;
+        top: 0;
+        right: 22px;
+        left: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        color: var(--graphite);
+        font-size: 9px;
+        font-weight: 680;
+        letter-spacing: .09em;
+        text-transform: uppercase;
+      }
+
+      .ink-bridge__stamp {
+        padding: 3px 7px 2px;
+        border: 1px solid currentColor;
+        color: var(--proof-ink);
+        filter: url(#ink-wobble);
+        opacity: .58;
+        transform: rotate(1.5deg);
+      }
+
+      .ink-bridge__sheet {
+        position: absolute;
+        width: min(80%, 580px);
+        margin: 0;
+        padding: clamp(24px, 3vw, 34px);
+        border: 1px solid rgba(23, 23, 19, .22);
         background:
-          linear-gradient(115deg, rgba(255, 255, 255, .55), rgba(255, 255, 255, 0) 42%),
-          linear-gradient(295deg, rgba(41, 36, 28, .05), rgba(41, 36, 28, 0) 46%),
+          linear-gradient(115deg, rgba(255, 255, 255, .62), transparent 43%),
+          linear-gradient(295deg, rgba(41, 36, 28, .045), transparent 48%),
           var(--sheet);
         box-shadow:
-          0 34px 80px rgba(41, 36, 28, .14),
-          0 1px 0 rgba(255, 255, 255, .78) inset;
-        cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cg fill='%23f6f3ea' stroke='%23262320' stroke-width='1.4' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M3 23 L6 15.5 L17.5 4 Q19.5 2 21.75 4.25 Q24 6.5 22 8.5 L10.5 20 Z'/%3E%3Cpath d='M3 23 L8.5 17.5'/%3E%3C/g%3E%3Ccircle cx='9.3' cy='16.7' r='1.2' fill='%23262320'/%3E%3C/svg%3E") 3 23, pointer;
-        transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) rotate(-.18deg);
+          0 28px 60px rgba(41, 36, 28, .12),
+          0 1px 0 rgba(255, 255, 255, .72) inset;
+        transform-origin: center;
         transition:
-          box-shadow 240ms cubic-bezier(.22, 1, .36, 1),
-          transform 240ms cubic-bezier(.22, 1, .36, 1),
-          opacity 480ms cubic-bezier(.22, 1, .36, 1) 200ms;
+          box-shadow 560ms cubic-bezier(.77, 0, .175, 1),
+          transform 560ms cubic-bezier(.77, 0, .175, 1);
       }
 
-      .folio__press:hover {
-        box-shadow:
-          0 40px 92px rgba(41, 36, 28, .18),
-          0 1px 0 rgba(255, 255, 255, .78) inset;
-      }
-
-      .folio__press::after {
+      .ink-bridge__sheet::after {
         position: absolute;
-        right: 0;
-        bottom: 0;
-        width: 30px;
-        height: 30px;
-        background: linear-gradient(135deg, var(--sheet-deep) 0 48.5%, rgba(23, 23, 19, .18) 48.5% 51.5%, var(--stock) 51.5% 100%);
+        z-index: 0;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.16 0 0 0 0 0.13 0 0 0 0 0.09 0.16 0.16 0.16 0 0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23g)'/%3E%3C/svg%3E");
         content: "";
-        transition: width 240ms cubic-bezier(.22, 1, .36, 1), height 240ms cubic-bezier(.22, 1, .36, 1);
-      }
-
-      .folio[data-stage="ink"] .folio__press:hover,
-      .folio[data-stage="ink"] .folio__press:focus-visible {
-        box-shadow:
-          0 42px 92px rgba(41, 36, 28, .2),
-          0 1px 0 rgba(255, 255, 255, .78) inset;
-        transform: rotate(-.18deg) translateY(-4px);
-      }
-
-      .folio[data-stage="ink"] .folio__press:hover::after,
-      .folio[data-stage="ink"] .folio__press:focus-visible::after {
-        width: 38px;
-        height: 38px;
-      }
-
-      .folio[data-stage="ink"] .folio__press:active {
-        transform: rotate(-.18deg) translateY(-1px) scale(.997);
-        transition-duration: 90ms;
-      }
-
-      .js .folio:not([data-stage="ink"]) .folio__press {
-        opacity: 0;
+        mix-blend-mode: multiply;
+        opacity: .24;
         pointer-events: none;
       }
 
-      .folio__art {
-        display: block;
-        width: 100%;
-        height: 100%;
+      .ink-bridge__sheet > * {
+        position: relative;
+        z-index: 1;
       }
 
-      .folio__art * { vector-effect: non-scaling-stroke; }
-
-      .folio-stroke,
-      .folio-line,
-      .folio-margin-mark {
-        fill: none;
-        stroke: var(--carbon);
-        stroke-linecap: round;
-        stroke-linejoin: round;
+      .ink-bridge__sheet--first {
+        z-index: 2;
+        top: 52px;
+        left: 20px;
+        min-height: 242px;
+        transform: translate(-18px, 0) rotate(-1.25deg);
       }
 
-      .folio-margin-mark { stroke-width: 2; }
-
-      .folio-strokes {
-        transition: transform 420ms cubic-bezier(.22, 1, .36, 1);
+      .ink-bridge__sheet--later {
+        z-index: 3;
+        right: 18px;
+        bottom: 42px;
+        min-height: 268px;
+        transform: translate(34px, 12px) rotate(1.08deg);
       }
 
-      .folio-strokes .folio-stroke {
-        opacity: .52;
-        transform-box: fill-box;
-        transform-origin: center;
-        transition: opacity 380ms cubic-bezier(.22, 1, .36, 1);
+      .ink-bridge[data-bridge-state="aligned"] .ink-bridge__sheet--first {
+        box-shadow:
+          0 20px 44px rgba(41, 36, 28, .1),
+          0 1px 0 rgba(255, 255, 255, .72) inset;
+        transform: translate(12px, 8px) rotate(-.18deg);
       }
 
-      .folio-strokes .folio-stroke:nth-child(3n) { transform: rotate(.5deg) translateY(.7px); }
-      .folio-strokes .folio-stroke:nth-child(4n + 1) { transform: rotate(-.45deg) translateY(-.6px); }
-      .folio-strokes .folio-stroke:nth-child(5n + 2) { transform: rotate(.3deg) translateY(1.1px); }
-      .folio-strokes .folio-stroke:nth-child(7n + 3) { transform: rotate(-.6deg) translateY(.4px) scaleX(.985); }
-
-      .folio-line,
-      .folio-margin-mark { stroke: var(--proof-ink); }
-      .folio-line { stroke-width: 2.5; }
-
-      .folio-mark-group {
-        opacity: .95;
-        transition:
-          opacity 340ms cubic-bezier(.22, 1, .36, 1),
-          transform 340ms cubic-bezier(.22, 1, .36, 1);
+      .ink-bridge[data-bridge-state="aligned"] .ink-bridge__sheet--later {
+        box-shadow:
+          0 24px 50px rgba(41, 36, 28, .12),
+          0 1px 0 rgba(255, 255, 255, .72) inset;
+        transform: translate(-18px, -4px) rotate(.18deg);
       }
 
-      .folio__press:hover .folio-mark-group,
-      .folio__press:focus-visible .folio-mark-group {
-        opacity: 1;
-        transform: translateY(-3px);
-      }
-
-      .js .folio:not([data-stage="ink"]) .folio-strokes { transform: translateY(5px); }
-      .js .folio:not([data-stage="ink"]) .folio-strokes .folio-stroke { opacity: .07; }
-
-      .js .folio:not([data-stage="ink"]) .folio-mark-group {
-        opacity: 0;
-        transform: translateY(12px);
-        transition-delay: 240ms;
-      }
-
-      .folio__header {
+      .ink-bridge__sheet figcaption {
         display: flex;
+        align-items: center;
         justify-content: space-between;
         gap: 16px;
-        padding: 20px clamp(22px, 3vw, 30px) 0;
+        margin-bottom: clamp(18px, 2.5vw, 28px);
         color: var(--graphite);
-        font-size: 10px;
-        font-weight: 680;
-        letter-spacing: .09em;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: .08em;
+        text-transform: uppercase;
       }
 
-      .folio__body {
-        display: flex;
-        min-height: 0;
-        flex: 1;
-        flex-direction: column;
-        justify-content: center;
-        gap: clamp(16px, 2.4vw, 24px);
-        padding: 16px clamp(24px, 4vw, 46px);
+      .ink-bridge__index {
+        color: rgba(23, 23, 19, .28);
+        font: 400 28px/1 "Instrument Serif", Georgia, serif;
+        letter-spacing: -.04em;
       }
 
-      .folio__source {
-        width: fit-content;
-        max-width: 560px;
-        align-self: center;
-      }
-
-      .folio__source-copy {
+      .ink-bridge__copy {
+        max-width: 510px;
         margin: 0;
         color: var(--carbon);
-        font: 400 clamp(27px, 3vw, 34px)/1.1 "Instrument Serif", Georgia, serif;
+        font: 400 clamp(23px, 2.7vw, 31px)/1.18 "Instrument Serif", Georgia, serif;
         letter-spacing: -.025em;
         text-wrap: balance;
       }
 
-      .folio__source-copy mark,
-      .folio__later-copy mark {
+      .ink-bridge__gain {
+        position: relative;
         padding: 0;
         background: none;
         color: var(--proof-ink);
+        filter: blur(.18px) url(#ink-bleed);
       }
 
-      .folio__underline {
-        display: block;
+      .ink-bridge__gain::after {
+        position: absolute;
+        right: -2px;
+        bottom: -.13em;
+        left: -2px;
+        height: 2px;
+        background: currentColor;
+        content: "";
+        filter: url(#ink-wobble);
+        opacity: .72;
+        transform: scaleX(.94) rotate(-.35deg);
+      }
+
+      .ink-bridge__gap {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin: 18px 0 0 clamp(54px, 11vw, 96px);
+        color: var(--proof-ink);
+        font: 400 17px/1.2 "Instrument Serif", Georgia, serif;
+        filter: blur(.16px) url(#ink-bleed);
+        transform: rotate(-.55deg);
+      }
+
+      .ink-bridge__gap::before {
+        width: 20px;
+        height: 10px;
+        border-top: 2px solid currentColor;
+        border-left: 2px solid currentColor;
+        content: "";
+        transform: skewX(-24deg) rotate(-6deg);
+      }
+
+      .ink-bridge__thread {
+        position: absolute;
+        z-index: 4;
+        inset: 0;
         width: 100%;
-        height: 15px;
-        margin: 11px 0 0;
+        height: 100%;
         overflow: visible;
+        filter: url(#ink-wobble);
+        pointer-events: none;
       }
 
-      .folio__underline path {
+      .ink-bridge__thread-path {
         fill: none;
         stroke: var(--proof-ink);
         stroke-linecap: round;
         stroke-linejoin: round;
-        stroke-width: 2.5;
+        vector-effect: non-scaling-stroke;
+        transition:
+          opacity 420ms cubic-bezier(.77, 0, .175, 1),
+          stroke-dashoffset 560ms cubic-bezier(.77, 0, .175, 1);
+      }
+
+      .ink-bridge__thread-path--loose {
+        stroke-width: 1.5;
+        stroke-dasharray: .05 .035;
+        opacity: .48;
+      }
+
+      .ink-bridge__thread-path--locked {
+        stroke-width: 2.4;
+        stroke-dasharray: 1;
+        stroke-dashoffset: 1;
+        opacity: 0;
+      }
+
+      .ink-bridge[data-bridge-state="aligned"] .ink-bridge__thread-path--loose {
+        opacity: .12;
+      }
+
+      .ink-bridge[data-bridge-state="aligned"] .ink-bridge__thread-path--locked {
+        stroke-dashoffset: 0;
         opacity: .9;
-        vector-effect: non-scaling-stroke;
       }
 
-      .folio__prompt {
-        width: fit-content;
-        max-width: 600px;
-      }
-
-      .folio__prompt .folio__underline { height: 11px; margin-top: 8px; }
-      .folio__prompt .folio__underline path { stroke-width: 2; }
-
-      .folio__prompt-copy {
-        margin: 0;
-        color: var(--carbon);
-        font: 400 clamp(20px, 2vw, 23px)/1.26 "Instrument Serif", Georgia, serif;
-        letter-spacing: -.015em;
-        text-wrap: balance;
-      }
-
-      .folio__attempt,
-      .folio__later { margin: 0; }
-
-      .folio__attempt figcaption,
-      .folio__later figcaption {
-        color: var(--graphite);
-        font-size: 9px;
-        font-weight: 680;
+      .ink-bridge__proof {
+        position: absolute;
+        z-index: 6;
+        top: 50%;
+        right: 18px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 9px 5px;
+        border: 1px solid rgba(112, 72, 87, .26);
+        background: rgba(244, 241, 232, .88);
+        color: var(--proof-ink);
+        font-size: 8px;
+        font-weight: 760;
         letter-spacing: .08em;
+        text-transform: uppercase;
+        transform: translateY(-50%) rotate(.4deg);
+        transition:
+          background-color 360ms cubic-bezier(.77, 0, .175, 1),
+          transform 560ms cubic-bezier(.77, 0, .175, 1);
       }
 
-      .folio__attempt-copy,
-      .folio__later-copy {
-        margin: 7px 0 0;
-        color: var(--carbon);
-        font: 400 clamp(22px, 2.4vw, 28px)/1.22 "Instrument Serif", Georgia, serif;
-        letter-spacing: -.02em;
+      .ink-bridge__proof::before {
+        width: 11px;
+        height: 2px;
+        background: currentColor;
+        content: "";
+        transform: rotate(-8deg);
       }
 
-      .folio__caret {
-        display: inline-block;
-        margin: 0 2px;
+      .ink-bridge[data-bridge-state="aligned"] .ink-bridge__proof {
+        background: rgba(244, 241, 232, .97);
+        transform: translate(-14px, -50%) rotate(-.35deg);
+      }
+
+      .ink-bridge__control {
+        position: absolute;
+        z-index: 8;
+        inset: 0;
+        min-width: 44px;
+        min-height: 44px;
+        padding: 0;
+        border: 0;
+        appearance: none;
+        background: transparent;
         color: var(--proof-ink);
-        transform: translateY(.3em);
+        cursor: pointer;
+        touch-action: manipulation;
       }
 
-      .folio__caret svg {
-        display: block;
-        width: 13px;
-        height: 10px;
+      .ink-bridge__control::after {
+        position: absolute;
+        right: 24px;
+        bottom: 5px;
+        color: var(--graphite);
+        content: "align the ink  ↔";
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: .08em;
+        text-transform: uppercase;
       }
 
-      .folio__art,
-      .folio__underline,
-      .folio__travel,
-      .folio__hook,
-      .folio__caret svg {
-        filter: url(#ink-wobble);
+      .ink-bridge[data-bridge-state="aligned"] .ink-bridge__control::after {
+        content: "release the ink  ↔";
       }
 
-      .folio__source-copy mark,
-      .folio__later-copy mark,
-      .folio__margin p {
-        filter: blur(.35px) url(#ink-bleed);
-      }
-
-      .folio__w { display: inline-block; }
-
-      .folio__hook {
-        display: block;
-        width: 22px;
-        height: 15px;
-        margin-bottom: 3px;
-        overflow: visible;
-      }
-
-      .folio__hook path {
-        fill: none;
-        stroke: currentColor;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        stroke-width: 2;
-        vector-effect: non-scaling-stroke;
-      }
-
-      .folio__stamp {
-        padding: 3px 8px 2px;
-        border: 1.5px solid currentColor;
-        border-radius: 3px;
-        color: var(--proof-ink);
-        filter: url(#ink-wobble);
-        opacity: .5;
-        transform: rotate(2.4deg);
+      @media (hover: hover) and (pointer: fine) {
+        .ink-bridge:has(.ink-bridge__control:hover) .ink-bridge__sheet--later {
+          box-shadow:
+            0 34px 72px rgba(41, 36, 28, .16),
+            0 1px 0 rgba(255, 255, 255, .72) inset;
+        }
       }
 
       .ink-underline {
@@ -1163,217 +1145,38 @@
         to { stroke-dashoffset: 0; }
       }
 
-      .folio__margin {
-        display: grid;
-        width: fit-content;
-        max-width: 520px;
-        margin: 0 0 0 clamp(18px, 3vw, 42px);
-        padding: 2px 0 2px 14px;
-        border-left: 2px solid var(--proof-ink);
-        color: var(--proof-ink);
-        gap: 5px;
-      }
-
-      .folio__margin p {
-        margin: 0;
-        font: 400 clamp(17px, 1.7vw, 20px)/1.24 "Instrument Serif", Georgia, serif;
-        letter-spacing: -.01em;
-      }
-
-      .folio__margin small {
-        color: var(--graphite);
-        font-size: 9px;
-        font-weight: 640;
-        letter-spacing: .06em;
-      }
-
-      .folio__margin--repair {
-        border-left-color: rgba(23, 23, 19, .45);
-        color: var(--carbon);
-      }
-
-      .folio__later {
-        padding-top: clamp(12px, 1.8vw, 18px);
-        border-top: 1px solid var(--hairline);
-      }
-
-      .folio__foot {
-        display: flex;
-        min-height: 66px;
-        align-items: flex-end;
-        justify-content: space-between;
-        gap: 18px;
-        padding: 0 clamp(22px, 3vw, 30px) 16px;
-      }
-
-      .folio__note {
-        margin: 0 0 12px;
-        color: var(--graphite);
-        font-size: 10px;
-        font-weight: 640;
-        line-height: 1.45;
-      }
-
-      .folio__verb {
-        position: relative;
-        display: inline-flex;
-        align-items: center;
-        gap: 9px;
-        min-height: 44px;
-        margin-left: auto;
-        padding: 6px 3px;
-        border: 0;
-        appearance: none;
-        background: none;
-        color: var(--proof-ink);
-        cursor: pointer;
-        font: 400 clamp(19px, 1.9vw, 21px)/1 "Instrument Serif", Georgia, serif;
-        letter-spacing: -.01em;
-        transition: color 200ms cubic-bezier(.22, 1, .36, 1);
-        white-space: nowrap;
-      }
-
-      .folio__verb::before {
-        position: absolute;
-        right: 0;
-        bottom: 2px;
-        left: 0;
-        height: 2px;
-        background: currentColor;
-        content: "";
-        transform-origin: left center;
-      }
-
-      .folio__verb::after {
-        content: "→" / "";
-        font-size: 17px;
-        transition: transform 220ms cubic-bezier(.22, 1, .36, 1);
-      }
-
-      .folio__verb:hover { color: #4c2b3a; }
-      .folio__verb:hover::after { transform: translateX(4px); }
-
-      @media (prefers-reduced-motion: no-preference) {
-        .js .folio[data-stage="ink"] .folio-margin-mark {
-          stroke-dasharray: 1;
-          animation: folio-draw 260ms 340ms cubic-bezier(.22, 1, .36, 1) both;
+      @media (max-width: 520px) {
+        .ink-bridge,
+        .ink-bridge__field { min-height: 510px; }
+        .ink-bridge::before { inset: 24px 2px 16px; }
+        .ink-bridge__meta { right: 10px; left: 10px; }
+        .ink-bridge__sheet {
+          width: calc(100% - 26px);
+          padding: 22px 20px;
         }
-
-        .js .folio[data-stage="ink"] .folio-line {
-          stroke-dasharray: 1;
-          animation: folio-draw 950ms 520ms cubic-bezier(.22, 1, .36, 1) both;
+        .ink-bridge__sheet--first {
+          top: 40px;
+          left: 0;
+          min-height: 214px;
+          transform: translate(-4px, 0) rotate(-.8deg);
         }
-
-        .js .folio[data-stage="source"] .folio__source-copy .folio__w,
-        .js .folio[data-stage="prompt"] .folio__prompt-copy .folio__w,
-        .js .folio[data-stage="attempt"] .folio__attempt-copy .folio__w,
-        .js .folio[data-stage="later"] .folio__later-copy .folio__w {
-          animation: folio-write var(--ww, 300ms) var(--wd, 200ms) cubic-bezier(.22, 1, .36, 1) both;
+        .ink-bridge__sheet--later {
+          right: 0;
+          bottom: 32px;
+          min-height: 246px;
+          transform: translate(8px, 8px) rotate(.72deg);
         }
-
-        .js .folio[data-stage="source"] .folio__source .folio__underline path {
-          stroke-dasharray: 1;
-          animation: folio-draw 500ms 560ms cubic-bezier(.22, 1, .36, 1) both;
+        .ink-bridge[data-bridge-state="aligned"] .ink-bridge__sheet--first {
+          transform: translate(4px, 6px) rotate(-.16deg);
         }
-
-        .js .folio[data-stage="prompt"] .folio__paper {
-          animation: folio-turn 460ms cubic-bezier(.22, 1, .36, 1) both;
+        .ink-bridge[data-bridge-state="aligned"] .ink-bridge__sheet--later {
+          transform: translate(-4px, -3px) rotate(.16deg);
         }
-
-        .js .folio[data-stage="prompt"] .folio__prompt .folio__underline path {
-          stroke-dasharray: 1;
-          animation: folio-draw 460ms 980ms cubic-bezier(.22, 1, .36, 1) both;
-        }
-
-        .js .folio[data-stage="attempt"] .folio__attempt {
-          animation: folio-rise 320ms cubic-bezier(.22, 1, .36, 1) both;
-        }
-
-        .js .folio[data-stage="gap"] .folio__caret {
-          animation: folio-caret 420ms 140ms cubic-bezier(.3, 1.2, .4, 1) both;
-        }
-
-        .js .folio[data-stage="gap"] [data-folio-gap] {
-          animation: folio-rise 360ms 320ms cubic-bezier(.22, 1, .36, 1) both;
-        }
-
-        .js .folio[data-stage="gap"] .folio__hook path {
-          stroke-dasharray: 1;
-          animation: folio-draw 300ms 620ms cubic-bezier(.22, 1, .36, 1) both;
-        }
-
-        .js .folio[data-stage="repair"] [data-folio-repair] {
-          animation: folio-rise 360ms 140ms cubic-bezier(.22, 1, .36, 1) both;
-        }
-
-        .js .folio[data-stage="later"] .folio__later {
-          animation: folio-rise 340ms cubic-bezier(.22, 1, .36, 1) both;
-        }
-
-        .js .folio[data-stage="later"] .folio__note {
-          animation: folio-rise 320ms 900ms cubic-bezier(.22, 1, .36, 1) both;
-        }
-
-        .js .folio .folio__verb.is-arriving {
-          animation: folio-rise 300ms 460ms cubic-bezier(.22, 1, .36, 1) both;
-        }
-
-        .js .folio .folio__verb.is-arriving::before {
-          animation: folio-underline-draw 320ms 640ms cubic-bezier(.22, 1, .36, 1) both;
-        }
-
-        .folio__travel {
-          transition: transform 460ms cubic-bezier(.3, .9, .3, 1);
-        }
-
-        @keyframes folio-underline-draw {
-          from { transform: scaleX(0); }
-          to { transform: scaleX(1); }
-        }
-
-        @keyframes folio-draw {
-          from { stroke-dashoffset: 1; }
-          to { stroke-dashoffset: 0; }
-        }
-
-        @keyframes folio-write {
-          from { clip-path: inset(0 100% 0 0); opacity: .85; color: oklch(from currentColor calc(l * .58) c h); }
-          to { clip-path: inset(0 -2% 0 0); opacity: 1; }
-        }
-
-        @keyframes folio-settle {
-          from { opacity: .97; transform: rotate(-.55deg) translateY(4px); }
-        }
-
-        @keyframes folio-rise {
-          from { opacity: 0; transform: translateY(6px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes folio-caret {
-          0% { opacity: 0; transform: translateY(-.18em) scale(.7); }
-          62% { opacity: 1; transform: translateY(.4em) scale(1.08); }
-          100% { opacity: 1; transform: translateY(.3em) scale(1); }
-        }
-
-        @keyframes folio-turn {
-          from { transform: rotate(-.18deg) translateY(7px); }
-          to { transform: rotate(-.18deg); }
-        }
-
-        .motion-ready [data-reveal] {
-          opacity: 0;
-          transform: translateY(28px);
-          transition:
-            opacity 700ms cubic-bezier(.22, 1, .36, 1),
-            transform 700ms cubic-bezier(.22, 1, .36, 1);
-          transition-delay: var(--reveal-delay, 0ms);
-        }
-
-        .motion-ready [data-reveal].is-visible {
-          opacity: 1;
-          transform: translateY(0);
-        }
+        .ink-bridge__sheet figcaption { margin-bottom: 16px; }
+        .ink-bridge__copy { font-size: clamp(21px, 6.3vw, 27px); }
+        .ink-bridge__gap { margin-top: 14px; margin-left: 28px; font-size: 15px; }
+        .ink-bridge__proof { top: 49%; right: 4px; }
+        .ink-bridge__control::after { right: 10px; bottom: 0; }
       }
 
       @media (min-width: 821px) and (min-height: 640px) {
@@ -1427,8 +1230,6 @@
       @media (max-width: 360px) {
         html,
         body { min-width: 0; }
-        .folio__foot { flex-wrap: wrap; }
-        .folio__note { flex: 1 1 100%; margin-bottom: 0; }
         .proof-band { min-height: 780px; }
         .proof-session,
         .proof-trace,
@@ -1481,27 +1282,19 @@
           display: none;
         }
 
-        .folio__press,
-        .folio[data-stage="ink"] .folio__press:hover,
-        .folio[data-stage="ink"] .folio__press:focus-visible,
-        .folio[data-stage="ink"] .folio__press:active { transform: none; }
-
-        .folio__paper { min-height: 540px; transform: none; }
-        .folio__header { padding: 16px 18px 0; }
-        .folio__body { padding: 14px 18px; gap: 16px; }
-        .folio__foot { padding: 0 18px 14px; }
-        .folio__source-copy { font-size: 26px; }
-        .folio__prompt-copy { font-size: 18px; }
-        .folio__attempt-copy,
-        .folio__later-copy { font-size: 21px; }
-        .folio__margin { margin-left: 10px; }
-        .folio__margin p { font-size: 16px; }
-        .folio__verb { font-size: 18px; }
       }
 
       @media (prefers-reduced-motion: reduce) {
         html { scroll-behavior: auto; }
         .proof-band { scroll-margin-top: 76px; }
+        .ink-bridge__sheet--first {
+          transform: translate(12px, 8px) rotate(-.18deg) !important;
+        }
+        .ink-bridge__sheet--later {
+          transform: translate(-18px, -4px) rotate(.18deg) !important;
+        }
+        .ink-bridge__thread-path--loose { opacity: .12 !important; }
+        .ink-bridge__thread-path--locked { stroke-dashoffset: 0 !important; opacity: .9 !important; }
         *, *::before, *::after { scroll-behavior: auto !important; transition-delay: 0ms !important; transition-duration: .01ms !important; animation-delay: 0ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
       }
     </style>
@@ -1532,9 +1325,9 @@
             <p class="hero-trust">Use public, personal, or non-confidential material.</p>
           </div>
 
-          <div class="folio" data-folio data-stage="later" role="region" aria-labelledby="folio-title" aria-describedby="folio-summary">
-            <h3 class="sr-only" id="folio-title">One page of reconstruction practice, from source ink to later evidence</h3>
-            <p class="sr-only" id="folio-summary">A marked line in the source becomes the next page. The source closes, one explanation is written from memory, the comparison finds the exact gap, the repair is noted in the margin, and a later attempt rebuilds the connection without help.</p>
+          <div class="folio ink-bridge" data-folio data-bridge-state="aligned" role="region" aria-labelledby="folio-title" aria-describedby="folio-summary">
+            <h3 class="sr-only" id="folio-title">Two exact attempts, connected across time</h3>
+            <p class="sr-only" id="folio-summary">An illustrative first explanation misses what triggers a Raft election. A later source-closed explanation independently reconstructs the timeout connection. Both attempts stay exactly as written.</p>
 
             <svg class="folio__defs" aria-hidden="true" focusable="false">
               <defs>
@@ -1550,86 +1343,33 @@
               </defs>
             </svg>
 
-            <svg class="folio__travel" data-folio-travel aria-hidden="true" focusable="false" viewBox="0 0 520 18" preserveAspectRatio="none" hidden>
-              <path d="M30 10 C110 5 190 14 270 9 C350 4 440 13 504 8 C511 7 515 6 518 3" pathLength="1" />
-            </svg>
+            <div class="ink-bridge__field">
+              <div class="ink-bridge__meta" aria-hidden="true">
+                <span>one capability · two moments</span>
+                <span class="ink-bridge__stamp">illustrative</span>
+              </div>
 
-            <button class="folio__press" data-folio-press type="button" hidden aria-describedby="folio-summary">
-              <span class="sr-only">Open the illustrative source page</span>
-              <svg class="folio__art" aria-hidden="true" focusable="false" viewBox="0 0 720 604" preserveAspectRatio="none">
-                <g class="folio-strokes">
-                  <path class="folio-stroke" d="M64 78 C132 71 198 83 262 76" stroke-dasharray="52 11 84 13" stroke-opacity="1" stroke-width="2.3" />
-                  <path class="folio-stroke" d="M84 132 C176 125 268 139 360 131 C452 123 548 137 640 130" stroke-dasharray="38 10 66 12 90 14 47 11" stroke-dashoffset="18" stroke-opacity=".74" stroke-width="1.7" />
-                  <path class="folio-stroke" d="M64 158 C168 151 272 164 376 157 C480 150 560 162 618 156" stroke-dasharray="72 12 44 10 58 13 81 15" stroke-dashoffset="42" stroke-opacity="1" stroke-width="2.1" />
-                  <path class="folio-stroke" d="M64 184 C152 177 240 190 328 183 C416 176 480 187 528 182" stroke-dasharray="55 11 92 14 40 10" stroke-dashoffset="7" stroke-opacity=".62" stroke-width="1.8" />
-                  <path class="folio-stroke" d="M84 232 C184 225 284 238 384 231 C492 225 576 236 646 230" stroke-dasharray="47 10 70 13 36 9 88 15" stroke-dashoffset="31" stroke-opacity=".92" stroke-width="2.2" />
-                  <path class="folio-stroke" d="M64 258 C160 252 256 264 352 257 C460 250 540 262 600 256" stroke-dasharray="83 14 51 11 64 12" stroke-dashoffset="12" stroke-opacity=".7" stroke-width="1.7" />
-                  <path class="folio-stroke" d="M64 284 C144 278 224 289 304 283 C384 277 440 286 486 281" stroke-dasharray="42 10 76 13 58 12" stroke-dashoffset="53" stroke-opacity="1" stroke-width="2.4" />
-                  <path class="folio-stroke" d="M84 384 C184 377 284 390 384 383 C476 377 552 388 622 382" stroke-dasharray="66 12 39 10 85 14 50 11" stroke-dashoffset="24" stroke-opacity=".82" stroke-width="2" />
-                  <path class="folio-stroke" d="M64 410 C160 404 256 415 352 409 C450 403 530 413 596 408" stroke-dasharray="49 11 73 13 57 12" stroke-dashoffset="39" stroke-opacity=".6" stroke-width="1.7" />
-                  <path class="folio-stroke" d="M64 436 C150 430 236 441 322 435 C400 429 460 439 512 434" stroke-dasharray="80 14 45 10 62 12" stroke-dashoffset="8" stroke-opacity=".96" stroke-width="2.3" />
-                  <path class="folio-stroke" d="M84 486 C184 480 284 491 384 485 C468 480 526 489 578 484" stroke-dasharray="41 10 69 13 54 11 78 14" stroke-dashoffset="47" stroke-opacity=".76" stroke-width="1.8" />
-                  <path class="folio-stroke" d="M64 510 C140 505 216 514 292 509" stroke-dasharray="60 12 44 10" stroke-dashoffset="16" stroke-opacity=".9" stroke-width="2.1" />
-                </g>
-                <g class="folio-mark-group">
-                  <path class="folio-margin-mark" d="M40 320 L52 336 M50 317 L62 333" pathLength="1" />
-                  <path class="folio-line" d="M92 330 C180 323 268 336 356 329 C444 322 520 334 574 327 C592 325 604 318 612 306" pathLength="1" />
-                </g>
+              <figure class="ink-bridge__sheet ink-bridge__sheet--first" data-ink-bridge-first>
+                <figcaption><span>attempt 01 · source closed</span><span class="ink-bridge__index">01</span></figcaption>
+                <blockquote class="ink-bridge__copy">A follower calls an election and votes for itself.</blockquote>
+                <p class="ink-bridge__gap" data-ink-bridge-gap>what triggers it?</p>
+              </figure>
+
+              <figure class="ink-bridge__sheet ink-bridge__sheet--later" data-ink-bridge-later>
+                <figcaption><span>attempt 02 · later, without help</span><span class="ink-bridge__index">02</span></figcaption>
+                <blockquote class="ink-bridge__copy"><mark class="ink-bridge__gain" data-ink-bridge-gain>After an election timeout passes without a heartbeat,</mark> the follower becomes a candidate, votes for itself, and asks peers for votes.</blockquote>
+              </figure>
+
+              <svg class="ink-bridge__thread" data-ink-bridge-thread aria-hidden="true" focusable="false" viewBox="0 0 720 620" preserveAspectRatio="none">
+                <path class="ink-bridge__thread-path ink-bridge__thread-path--loose" d="M388 257 C486 270 560 316 520 356 C476 402 372 326 286 362" pathLength="1" />
+                <path class="ink-bridge__thread-path ink-bridge__thread-path--locked" d="M386 257 C438 278 430 326 286 362" pathLength="1" />
               </svg>
-            </button>
 
-            <div class="folio__paper" data-folio-paper>
-              <div class="folio__header" aria-hidden="true">
-                <span data-folio-stage-label>later · from memory again</span>
-                <span class="folio__stamp">illustrative</span>
-              </div>
-
-              <div class="folio__body">
-                <div class="folio__source" data-folio-source hidden>
-                  <p class="folio__source-copy"><span class="folio__w" style="--wd: 380ms; --ww: 220ms;">A follower</span> <span class="folio__w" style="--wd: 620ms; --ww: 260ms;">calls an election</span> <mark class="folio__w" style="--wd: 920ms; --ww: 300ms;">when heartbeats stop</mark> <span class="folio__w" style="--wd: 1260ms; --ww: 260ms;">and votes for itself.</span></p>
-                  <svg class="folio__underline" aria-hidden="true" focusable="false" viewBox="0 0 520 18" preserveAspectRatio="none">
-                    <path d="M2 4 L8 14 M11 2 L17 12 M30 10 C110 5 190 14 270 9 C350 4 440 13 504 8 C511 7 515 6 518 3" pathLength="1" />
-                  </svg>
-                </div>
-
-                <div class="folio__prompt" data-folio-prompt>
-                  <p class="folio__prompt-copy" data-folio-capability><span class="folio__w" style="--wd: 200ms; --ww: 280ms;">Explain when a Raft follower</span> <span class="folio__w" style="--wd: 520ms; --ww: 240ms;">calls an election.</span></p>
-                  <svg class="folio__underline" aria-hidden="true" focusable="false" viewBox="0 0 520 18" preserveAspectRatio="none">
-                    <path d="M2 4 L8 14 M11 2 L17 12 M30 10 C110 5 190 14 270 9 C350 4 440 13 504 8 C511 7 515 6 518 3" pathLength="1" />
-                  </svg>
-                </div>
-
-                <figure class="folio__attempt" data-folio-attempt>
-                  <figcaption>attempt 01 · source closed</figcaption>
-                  <p class="folio__attempt-copy"><span class="folio__w" style="--wd: 140ms; --ww: 340ms;">A follower calls an election</span><span class="folio__caret" data-folio-caret aria-hidden="true"><svg viewBox="0 0 14 11" focusable="false"><path d="M1.5 10 L7 1.5 L12.5 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg></span> <span class="folio__w" style="--wd: 530ms; --ww: 280ms;">and votes for itself.</span></p>
-                </figure>
-
-                <aside class="folio__margin" data-folio-gap>
-                  <svg class="folio__hook" aria-hidden="true" focusable="false" viewBox="0 0 24 18" preserveAspectRatio="none">
-                    <path d="M22 2 C14 4 8 8 5 16" pathLength="1" />
-                  </svg>
-                  <p>Missing: the stopped heartbeats.</p>
-                  <small>one gap · the attempt stays as written</small>
-                </aside>
-
-                <aside class="folio__margin folio__margin--repair" data-folio-repair>
-                  <p>The election timeout fires when no heartbeat arrives.</p>
-                  <small>repair in the margin · context, not proof</small>
-                </aside>
-
-                <figure class="folio__later" data-folio-later>
-                  <figcaption>attempt 02 · later, from memory</figcaption>
-                  <p class="folio__later-copy"><span class="folio__w" style="--wd: 180ms; --ww: 320ms;">A follower calls an election</span> <mark class="folio__w" style="--wd: 540ms; --ww: 300ms;">when heartbeats stop</mark> <span class="folio__w" style="--wd: 880ms; --ww: 260ms;">and votes for itself.</span></p>
-                </figure>
-              </div>
-
-              <div class="folio__foot">
-                <p class="folio__note" data-folio-note>Recorded: what you rebuilt without help.</p>
-                <button class="folio__verb" data-folio-verb type="button" hidden></button>
-              </div>
+              <p class="ink-bridge__proof" aria-hidden="true">one connection · rebuilt later</p>
             </div>
 
-            <p class="sr-only" data-folio-live aria-live="polite" aria-atomic="true"></p>
+            <button class="ink-bridge__control" data-ink-bridge-control type="button" hidden aria-pressed="true" aria-describedby="folio-summary" aria-label="Release the two illustrative attempts"></button>
+            <p class="sr-only" data-ink-bridge-live aria-live="polite" aria-atomic="true"></p>
           </div>
         </div>
       </section>
@@ -1753,143 +1493,36 @@
       const folio = document.querySelector("[data-folio]");
 
       if (folio) {
-        const pickFolioElement = (selector) => {
-          const element = folio.querySelector(selector);
-          if (!element) throw new Error(`Folio markup is missing ${selector}`);
-          return element;
-        };
-        const press = pickFolioElement("[data-folio-press]");
-        const paper = pickFolioElement("[data-folio-paper]");
-        const stageLabel = pickFolioElement("[data-folio-stage-label]");
-        const sourceBlock = pickFolioElement("[data-folio-source]");
-        const promptBlock = pickFolioElement("[data-folio-prompt]");
-        const attemptBlock = pickFolioElement("[data-folio-attempt]");
-        const caretMark = pickFolioElement("[data-folio-caret]");
-        const gapNote = pickFolioElement("[data-folio-gap]");
-        const repairNote = pickFolioElement("[data-folio-repair]");
-        const laterBlock = pickFolioElement("[data-folio-later]");
-        const endNote = pickFolioElement("[data-folio-note]");
-        const verb = pickFolioElement("[data-folio-verb]");
-        const liveRegion = pickFolioElement("[data-folio-live]");
-        const travel = pickFolioElement("[data-folio-travel]");
+        const control = folio.querySelector("[data-ink-bridge-control]");
+        const liveRegion = folio.querySelector("[data-ink-bridge-live]");
         const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-        const stages = {
-          ink: {
-            label: "a source · one line marked",
-            verb: "",
-            parts: [],
-            message: "",
-          },
-          source: {
-            label: "source open",
-            verb: "Close the source",
-            parts: [sourceBlock],
-            message: "Source open. One line is marked: a follower calls an election when heartbeats stop and votes for itself.",
-          },
-          prompt: {
-            label: "source closed",
-            verb: "Write from memory",
-            parts: [promptBlock],
-            message: "Source closed. The prompt: explain when a Raft follower calls an election.",
-          },
-          attempt: {
-            label: "written from memory",
-            verb: "Compare with the source",
-            parts: [promptBlock, attemptBlock],
-            message: "Written from memory: a follower calls an election and votes for itself.",
-          },
-          gap: {
-            label: "compared · one gap",
-            verb: "Repair the gap",
-            parts: [promptBlock, attemptBlock, caretMark, gapNote],
-            message: "Compared with the source. One gap: the stopped heartbeats are missing. The attempt stays as written.",
-          },
-          repair: {
-            label: "repaired in the margin",
-            verb: "Return later",
-            parts: [promptBlock, attemptBlock, caretMark, gapNote, repairNote],
-            message: "Repaired in the margin: the election timeout fires when no heartbeat arrives. Context, not proof.",
-          },
-          later: {
-            label: "later · from memory again",
-            verb: "Begin again",
-            parts: [promptBlock, attemptBlock, caretMark, gapNote, repairNote, laterBlock, endNote],
-            message: "Rebuilt later without help: a follower calls an election when heartbeats stop and votes for itself.",
-          },
-        };
-        const stageOrder = ["ink", "source", "prompt", "attempt", "gap", "repair", "later"];
-        const allParts = [sourceBlock, promptBlock, attemptBlock, caretMark, gapNote, repairNote, laterBlock, endNote];
-        let stage = "later";
-        let pressHideTimer;
-        let travelTimer;
+        if (!control || !liveRegion) throw new Error("Ink Bridge markup is incomplete");
 
-        function applyStage(nextStage, announce) {
-          stage = nextStage;
-          const config = stages[stage];
-          const isInk = stage === "ink";
-          clearTimeout(travelTimer);
-          folio.classList.remove("is-traveling", "is-traveled");
-          travel.toggleAttribute("hidden", true);
-          folio.dataset.stage = stage;
-          stageLabel.textContent = config.label;
-          allParts.forEach((part) => { part.hidden = !config.parts.includes(part); });
-          verb.hidden = !config.verb;
-          if (config.verb) {
-            verb.textContent = config.verb;
-            verb.classList.remove("is-arriving");
-            verb.getBoundingClientRect();
-            verb.classList.add("is-arriving");
+        function setBridgeState(aligned, announce) {
+          folio.dataset.bridgeState = aligned ? "aligned" : "separated";
+          control.setAttribute("aria-pressed", String(aligned));
+          control.setAttribute("aria-label", aligned ? "Release the two illustrative attempts" : "Align the two illustrative attempts");
+          if (announce) {
+            liveRegion.textContent = aligned
+              ? "Attempts aligned. The later explanation rebuilt the missing timeout connection."
+              : "Attempts separated. Both exact explanations remain preserved.";
           }
-          paper.inert = isInk;
-          paper.setAttribute("aria-hidden", String(isInk));
-          if (announce && config.message) liveRegion.textContent = config.message;
         }
 
-        function advanceStage() {
-          const nextIndex = stageOrder.indexOf(stage) + 1;
-          applyStage(stageOrder[nextIndex] ?? "source", true);
+        function toggleBridge() {
+          setBridgeState(folio.dataset.bridgeState !== "aligned", true);
         }
 
-        function travelInk(marked) {
-          if (reduceMotion.matches) return;
-          const underline = sourceBlock.querySelector(".folio__underline");
-          const from = marked.getBoundingClientRect();
-          const to = underline.getBoundingClientRect();
-          if (!from.width || !to.width) return;
-          const base = folio.getBoundingClientRect();
-          folio.classList.add("is-traveling", "is-traveled");
-          travel.toggleAttribute("hidden", false);
-          travel.style.left = `${to.left - base.left}px`;
-          travel.style.top = `${to.top - base.top}px`;
-          travel.style.width = `${to.width}px`;
-          travel.style.height = `${to.height}px`;
-          travel.style.transform = `translate(${from.left - to.left}px, ${from.top - to.top}px) scale(${from.width / to.width}, ${from.height / to.height})`;
-          travel.getBoundingClientRect();
-          travel.style.transform = "translate(0, 0)";
-          travelTimer = setTimeout(() => {
-            folio.classList.remove("is-traveling");
-            travel.toggleAttribute("hidden", true);
-          }, 500);
+        control.addEventListener("click", toggleBridge);
+
+        if (reduceMotion.matches) {
+          setBridgeState(true, false);
+        } else {
+          setBridgeState(false, false);
+          control.hidden = false;
         }
 
-        function openFromInk() {
-          if (stage !== "ink") return;
-          clearTimeout(pressHideTimer);
-          const marked = press.querySelector(".folio-line");
-          press.disabled = true;
-          pressHideTimer = setTimeout(() => { press.hidden = true; }, 560);
-          applyStage("source", true);
-          travelInk(marked);
-          verb.focus({ preventScroll: true });
-        }
-
-        press.addEventListener("click", openFromInk);
-        verb.addEventListener("click", advanceStage);
-
-        press.hidden = false;
-        press.disabled = false;
-        applyStage("ink", false);
         folio.setAttribute("data-folio-ready", "");
       }
 
